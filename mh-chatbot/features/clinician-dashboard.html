@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clinician Dashboard</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background-attachment: fixed;
+            padding: 2rem;
+        }
+
+        .feature-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .feature-header {
+            background: rgba(255, 255, 255, 0.95);
+            -webkit-backdrop-filter:backdrop-filter:
+            backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .feature-header h1 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            -webkit-backdrop-filter:backdrop-filter:
+            backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card h3 {
+            font-size: 1rem;
+            color: var(--gray-600);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-purple);
+        }
+
+        .risk-score {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+
+        .risk-low {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .risk-medium {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+        }
+
+        .risk-high {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        .mood-chart-container {
+            background: rgba(255, 255, 255, 0.95);
+            -webkit-backdrop-filter:backdrop-filter:
+            backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .mood-chart {
+            height: 200px;
+            display: flex;
+            align-items: flex-end;
+            gap: 1rem;
+            padding: 1rem 0;
+        }
+
+        .mood-bar {
+            flex: 1;
+            background: var(--gradient-primary);
+            border-radius: 0.5rem 0.5rem 0 0;
+            min-height: 20px;
+            position: relative;
+        }
+
+        .mood-label {
+            position: absolute;
+            bottom: -1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.75rem;
+            color: var(--gray-600);
+            white-space: nowrap;
+        }
+
+        .activity-log {
+            background: rgba(255, 255, 255, 0.95);
+            -webkit-backdrop-filter:backdrop-filter:
+            backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .log-item {
+            background: var(--gray-50);
+            padding: 1rem;
+            border-radius: 0.75rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .log-content {
+            flex: 1;
+        }
+
+        .log-time {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+        }
+
+        .log-text {
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: 2rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.2s;
+            margin-bottom: 1rem;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .summary-card {
+            background: rgba(255, 255, 255, 0.95);
+            -webkit-backdrop-filter:backdrop-filter:
+            backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .summary-item {
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .summary-label {
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 0.25rem;
+        }
+
+        .summary-value {
+            color: var(--gray-600);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="feature-container">
+        <a href="../index.html" class="back-btn">
+            <span>←</span> Back to Dashboard
+        </a>
+
+        <div class="feature-header">
+            <h1>👨‍⚕️ Clinician Dashboard</h1>
+            <p>Professional monitoring and insights for mental health care providers</p>
+        </div>
+
+        <!-- Key Metrics -->
+        <div class="dashboard-grid">
+            <div class="stat-card">
+                <h3>Overall Well-being Score</h3>
+                <div class="stat-value" id="wellbeing-score">7.2</div>
+                <div class="risk-score risk-low" id="risk-level">Low Risk</div>
+            </div>
+
+            <div class="stat-card">
+                <h3>Activities Completed</h3>
+                <div class="stat-value" id="activities">0</div>
+                <p style="color: var(--gray-600); font-size: 0.875rem; margin-top: 0.5rem;">Last 7 days</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>Journal Entries</h3>
+                <div class="stat-value" id="journal-count">0</div>
+                <p style="color: var(--gray-600); font-size: 0.875rem; margin-top: 0.5rem;">Last 30 days</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>Average Sleep</h3>
+                <div class="stat-value" id="avg-sleep">0</div>
+                <p style="color: var(--gray-600); font-size: 0.875rem; margin-top: 0.5rem;">hours per night</p>
+            </div>
+        </div>
+
+        <!-- Mood Trend Chart -->
+        <div class="mood-chart-container">
+            <h2 style="font-size: 1.5rem; font-weight: 600; margin-bottom: 1.5rem;">Mood Trend (Last 7 Days)</h2>
+            <div class="mood-chart" id="mood-chart">
+                <!-- Chart bars will be generated -->
+            </div>
+        </div>
+
+        <!-- User Summary Report -->
+        <div class="summary-card">
+            <h2 style="font-size: 1.5rem; font-weight: 600; margin-bottom: 1.5rem;">User Summary</h2>
+            <div id="summary-content">
+                <!-- Summary will be generated -->
+            </div>
+        </div>
+
+        <!-- Recent Activity Log -->
+        <div class="activity-log">
+            <h2 style="font-size: 1.5rem; font-weight: 600; margin-bottom: 1.5rem;">Recent Activity</h2>
+            <div id="activity-log">
+                <!-- Activity will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="../utils/storage.js"></script>
+    <script>
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function () {
+            loadDashboardData();
+        });
+
+        function loadDashboardData() {
+            loadMetrics();
+            loadMoodChart();
+            loadSummary();
+            loadActivityLog();
+        }
+
+        function loadMetrics() {
+            const stats = Storage.load(Storage.KEYS.STATS);
+            const habits = Storage.load(Storage.KEYS.HABITS);
+            const journals = Storage.load(Storage.KEYS.JOURNAL_ENTRIES);
+
+            // Activities
+            document.getElementById('activities').textContent = stats.activitiesCompleted || 0;
+
+            // Journal entries (last 30 days)
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            const recentJournals = journals.filter(j =>
+                new Date(j.timestamp) >= thirtyDaysAgo
+            );
+            document.getElementById('journal-count').textContent = recentJournals.length;
+
+            // Average sleep (last 7 days)
+            const last7Days = habits.sleep.filter(entry => {
+                const entryDate = new Date(entry.timestamp);
+                const weekAgo = new Date();
+                weekAgo.setDate(weekAgo.getDate() - 7);
+                return entryDate >= weekAgo;
+            });
+            const avgSleep = last7Days.length > 0
+                ? (last7Days.reduce((sum, e) => sum + e.hours, 0) / last7Days.length).toFixed(1)
+                : 0;
+            document.getElementById('avg-sleep').textContent = avgSleep;
+
+            // Calculate risk score
+            calculateRiskScore(avgSleep, recentJournals.length, stats.activitiesCompleted);
+        }
+
+        function calculateRiskScore(avgSleep, journalCount, activities) {
+            let score = 10; // Start at 10 (best)
+
+            // Sleep factor
+            if (avgSleep < 6) score -= 2;
+            else if (avgSleep < 7) score -= 1;
+
+            // Engagement factor
+            if (activities < 5) score -= 1.5;
+            if (journalCount < 3) score -= 1.5;
+
+            // Set risk level
+            let riskLevel = 'Low Risk';
+            let riskClass = 'risk-low';
+
+            if (score < 5) {
+                riskLevel = 'High Risk';
+                riskClass = 'risk-high';
+            } else if (score < 7) {
+                riskLevel = 'Medium Risk';
+                riskClass = 'risk-medium';
+            }
+
+            document.getElementById('wellbeing-score').textContent = Math.max(score, 0).toFixed(1);
+            const riskElement = document.getElementById('risk-level');
+            riskElement.textContent = riskLevel;
+            riskElement.className = 'risk-score ' + riskClass;
+        }
+
+        function loadMoodChart() {
+            const journals = Storage.load(Storage.KEYS.JOURNAL_ENTRIES);
+            const moodData = {};
+
+            // Get last 7 days
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                const dateStr = date.toLocaleDateString('en-US', { weekday: 'short' });
+                moodData[dateStr] = 0;
+            }
+
+            // Map moods to scores
+            const moodScores = {
+                'Happy': 5,
+                'Calm': 4,
+                'Neutral': 3,
+                'Sad': 2,
+                'Anxious': 2,
+                'Frustrated': 1
+            };
+
+            // Calculate average mood per day
+            journals.forEach(entry => {
+                const entryDate = new Date(entry.timestamp);
+                const dateStr = entryDate.toLocaleDateString('en-US', { weekday: 'short' });
+                if (dateStr in moodData && entry.mood) {
+                    const score = moodScores[entry.mood.label] || 3;
+                    moodData[dateStr] = (moodData[dateStr] + score) / 2;
+                }
+            });
+
+            // Render chart
+            const chartDiv = document.getElementById('mood-chart');
+            chartDiv.innerHTML = '';
+
+            Object.entries(moodData).forEach(([day, score]) => {
+                const bar = document.createElement('div');
+                bar.className = 'mood-bar';
+                const height = (score / 5) * 100;
+                bar.style.height = height + '%';
+
+                const label = document.createElement('div');
+                label.className = 'mood-label';
+                label.textContent = day;
+                bar.appendChild(label);
+
+                chartDiv.appendChild(bar);
+            });
+        }
+
+        function loadSummary() {
+            const stats = Storage.load(Storage.KEYS.STATS);
+            const habits = Storage.load(Storage.KEYS.HABITS);
+            const journals = Storage.load(Storage.KEYS.JOURNAL_ENTRIES);
+            const memory = Storage.load(Storage.KEYS.SEMANTIC_MEMORY);
+
+            const summaryDiv = document.getElementById('summary-content');
+            summaryDiv.innerHTML = `
+                <div class="summary-item">
+                    <div class="summary-label">Active Days</div>
+                    <div class="summary-value">${stats.daysActive || 0} days</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Current Streak</div>
+                    <div class="summary-value">${stats.streakDays || 0} days</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Primary Goals</div>
+                    <div class="summary-value">${memory.goals.slice(0, 3).join(', ') || 'No goals set'}</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Successful Coping Tools</div>
+                    <div class="summary-value">${memory.successfulCopingTools.slice(0, 3).join(', ') || 'None recorded yet'}</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Identified Triggers</div>
+                    <div class="summary-value">${memory.triggers.slice(0, 3).join(', ') || 'None identified'}</div>
+                </div>
+            `;
+        }
+
+        function loadActivityLog() {
+            const journals = Storage.load(Storage.KEYS.JOURNAL_ENTRIES);
+            const breathingSessions = Storage.load('mh_breathing_sessions') || [];
+            const focusSessions = Storage.load('mh_focus_sessions') || [];
+
+            // Combine all activities
+            const activities = [];
+
+            journals.slice(-5).forEach(j => {
+                activities.push({
+                    timestamp: j.timestamp,
+                    text: '📝 Journal entry: ' + j.content.substring(0, 50) + '...'
+                });
+            });
+
+            breathingSessions.slice(-5).forEach(s => {
+                activities.push({
+                    timestamp: s.timestamp,
+                    text: `🫁 Breathing exercise completed`
+                });
+            });
+
+            focusSessions.slice(-5).forEach(s => {
+                activities.push({
+                    timestamp: s.timestamp,
+                    text: `⏱️ Focus session: ${s.duration} minutes`
+                });
+            });
+
+            // Sort by timestamp
+            activities.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+            // Display
+            const logDiv = document.getElementById('activity-log');
+            logDiv.innerHTML = activities.slice(0, 10).map(activity => `
+                <div class="log-item">
+                    <div class="log-content">
+                        <div class="log-text">${activity.text}</div>
+                        <div class="log-time">${formatTime(activity.timestamp)}</div>
+                    </div>
+                </div>
+            `).join('') || '<p style="text-align: center; color: var(--gray-500);">No recent activity</p>';
+        }
+
+        function formatTime(timestamp) {
+            const date = new Date(timestamp);
+            return date.toLocaleString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+    </script>
+</body>
+
+</html>

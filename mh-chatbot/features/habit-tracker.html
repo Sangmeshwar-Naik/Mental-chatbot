@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Habit & Routine Tracker</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background-attachment: fixed;
+            padding: 2rem;
+        }
+
+        .feature-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-header {
+            background: rgba(255, 255, 255, 0.95);
+            -webkit-backdrop-filter:backdrop-filter:
+            backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .feature-header h1 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .tracker-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .tracker-card {
+            background: rgba(255, 255, 255, 0.95);
+            -webkit-backdrop-filter:backdrop-filter:
+            backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .tracker-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tracker-input-group {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .tracker-input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 2px solid var(--gray-200);
+            border-radius: 0.75rem;
+            font-size: 1rem;
+        }
+
+        .tracker-input:focus {
+            outline: none;
+            border-color: var(--primary-purple);
+        }
+
+        .add-btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .habit-log {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .log-entry {
+            background: var(--gray-50);
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .log-time {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+        }
+
+        .log-value {
+            font-weight: 600;
+            color: var(--primary-purple);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--gray-200);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient-primary);
+            transition: width 0.3s;
+        }
+
+        .stat-display {
+            text-align: center;
+            padding: 1rem;
+            background: var(--gray-50);
+            border-radius: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-purple);
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+
+        .insights-card {
+            background: rgba(255, 255, 255, 0.95);
+            -webkit-backdrop-filter:backdrop-filter:
+            backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .insight-item {
+            background: rgba(102, 126, 234, 0.05);
+            border-left: 4px solid var(--primary-purple);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .insight-item h4 {
+            color: var(--primary-purple);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: 2rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.2s;
+            margin-bottom: 1rem;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .water-glasses {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .water-glass {
+            aspect-ratio: 1;
+            background: var(--gray-200);
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .water-glass.filled {
+            background: var(--gradient-secondary);
+        }
+
+        .water-glass:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="feature-container">
+        <a href="../index.html" class="back-btn">
+            <span>←</span> Back to Dashboard
+        </a>
+
+        <div class="feature-header">
+            <h1>✅ Habit & Routine Tracker</h1>
+            <p>Build healthy habits and track your daily wellness routines</p>
+        </div>
+
+        <!-- Tracker Grid -->
+        <div class="tracker-grid">
+            <!-- Sleep Tracker -->
+            <div class="tracker-card">
+                <h3><span>😴</span> Sleep Tracker</h3>
+                <div class="stat-display">
+                    <span class="stat-number" id="avg-sleep">0</span>
+                    <span class="stat-label">Average Hours (7 days)</span>
+                </div>
+                <div class="tracker-input-group">
+                    <input type="number" id="sleep-hours" class="tracker-input" placeholder="Hours slept" min="0"
+                        max="24" step="0.5">
+                    <button class="add-btn" onclick="logSleep()">Log</button>
+                </div>
+                <div class="habit-log" id="sleep-log"></div>
+            </div>
+
+            <!-- Water Tracker -->
+            <div class="tracker-card">
+                <h3><span>💧</span> Water Intake</h3>
+                <div class="stat-display">
+                    <span class="stat-number" id="water-today">0</span>
+                    <span class="stat-label">Glasses Today (Goal: 8)</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="water-progress" style="width: 0%"></div>
+                </div>
+                <div class="water-glasses" id="water-glasses">
+                    <!-- Will be populated by JS -->
+                </div>
+            </div>
+
+            <!-- Exercise Tracker -->
+            <div class="tracker-card">
+                <h3><span>🏃</span> Exercise</h3>
+                <div class="stat-display">
+                    <span class="stat-number" id="exercise-week">0</span>
+                    <span class="stat-label">Days This Week</span>
+                </div>
+                <div class="tracker-input-group">
+                    <input type="text" id="exercise-type" class="tracker-input" placeholder="Activity (e.g., Running)">
+                    <input type="number" id="exercise-duration" class="tracker-input" placeholder="Minutes" min="0">
+                    <button class="add-btn" onclick="logExercise()">Log</button>
+                </div>
+                <div class="habit-log" id="exercise-log"></div>
+            </div>
+
+            <!-- Screen Time -->
+            <div class="tracker-card">
+                <h3><span>📱</span> Screen Time</h3>
+                <div class="stat-display">
+                    <span class="stat-number" id="avg-screentime">0</span>
+                    <span class="stat-label">Avg Hours/Day (7 days)</span>
+                </div>
+                <div class="tracker-input-group">
+                    <input type="number" id="screen-hours" class="tracker-input" placeholder="Hours today" min="0"
+                        max="24" step="0.5">
+                    <button class="add-btn" onclick="logScreenTime()">Log</button>
+                </div>
+                <div class="habit-log" id="screen-log"></div>
+            </div>
+
+            <!-- Diet Tracker -->
+            <div class="tracker-card">
+                <h3><span>🥗</span> Healthy Meals</h3>
+                <div class="stat-display">
+                    <span class="stat-number" id="meals-today">0</span>
+                    <span class="stat-label">Healthy Meals Today</span>
+                </div>
+                <div class="tracker-input-group">
+                    <select id="meal-type" class="tracker-input">
+                        <option value="">Select meal...</option>
+                        <option value="Breakfast">Breakfast</option>
+                        <option value="Lunch">Lunch</option>
+                        <option value="Dinner">Dinner</option>
+                        <option value="Snack">Snack</option>
+                    </select>
+                    <button class="add-btn" onclick="logMeal()">Log</button>
+                </div>
+                <div class="habit-log" id="meal-log"></div>
+            </div>
+
+            <!-- Break Reminders -->
+            <div class="tracker-card">
+                <h3><span>⏰</span> Break Reminders</h3>
+                <div class="stat-display">
+                    <span class="stat-number" id="breaks-taken">0</span>
+                    <span class="stat-label">Breaks Taken Today</span>
+                </div>
+                <button class="add-btn" style="width: 100%; margin-bottom: 0.5rem;" onclick="takeBreak()">✓ Took a
+                    Break</button>
+                <div class="habit-log" id="break-log"></div>
+            </div>
+        </div>
+
+        <!-- AI Insights -->
+        <div class="insights-card">
+            <h2 style="font-size: 1.5rem; font-weight: 600; margin-bottom: 1.5rem;">
+                <span>🤖</span> AI Behavior Insights
+            </h2>
+            <div id="ai-insights">
+                <!-- Insights will be generated here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="../utils/storage.js"></script>
+    <script>
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function () {
+            loadAllHabits();
+            generateInsights();
+            initWaterGlasses();
+        });
+
+        function loadAllHabits() {
+            loadSleepLog();
+            loadWaterIntake();
+            loadExerciseLog();
+            loadScreenLog();
+            loadMealLog();
+            loadBreakLog();
+        }
+
+        // Sleep Tracker
+        function logSleep() {
+            const hours = parseFloat(document.getElementById('sleep-hours').value);
+            if (!hours || hours <= 0) {
+                alert('Please enter valid sleep hours');
+                return;
+            }
+
+            const habits = Storage.load(Storage.KEYS.HABITS);
+            habits.sleep.push({
+                timestamp: new Date().toISOString(),
+                hours: hours
+            });
+            Storage.save(Storage.KEYS.HABITS, habits);
+            Storage.incrementActivity();
+
+            document.getElementById('sleep-hours').value = '';
+            loadSleepLog();
+            generateInsights();
+        }
+
+        function loadSleepLog() {
+            const habits = Storage.load(Storage.KEYS.HABITS);
+            const last7Days = habits.sleep.filter(entry => {
+                const entryDate = new Date(entry.timestamp);
+                const weekAgo = new Date();
+                weekAgo.setDate(weekAgo.getDate() - 7);
+                return entryDate >= weekAgo;
+            });
+
+            const avg = last7Days.length > 0
+                ? (last7Days.reduce((sum, e) => sum + e.hours, 0) / last7Days.length).toFixed(1)
+                : 0;
+
+            document.getElementById('avg-sleep').textContent = avg;
+
+            const logDiv = document.getElementById('sleep-log');
+            logDiv.innerHTML = last7Days.slice(-5).reverse().map(entry => `
+                <div class="log-entry">
+                    <span class="log-value">${entry.hours} hours</span>
+                    <span class="log-time">${formatTime(entry.timestamp)}</span>
+                </div>
+            `).join('') || '<p style="color: var(--gray-500); text-align: center;">No entries yet</p>';
+        }
+
+        // Water Tracker
+        function initWaterGlasses() {
+            const container = document.getElementById('water-glasses');
+            for (let i = 0; i < 8; i++) {
+                const glass = document.createElement('div');
+                glass.className = 'water-glass';
+                glass.innerHTML = '💧';
+                glass.onclick = () => toggleWaterGlass(i);
+                container.appendChild(glass);
+            }
+            loadWaterIntake();
+        }
+
+        function toggleWaterGlass(index) {
+            const habits = Storage.load(Storage.KEYS.HABITS);
+            const today = new Date().toDateString();
+
+            // Get today's water entries
+            const todayWater = habits.water.filter(e =>
+                new Date(e.timestamp).toDateString() === today
+            );
+
+            if (todayWater.length > index) {
+                // Remove this glass
+                const entryToRemove = todayWater[index];
+                habits.water = habits.water.filter(e => e.timestamp !== entryToRemove.timestamp);
+            } else {
+                // Add this glass
+                habits.water.push({
+                    timestamp: new Date().toISOString(),
+                    glasses: 1
+                });
+            }
+
+            Storage.save(Storage.KEYS.HABITS, habits);
+            Storage.incrementActivity();
+            loadWaterIntake();
+            generateInsights();
+        }
+
+        function loadWaterIntake() {
+            const habits = Storage.load(Storage.KEYS.HABITS);
+            const today = new Date().toDateString();
+            const todayWater = habits.water.filter(e =>
+                new Date(e.timestamp).toDateString() === today
+            );
+
+            const count = todayWater.length;
+            document.getElementById('water-today').textContent = count;
+
+            const progress = Math.min((count / 8) * 100, 100);
+            document.getElementById('water-progress').style.width = progress + '%';
+
+            // Update glass visuals
+            const glasses = document.querySelectorAll('.water-glass');
+            glasses.forEach((glass, index) => {
+                if (index < count) {
+                    glass.classList.add('filled');
+                } else {
+                    glass.classList.remove('filled');
+                }
+            });
+        }
+
+        // Exercise Tracker
+        function logExercise() {
+            const type = document.getElementById('exercise-type').value.trim();
+            const duration = parseInt(document.getElementById('exercise-duration').value);
+
+            if (!type || !duration) {
+                alert('Please enter activity type and duration');
+                return;
+            }
+
+            const habits = Storage.load(Storage.KEYS.HABITS);
+            habits.exercise.push({
+                timestamp: new Date().toISOString(),
+                type: type,
+                duration: duration
+            });
+            Storage.save(Storage.KEYS.HABITS, habits);
+            Storage.incrementActivity();
+
+            document.getElementById('exercise-type').value = '';
+            document.getElementById('exercise-duration').value = '';
+            loadExerciseLog();
+            generateInsights();
+        }
+
+        function loadExerciseLog() {
+            const habits = Storage.load(Storage.KEYS.HABITS);
+            const weekAgo = new Date();
+            weekAgo.setDate(weekAgo.getDate() - 7);
+
+            const weekExercise = habits.exercise.filter(e =>
+                new Date(e.timestamp) >= weekAgo
+            );
+
+            // Count unique days
+            const uniqueDays = new Set(weekExercise.map(e =>
+                new Date(e.timestamp).toDateString()
+            )).size;
+
+            document.getElementById('exercise-week').textContent = uniqueDays;
+
+            const logDiv = document.getElementById('exercise-log');
+            logDiv.innerHTML = weekExercise.slice(-5).reverse().map(entry => `
+                <div class="log-entry">
+                    <span class="log-value">${entry.type} - ${entry.duration}min</span>
+                    <span class="log-time">${formatTime(entry.timestamp)}</span>
+                </div>
+            `).join('') || '<p style="color: var(--gray-500); text-align: center;">No entries yet</p>';
+        }
+
+        // Screen Time
+        function logScreenTime() {
+            const hours = parseFloat(document.getElementById('screen-hours').value);
+            if (!hours || hours < 0) {
+                alert('Please enter valid screen time');
+                return;
+            }
+
+            const habits = Storage.load(Storage.KEYS.HABITS);
+            habits.screenTime.push({
+                timestamp: new Date().toISOString(),
+                hours: hours
+            });
+            Storage.save(Storage.KEYS.HABITS, habits);
+            Storage.incrementActivity();
+
+            document.getElementById('screen-hours').value = '';
+            loadScreenLog();
+            generateInsights();
+        }
+
+        function loadScreenLog() {
+            const habits = Storage.load(Storage.KEYS.HABITS);
+            const last7Days = habits.screenTime.filter(entry => {
+                const entryDate = new Date(entry.timestamp);
+                const weekAgo = new Date();
+                weekAgo.setDate(weekAgo.getDate() - 7);
+                return entryDate >= weekAgo;
+            });
+
+            const avg = last7Days.length > 0
+                ? (last7Days.reduce((sum, e) => sum + e.hours, 0) / last7Days.length).toFixed(1)
+                : 0;
+
+            document.getElementById('avg-screentime').textContent = avg;
+
+            const logDiv = document.getElementById('screen-log');
+            logDiv.innerHTML = last7Days.slice(-5).reverse().map(entry => `
+                <div class="log-entry">
+                    <span class="log-value">${entry.hours} hours</span>
+                    <span class="log-time">${formatTime(entry.timestamp)}</span>
+                </div>
+            `).join('') || '<p style="color: var(--gray-500); text-align: center;">No entries yet</p>';
+        }
+
+        // Meal Tracker
+        function logMeal() {
+            const type = document.getElementById('meal-type').value;
+            if (!type) {
+                alert('Please select a meal type');
+                return;
+            }
+
+            const habits = Storage.load(Storage.KEYS.HABITS);
+            habits.diet.push({
+                timestamp: new Date().toISOString(),
+                type: type
+            });
+            Storage.save(Storage.KEYS.HABITS, habits);
+            Storage.incrementActivity();
+
+            document.getElementById('meal-type').value = '';
+            loadMealLog();
+            generateInsights();
+        }
+
+        function loadMealLog() {
+            const habits = Storage.load(Storage.KEYS.HABITS);
+            const today = new Date().toDateString();
+            const todayMeals = habits.diet.filter(e =>
+                new Date(e.timestamp).toDateString() === today
+            );
+
+            document.getElementById('meals-today').textContent = todayMeals.length;
+
+            const logDiv = document.getElementById('meal-log');
+            logDiv.innerHTML = todayMeals.slice(-5).reverse().map(entry => `
+                <div class="log-entry">
+                    <span class="log-value">${entry.type}</span>
+                    <span class="log-time">${formatTime(entry.timestamp)}</span>
+                </div>
+            `).join('') || '<p style="color: var(--gray-500); text-align: center;">No entries yet</p>';
+        }
+
+        // Break Tracker
+        function takeBreak() {
+            const habits = Storage.load(Storage.KEYS.HABITS);
+            if (!habits.breaks) habits.breaks = [];
+
+            habits.breaks.push({
+                timestamp: new Date().toISOString()
+            });
+            Storage.save(Storage.KEYS.HABITS, habits);
+            Storage.incrementActivity();
+
+            loadBreakLog();
+            generateInsights();
+            alert('✅ Great job taking a break!');
+        }
+
+        function loadBreakLog() {
+            const habits = Storage.load(Storage.KEYS.HABITS);
+            if (!habits.breaks) habits.breaks = [];
+
+            const today = new Date().toDateString();
+            const todayBreaks = habits.breaks.filter(e =>
+                new Date(e.timestamp).toDateString() === today
+            );
+
+            document.getElementById('breaks-taken').textContent = todayBreaks.length;
+
+            const logDiv = document.getElementById('break-log');
+            logDiv.innerHTML = todayBreaks.slice(-5).reverse().map(entry => `
+                <div class="log-entry">
+                    <span class="log-value">Break taken</span>
+                    <span class="log-time">${formatTime(entry.timestamp)}</span>
+                </div>
+            `).join('') || '<p style="color: var(--gray-500); text-align: center;">No breaks yet</p>';
+        }
+
+        // Generate AI Insights
+        function generateInsights() {
+            const habits = Storage.load(Storage.KEYS.HABITS);
+            const insights = [];
+
+            // Sleep insights
+            const avgSleep = parseFloat(document.getElementById('avg-sleep').textContent);
+            if (avgSleep > 0) {
+                if (avgSleep < 6) {
+                    insights.push({
+                        icon: '😴',
+                        title: 'Sleep Improvement Needed',
+                        message: `Your average sleep is ${avgSleep} hours. Aim for 7-9 hours for optimal mental health.`
+                    });
+                } else if (avgSleep >= 7 && avgSleep <= 9) {
+                    insights.push({
+                        icon: '✅',
+                        title: 'Great Sleep Pattern!',
+                        message: `You're getting ${avgSleep} hours of sleep on average - that's ideal!`
+                    });
+                }
+            }
+
+            // Water insights
+            const waterToday = parseInt(document.getElementById('water-today').textContent);
+            if (waterToday >= 8) {
+                insights.push({
+                    icon: '💧',
+                    title: 'Hydration Goal Achieved!',
+                    message: 'You met your water intake goal today. Great for mood and energy!'
+                });
+            } else if (waterToday > 0) {
+                insights.push({
+                    icon: '💧',
+                    title: 'Keep Hydrating',
+                    message: `${8 - waterToday} more glasses to reach your daily goal.`
+                });
+            }
+
+            // Exercise insights
+            const exerciseDays = parseInt(document.getElementById('exercise-week').textContent);
+            if (exerciseDays >= 3) {
+                insights.push({
+                    icon: '🏃',
+                    title: 'Active Week!',
+                    message: `You exercised ${exerciseDays} days this week. Exercise is excellent for mental health!`
+                });
+            }
+
+            // Screen time insights
+            const avgScreen = parseFloat(document.getElementById('avg-screentime').textContent);
+            if (avgScreen > 8) {
+                insights.push({
+                    icon: '📱',
+                    title: 'High Screen Time',
+                    message: `Average ${avgScreen} hrs/day. Consider reducing for better sleep and mental clarity.`
+                });
+            }
+
+            // Display insights
+            const insightsDiv = document.getElementById('ai-insights');
+            insightsDiv.innerHTML = insights.length > 0
+                ? insights.map(i => `
+                    <div class="insight-item">
+                        <h4><span>${i.icon}</span> ${i.title}</h4>
+                        <p style="color: var(--gray-700); margin: 0;">${i.message}</p>
+                    </div>
+                `).join('')
+                : '<p style="color: var(--gray-500); text-align: center;">Start tracking your habits to see personalized insights!</p>';
+        }
+
+        // Utility function
+        function formatTime(timestamp) {
+            const date = new Date(timestamp);
+            return date.toLocaleString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mental Health Tools</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.2);
+            -webkit-backdrop-filter:backdrop-filter:
+            backdrop-filter: blur(10px);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .tools-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            padding: 20px;
+        }
+
+        .tool-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .tool-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .tool-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .tool-card h3 {
+            font-size: 22px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .tool-card p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .tool-card .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <a href="index.html" class="back-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+        Back to Dashboard
+    </a>
+
+    <div class="header">
+        <h1>🧠 Mental Health Tools</h1>
+        <p>Professional tools for your mental wellness journey</p>
+    </div>
+
+    <div class="tools-grid">
+        <div class="tool-card" onclick="window.location.href='features/coping-plan.html'">
+            <div class="tool-icon">📋</div>
+            <h3>Coping Plan Generator</h3>
+            <p>Create personalized daily plans based on your mood and needs</p>
+            <span class="badge">Popular</span>
+        </div>
+
+        <div class="tool-card" onclick="window.location.href='features/therapy-exercises.html'">
+            <div class="tool-icon">🎯</div>
+            <h3>Therapy Exercises</h3>
+            <p>CBT, DBT, and ACT exercises for emotional wellness</p>
+        </div>
+
+        <div class="tool-card" onclick="window.location.href='features/journal.html'">
+            <div class="tool-icon">📝</div>
+            <h3>AI Journal Assistant</h3>
+            <p>Reflect and get insights from your daily thoughts</p>
+        </div>
+
+        <div class="tool-card" onclick="window.location.href='features/habit-tracker.html'">
+            <div class="tool-icon">✅</div>
+            <h3>Habit Tracker</h3>
+            <p>Track sleep, diet, exercise, and build healthy routines</p>
+        </div>
+
+        <div class="tool-card" onclick="window.location.href='features/voice-chat.html'">
+            <div class="tool-icon">🎙️</div>
+            <h3>Voice Conversation</h3>
+            <p>Speak with AI support using voice chat</p>
+        </div>
+
+        <div class="tool-card" onclick="window.location.href='features/mood-tracker.html'">
+            <div class="tool-icon">📊</div>
+            <h3>Mood Tracker</h3>
+            <p>Log your emotions and discover patterns in your mental health journey</p>
+            <span class="badge">New</span>
+        </div>
+
+        <div class="tool-card" onclick="window.location.href='features/crisis-support.html'">
+            <div class="tool-icon">🆘</div>
+            <h3>Crisis Support</h3>
+            <p>Immediate help and resources for difficult moments</p>
+            <span class="badge">Essential</span>
+        </div>
+
+        <div class="tool-card" onclick="window.location.href='features/cbt-worksheets.html'">
+            <div class="tool-icon">📑</div>
+            <h3>CBT Worksheets</h3>
+            <p>Interactive cognitive behavioral therapy worksheets and tools</p>
+        </div>
+
+        <div class="tool-card" onclick="window.location.href='features/stress-assessment.html'">
+            <div class="tool-icon">🎯</div>
+            <h3>Stress Assessment</h3>
+            <p>Evaluate your stress levels with validated psychological scales</p>
+            <span class="badge">New</span>
+        </div>
+
+        <div class="tool-card" onclick="window.location.href='features/progress-dashboard.html'">
+            <div class="tool-icon">📈</div>
+            <h3>Progress Dashboard</h3>
+            <p>Visualize your mental health journey and celebrate milestones</p>
+        </div>
+
+        <div class="tool-card" onclick="window.location.href='features/self-care-planner.html'">
+            <div class="tool-icon">🌟</div>
+            <h3>Self-Care Planner</h3>
+            <p>Schedule and track personalized self-care activities</p>
+        </div>
+
+        <div class="tool-card" onclick="window.location.href='features/thought-record.html'">
+            <div class="tool-icon">💭</div>
+            <h3>Thought Record</h3>
+            <p>Challenge negative thoughts with structured cognitive techniques</p>
+        </div>
+
+        <div class="tool-card" onclick="window.location.href='features/relaxation-scripts.html'">
+            <div class="tool-icon">🎧</div>
+            <h3>Relaxation Scripts</h3>
+            <p>Guided visualization and progressive muscle relaxation exercises</p>
+        </div>
+
+        <div class="tool-card" onclick="window.location.href='features/mental-health-resources.html'">
+            <div class="tool-icon">📚</div>
+            <h3>Mental Health Resources</h3>
+            <p>Access educational content, videos, and professional help</p>
+        </div>
+
+        <div class="tool-card" onclick="window.location.href='features/medication-reminder.html'">
+            <div class="tool-icon">💊</div>
+            <h3>Medication Reminder</h3>
+            <p>Manage your medication schedule and track adherence</p>
+        </div>
+    </div>
+</body>
+
+</html>

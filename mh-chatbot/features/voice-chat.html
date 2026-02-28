@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Conversation</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background-attachment: fixed;
+            padding: 2rem;
+        }
+
+        .feature-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .feature-header {
+            background: rgba(255, 255, 255, 0.95);
+            -webkit-backdrop-filter:backdrop-filter:
+            backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .feature-header h1 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .voice-card {
+            background: rgba(255, 255, 255, 0.95);
+            -webkit-backdrop-filter:backdrop-filter:
+            backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
+        }
+
+        .voice-visualizer {
+            height: 150px;
+            background: var(--gray-50);
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .wave-container {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            height: 100%;
+        }
+
+        .wave-bar {
+            width: 4px;
+            background: var(--gradient-primary);
+            border-radius: 2px;
+            transition: height 0.1s;
+        }
+
+        .mic-button {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            border: none;
+            color: white;
+            font-size: 3rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+            margin: 0 auto;
+            display: block;
+        }
+
+        .mic-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.6);
+        }
+
+        .mic-button.recording {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .status-text {
+            text-align: center;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin: 1rem 0;
+        }
+
+        .transcript-box {
+            background: var(--gray-50);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            min-height: 150px;
+            margin-bottom: 1.5rem;
+        }
+
+        .transcript-box h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 0.75rem;
+        }
+
+        .transcript-text {
+            color: var(--gray-700);
+            line-height: 1.6;
+            font-size: 1rem;
+        }
+
+        .mode-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .mode-tab {
+            flex: 1;
+            padding: 1rem;
+            background: var(--gray-100);
+            border: 2px solid transparent;
+            border-radius: 1rem;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .mode-tab:hover {
+            background: var(--gray-200);
+        }
+
+        .mode-tab.active {
+            background: rgba(102, 126, 234, 0.1);
+            border-color: var(--primary-purple);
+        }
+
+        .mode-tab .icon {
+            font-size: 1.5rem;
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .mode-tab .label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+
+        .message-history {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 1.5rem;
+        }
+
+        .message {
+            background: var(--gray-50);
+            padding: 1rem;
+            border-radius: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .message.user {
+            background: rgba(102, 126, 234, 0.1);
+            border-left: 4px solid var(--primary-purple);
+        }
+
+        .message.assistant {
+            background: var(--gray-100);
+            border-left: 4px solid var(--success);
+        }
+
+        .message-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--gray-600);
+            margin-bottom: 0.25rem;
+        }
+
+        .message-text {
+            color: var(--gray-800);
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .control-btn {
+            flex: 1;
+            padding: 0.75rem;
+            background: var(--gray-200);
+            border: none;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .control-btn:hover {
+            background: var(--gray-300);
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: 2rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.2s;
+            margin-bottom: 1rem;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .info-banner {
+            background: rgba(59, 130, 246, 0.1);
+            border: 2px solid rgba(59, 130, 246, 0.2);
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .info-banner .icon {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-banner p {
+            color: var(--gray-700);
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="feature-container">
+        <a href="../index.html" class="back-btn">
+            <span>←</span> Back to Dashboard
+        </a>
+
+        <div class="feature-header">
+            <h1>🎙️ Voice Conversation</h1>
+            <p>Speak with your mental health companion using voice</p>
+        </div>
+
+        <!-- Mode Selection -->
+        <div class="voice-card">
+            <div class="mode-tabs">
+                <div class="mode-tab active" data-mode="chat" onclick="switchMode('chat')">
+                    <span class="icon">💬</span>
+                    <span class="label">Voice Chat</span>
+                </div>
+                <div class="mode-tab" data-mode="journal" onclick="switchMode('journal')">
+                    <span class="icon">📝</span>
+                    <span class="label">Voice Journal</span>
+                </div>
+            </div>
+
+            <!-- Voice Chat Mode -->
+            <div id="chat-mode">
+                <div class="info-banner" id="browser-support">
+                    <span class="icon">ℹ️</span>
+                    <p>Checking browser support for voice features...</p>
+                </div>
+
+                <div class="voice-visualizer" id="visualizer">
+                    <div class="wave-container" id="wave-container">
+                        <!-- Wave bars will be generated by JS -->
+                    </div>
+                </div>
+
+                <button class="mic-button" id="mic-button" onclick="toggleRecording()">
+                    🎤
+                </button>
+
+                <p class="status-text" id="status-text">Click the microphone to start speaking</p>
+
+                <div class="transcript-box">
+                    <h3>You said:</h3>
+                    <p class="transcript-text" id="transcript">Your speech will appear here...</p>
+                </div>
+
+                <div class="transcript-box" id="response-box" style="display: none;">
+                    <h3>🤖 AI Response:</h3>
+                    <p class="transcript-text" id="response-text"></p>
+                </div>
+
+                <div class="controls">
+                    <button class="control-btn" onclick="clearConversation()">Clear</button>
+                    <button class="control-btn" onclick="toggleAutoSpeak()">
+                        <span id="autospeak-label">Auto-Speak: On</span>
+                    </button>
+                </div>
+
+                <div class="message-history" id="message-history">
+                    <!-- Message history will appear here -->
+                </div>
+            </div>
+
+            <!-- Voice Journal Mode -->
+            <div id="journal-mode" style="display: none;">
+                <div class="voice-visualizer" id="journal-visualizer">
+                    <div class="wave-container" id="journal-wave-container">
+                        <!-- Wave bars will be generated by JS -->
+                    </div>
+                </div>
+
+                <button class="mic-button" id="journal-mic-button" onclick="toggleJournalRecording()">
+                    🎤
+                </button>
+
+                <p class="status-text" id="journal-status">Click to start voice journaling</p>
+
+                <div class="transcript-box">
+                    <h3>Your Journal Entry:</h3>
+                    <p class="transcript-text" id="journal-transcript">Start speaking to create your journal entry...
+                    </p>
+                </div>
+
+                <div class="controls">
+                    <button class="control-btn" onclick="saveVoiceJournal()">💾 Save as Journal</button>
+                    <button class="control-btn" onclick="clearJournal()">Clear</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../utils/storage.js"></script>
+    <script>
+        let recognition = null;
+        let synthesis = window.speechSynthesis;
+        let isRecording = false;
+        let isJournalRecording = false;
+        let autoSpeak = true;
+        let currentTranscript = '';
+        let journalTranscript = '';
+        let conversationHistory = [];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function () {
+            checkBrowserSupport();
+            initWaveVisualizer();
+        });
+
+        function checkBrowserSupport() {
+            const banner = document.getElementById('browser-support');
+
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = true;
+                recognition.lang = 'en-US';
+
+                setupRecognitionHandlers();
+
+                banner.innerHTML = `
+                    <span class="icon">✅</span>
+                    <p>Voice features are ready! Click the microphone to start.</p>
+                `;
+            } else {
+                banner.innerHTML = `
+                    <span class="icon">⚠️</span>
+                    <p>Your browser doesn't support voice features. Please use Chrome, Edge, or Safari.</p>
+                `;
+                document.getElementById('mic-button').disabled = true;
+                document.getElementById('journal-mic-button').disabled = true;
+            }
+        }
+
+        function setupRecognitionHandlers() {
+            recognition.onstart = () => {
+                console.log('Voice recognition started');
+            };
+
+            recognition.onresult = (event) => {
+                let interimTranscript = '';
+                let finalTranscript = '';
+
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    const transcript = event.results[i][0].transcript;
+                    if (event.results[i].isFinal) {
+                        finalTranscript += transcript + ' ';
+                    } else {
+                        interimTranscript += transcript;
+                    }
+                }
+
+                if (isJournalRecording) {
+                    journalTranscript = finalTranscript || interimTranscript;
+                    document.getElementById('journal-transcript').textContent = journalTranscript || 'Listening...';
+                } else {
+                    currentTranscript = finalTranscript || interimTranscript;
+                    document.getElementById('transcript').textContent = currentTranscript || 'Listening...';
+                }
+
+                if (finalTranscript) {
+                    handleFinalTranscript(finalTranscript);
+                }
+            };
+
+            recognition.onerror = (event) => {
+                console.error('Speech recognition error:', event.error);
+                stopRecording();
+                updateStatus('Error: ' + event.error);
+            };
+
+            recognition.onend = () => {
+                stopRecording();
+            };
+        }
+
+        function initWaveVisualizer() {
+            const container = document.getElementById('wave-container');
+            const journalContainer = document.getElementById('journal-wave-container');
+
+            for (let i = 0; i < 20; i++) {
+                const bar = document.createElement('div');
+                bar.className = 'wave-bar';
+                bar.style.height = '20px';
+                container.appendChild(bar);
+
+                const bar2 = document.createElement('div');
+                bar2.className = 'wave-bar';
+                bar2.style.height = '20px';
+                journalContainer.appendChild(bar2);
+            }
+        }
+
+        function animateWaves(active) {
+            const bars = document.querySelectorAll('.wave-bar');
+            bars.forEach((bar, index) => {
+                if (active) {
+                    const height = Math.random() * 60 + 20;
+                    bar.style.height = height + 'px';
+                } else {
+                    bar.style.height = '20px';
+                }
+            });
+
+            if (active) {
+                setTimeout(() => animateWaves(active), 100);
+            }
+        }
+
+        function toggleRecording() {
+            if (isRecording) {
+                recognition.stop();
+            } else {
+                startRecording();
+            }
+        }
+
+        function startRecording() {
+            if (!recognition) return;
+
+            isRecording = true;
+            currentTranscript = '';
+            recognition.start();
+
+            const micBtn = document.getElementById('mic-button');
+            micBtn.classList.add('recording');
+            micBtn.textContent = '🔴';
+
+            updateStatus('Listening...');
+            animateWaves(true);
+        }
+
+        function stopRecording() {
+            isRecording = false;
+
+            const micBtn = document.getElementById('mic-button');
+            micBtn.classList.remove('recording');
+            micBtn.textContent = '🎤';
+
+            updateStatus('Click the microphone to speak');
+            animateWaves(false);
+        }
+
+        function handleFinalTranscript(transcript) {
+            // Add to conversation history
+            conversationHistory.push({
+                role: 'user',
+                text: transcript,
+                timestamp: new Date().toISOString()
+            });
+
+            // Generate AI response (simulated)
+            const response = generateAIResponse(transcript);
+            conversationHistory.push({
+                role: 'assistant',
+                text: response,
+                timestamp: new Date().toISOString()
+            });
+
+            // Display response
+            document.getElementById('response-box').style.display = 'block';
+            document.getElementById('response-text').textContent = response;
+
+            // Speak response if auto-speak is on
+            if (autoSpeak) {
+                speakText(response);
+            }
+
+            // Update history
+            updateMessageHistory();
+
+            // Save to storage
+            Storage.incrementActivity();
+        }
+
+        function generateAIResponse(userInput) {
+            const input = userInput.toLowerCase();
+
+            if (input.includes('anxious') || input.includes('worry') || input.includes('nervous')) {
+                return "I understand you're feeling anxious. Let's try a calming breathing exercise. Breathe in for 4 counts, hold for 4, and breathe out for 4. Would you like to try the TIPP skills for managing distress?";
+            }
+
+            if (input.includes('sad') || input.includes('down') || input.includes('depressed')) {
+                return "I hear that you're feeling down. It's important to acknowledge these feelings. Have you tried journaling about what's making you feel this way? Sometimes writing can help clarify our thoughts.";
+            }
+
+            if (input.includes('stress') || input.includes('overwhelm')) {
+                return "Stress can be really challenging. It might help to break down what's overwhelming you into smaller, manageable tasks. Would you like to create a coping plan together?";
+            }
+
+            if (input.includes('sleep') || input.includes('tired')) {
+                return "Sleep is so important for mental health. Are you maintaining a consistent sleep schedule? I can help you track your sleep patterns in the habit tracker.";
+            }
+
+            if (input.includes('thank') || input.includes('grateful')) {
+                return "It's wonderful that you're practicing gratitude! This is a powerful tool for improving mental wellness. Would you like to add this to your journal?";
+            }
+
+            return "I'm here to listen and support you. How are you feeling right now? If you'd like, we can explore some coping strategies together, or you can tell me more about what's on your mind.";
+        }
+
+        function speakText(text) {
+            if (!synthesis) return;
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 0.9;
+            utterance.pitch = 1;
+            utterance.volume = 1;
+
+            synthesis.speak(utterance);
+        }
+
+        function updateMessageHistory() {
+            const historyDiv = document.getElementById('message-history');
+            historyDiv.innerHTML = conversationHistory.map(msg => `
+                <div class="message ${msg.role}">
+                    <div class="message-label">${msg.role === 'user' ? 'You' : 'AI Assistant'}</div>
+                    <div class="message-text">${msg.text}</div>
+                </div>
+            `).join('');
+
+            historyDiv.scrollTop = historyDiv.scrollHeight;
+        }
+
+        function updateStatus(text) {
+            document.getElementById('status-text').textContent = text;
+        }
+
+        function clearConversation() {
+            conversationHistory = [];
+            currentTranscript = '';
+            document.getElementById('transcript').textContent = 'Your speech will appear here...';
+            document.getElementById('response-box').style.display = 'none';
+            document.getElementById('message-history').innerHTML = '';
+        }
+
+        function toggleAutoSpeak() {
+            autoSpeak = !autoSpeak;
+            document.getElementById('autospeak-label').textContent =
+                'Auto-Speak: ' + (autoSpeak ? 'On' : 'Off');
+        }
+
+        // Voice Journal Mode
+        function toggleJournalRecording() {
+            if (isJournalRecording) {
+                recognition.stop();
+            } else {
+                startJournalRecording();
+            }
+        }
+
+        function startJournalRecording() {
+            if (!recognition) return;
+
+            isJournalRecording = true;
+            journalTranscript = '';
+            recognition.start();
+
+            const micBtn = document.getElementById('journal-mic-button');
+            micBtn.classList.add('recording');
+            micBtn.textContent = '🔴';
+
+            document.getElementById('journal-status').textContent = 'Recording...';
+            animateWaves(true);
+        }
+
+        function saveVoiceJournal() {
+            if (!journalTranscript) {
+                alert('Please record something first!');
+                return;
+            }
+
+            // Save to journal
+            const entry = {
+                id: Date.now(),
+                timestamp: new Date().toISOString(),
+                content: journalTranscript,
+                mood: { emoji: '🎤', label: 'Voice Entry' },
+                emotions: ['💭 Voice Reflection'],
+                isVoiceEntry: true
+            };
+
+            Storage.addJournalEntry(entry);
+            Storage.incrementActivity();
+
+            alert('✅ Voice journal entry saved!');
+            clearJournal();
+        }
+
+        function clearJournal() {
+            journalTranscript = '';
+            document.getElementById('journal-transcript').textContent = 'Start speaking to create your journal entry...';
+        }
+
+        // Mode Switching
+        function switchMode(mode) {
+            const tabs = document.querySelectorAll('.mode-tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            event.target.closest('.mode-tab').classList.add('active');
+
+            if (mode === 'chat') {
+                document.getElementById('chat-mode').style.display = 'block';
+                document.getElementById('journal-mode').style.display = 'none';
+            } else {
+                document.getElementById('chat-mode').style.display = 'none';
+                document.getElementById('journal-mode').style.display = 'block';
+            }
+
+            // Stop any active recording
+            if (recognition && (isRecording || isJournalRecording)) {
+                recognition.stop();
+            }
+        }
+    </script>
+</body>
+
+</html>

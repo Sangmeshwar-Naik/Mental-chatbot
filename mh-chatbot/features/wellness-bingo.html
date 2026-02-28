@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wellness Bingo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.2);
+            -webkit-backdrop-filter:backdrop-filter:
+            backdrop-filter: blur(10px);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .game-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+
+        .bingo-board {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .bingo-cell {
+            aspect-ratio: 1;
+            background: #f9fafb;
+            border: 3px solid #e0e0e0;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 13px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .bingo-cell:hover {
+            border-color: #667eea;
+            transform: scale(1.05);
+        }
+
+        .bingo-cell.completed {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-color: #667eea;
+        }
+
+        .bingo-cell.free {
+            background: #fbbf24;
+            color: white;
+            border-color: #f59e0b;
+            font-weight: 700;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .celebration {
+            display: none;
+            padding: 30px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="../index.html" class="back-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+        Back to Dashboard
+    </a>
+
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Wellness Bingo</h1>
+            <p>Gamify self-care with fun challenges</p>
+        </div>
+
+        <div class="celebration" id="celebration">
+            🎉 BINGO! Congratulations! You're doing amazing! 🎉
+        </div>
+
+        <div class="game-card">
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-value" id="completed-count">0</div>
+                    <div class="stat-label">Completed</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="bingo-count">0</div>
+                    <div class="stat-label">Bingos</div>
+                </div>
+            </div>
+
+            <div class="bingo-board" id="board"></div>
+
+            <button class="btn-primary" onclick="resetBoard()">New Board</button>
+        </div>
+    </div>
+
+    <script>
+        const activities = [
+            "Drink 8 glasses of water",
+            "Do 30 min exercise",
+            "Meditate for 10 min",
+            "Call a friend",
+            "Read for 30 min",
+            "Take a walk outside",
+            "Practice gratitude",
+            "Get 8 hours sleep",
+            "Cook a healthy meal",
+            "Write in journal",
+            "Stretch for 15 min",
+            "Listen to music",
+            "Take a relaxing bath",
+            "Practice deep breathing",
+            "Compliment someone",
+            "Learn something new",
+            "Declutter a space",
+            "Do a creative activity",
+            "Spend time in nature",
+            "Practice self-compassion",
+            "Help someone",
+            "Try a new recipe",
+            "Dance for 10 min",
+            "Digital detox 1 hour"
+        ];
+
+        let board = [];
+        let completed = new Set();
+        let bingoCount = 0;
+
+        function generateBoard() {
+            const shuffled = [...activities].sort(() => Math.random() - 0.5);
+            board = shuffled.slice(0, 24);
+            board.splice(12, 0, "FREE SPACE");
+        }
+
+        function renderBoard() {
+            const boardDiv = document.getElementById('board');
+            boardDiv.innerHTML = board.map((activity, index) => {
+                const isCompleted = completed.has(index);
+                const isFree = activity === "FREE SPACE";
+                return `
+                    <div class="bingo-cell ${isCompleted ? 'completed' : ''} ${isFree ? 'free' : ''}" 
+                         onclick="toggleCell(${index})">
+                        ${activity}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function toggleCell(index) {
+            if (board[index] === "FREE SPACE") return;
+
+            if (completed.has(index)) {
+                completed.delete(index);
+            } else {
+                completed.add(index);
+            }
+
+            renderBoard();
+            checkBingo();
+            saveProgress();
+            updateStats();
+        }
+
+        function checkBingo() {
+            const size = 5;
+            let hasBingo = false;
+
+            // Check rows
+            for (let row = 0; row < size; row++) {
+                if (Array.from({ length: size }, (_, i) => row * size + i)
+                    .every(i => completed.has(i) || i === 12)) {
+                    hasBingo = true;
+                }
+            }
+
+            // Check columns
+            for (let col = 0; col < size; col++) {
+                if (Array.from({ length: size }, (_, i) => col + i * size)
+                    .every(i => completed.has(i) || i === 12)) {
+                    hasBingo = true;
+                }
+            }
+
+            // Check diagonals
+            if ([0, 6, 12, 18, 24].every(i => completed.has(i) || i === 12)) {
+                hasBingo = true;
+            }
+            if ([4, 8, 12, 16, 20].every(i => completed.has(i) || i === 12)) {
+                hasBingo = true;
+            }
+
+            if (hasBingo && !document.getElementById('celebration').style.display) {
+                bingoCount++;
+                document.getElementById('celebration').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('celebration').style.display = 'none';
+                }, 3000);
+                localStorage.setItem('wellness_bingo_count', bingoCount);
+                updateStats();
+            }
+        }
+
+        function resetBoard() {
+            completed.clear();
+            generateBoard();
+            completed.add(12); // FREE SPACE
+            renderBoard();
+            saveProgress();
+            updateStats();
+        }
+
+        function saveProgress() {
+            localStorage.setItem('wellness_board', JSON.stringify(board));
+            localStorage.setItem('wellness_completed', JSON.stringify([...completed]));
+        }
+
+        function loadProgress() {
+            const savedBoard = localStorage.getItem('wellness_board');
+            const savedCompleted = localStorage.getItem('wellness_completed');
+            const savedBingoCount = localStorage.getItem('wellness_bingo_count');
+
+            if (savedBoard) {
+                board = JSON.parse(savedBoard);
+            } else {
+                generateBoard();
+            }
+
+            if (savedCompleted) {
+                completed = new Set(JSON.parse(savedCompleted));
+            } else {
+                completed.add(12); // FREE SPACE
+            }
+
+            if (savedBingoCount) {
+                bingoCount = parseInt(savedBingoCount);
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('completed-count').textContent = completed.size - 1; // -1 for FREE SPACE
+            document.getElementById('bingo-count').textContent = bingoCount;
+        }
+
+        loadProgress();
+        renderBoard();
+        updateStats();
+    </script>
+</body>
+
+</html>

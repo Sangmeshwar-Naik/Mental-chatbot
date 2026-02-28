@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mind Games - Choose Your Story</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+            transition: background 0.5s ease;
+        }
+
+        body.default-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        body.island-bg {
+            background: linear-gradient(135deg, rgba(255, 120, 64, 0.3), rgba(118, 75, 162, 0.4)),
+                url('../assets/mind-games/island_adventure.png') center/cover fixed;
+        }
+
+        body.space-bg {
+            background: linear-gradient(135deg, rgba(20, 30, 48, 0.5), rgba(64, 92, 178, 0.4)),
+                url('../assets/mind-games/space_station.png') center/cover fixed;
+        }
+
+        body.forest-bg {
+            background: linear-gradient(135deg, rgba(34, 139, 34, 0.4), rgba(107, 142, 35, 0.3)),
+                url('../assets/mind-games/enchanted_forest.png') center/cover fixed;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.2);
+            -webkit-backdrop-filter:backdrop-filter:
+            backdrop-filter: blur(10px);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 1000;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Story Selection Screen */
+        .story-selection {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 20px;
+        }
+
+        .story-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.4s;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .story-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+        }
+
+        .story-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .story-content {
+            padding: 25px;
+        }
+
+        .story-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .story-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .story-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .story-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* Quiz Screen */
+        .quiz-screen {
+            display: none;
+        }
+
+        .quiz-card {
+            background: transparent;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 20px;
+        }
+
+        .progress {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .story-context {
+            background: rgba(255, 255, 255, 0.15);
+            -webkit-backdrop-filter:backdrop-filter:
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            border-left: 4px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .story-context p {
+            color: white;
+            line-height: 1.8;
+            font-size: 15px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .question {
+            font-size: 20px;
+            color: white;
+            margin-bottom: 25px;
+            font-weight: 600;
+            line-height: 1.6;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            background: rgba(255, 255, 255, 0.1);
+            -webkit-backdrop-filter:backdrop-filter:
+            backdrop-filter: blur(5px);
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: transparent;
+            padding: 0;
+        }
+
+        .option {
+            padding: 18px 20px;
+            background: rgba(255, 255, 255, 0.15);
+            -webkit-backdrop-filter:backdrop-filter:
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 15px;
+            position: relative;
+            padding-left: 50px;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .option::before {
+            content: attr(data-label);
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 12px;
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .option:hover {
+            border-color: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateX(5px);
+            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .option.selected {
+            border-color: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.4);
+        }
+
+        .option.selected::before {
+            background: rgba(255, 255, 255, 0.8);
+            color: #667eea;
+            border-color: white;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 25px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.9);
+            color: #667eea;
+            padding: 12px 30px;
+            border: 2px solid #667eea;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 15px;
+        }
+
+        .btn-secondary:hover {
+            background: white;
+            transform: translateY(-2px);
+        }
+
+        .results {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            -webkit-backdrop-filter:backdrop-filter:
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .personality-type {
+            font-size: 48px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+        }
+
+        .personality-title {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .personality-description {
+            font-size: 16px;
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        .traits {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .trait {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            padding: 15px;
+            border-radius: 12px;
+            text-align: left;
+        }
+
+        .trait-label {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .trait-value {
+            color: #555;
+            font-size: 14px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 28px;
+            }
+
+            .quiz-card {
+                padding: 25px;
+            }
+
+            .story-selection {
+                grid-template-columns: 1fr;
+            }
+
+            .personality-type {
+                font-size: 36px;
+            }
+
+            .personality-title {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+
+<body class="default-bg">
+    <a href="../games.html" class="back-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+        Back to Games
+    </a>
+
+    <div class="container">
+        <div class="header">
+            <h1>🧠 Mind Games</h1>
+            <p id="subtitle">Choose your adventure and discover your cognitive style</p>
+        </div>
+
+        <!-- Story Selection Screen -->
+        <div class="story-selection" id="story-selection">
+            <div class="story-card" onclick="selectStory('island')">
+                <img src="../assets/mind-games/island_adventure.png" alt="Island Adventure" class="story-image">
+                <div class="story-content">
+                    <div class="story-icon">🏝️</div>
+                    <div class="story-title">Island Adventure</div>
+                    <div class="story-description">
+                        Wake up on a mysterious tropical island. Navigate survival challenges, ancient puzzles, and
+                        leadership tests.
+                    </div>
+                    <span class="story-badge">Exploration & Survival</span>
+                </div>
+            </div>
+
+            <div class="story-card" onclick="selectStory('space')">
+                <img src="../assets/mind-games/space_station.png" alt="Space Station" class="story-image">
+                <div class="story-content">
+                    <div class="story-icon">🚀</div>
+                    <div class="story-title">Space Station</div>
+                    <div class="story-description">
+                        Command a futuristic orbital facility. Handle system failures, alien signals, and crew dynamics
+                        in deep space.
+                    </div>
+                    <span class="story-badge">Sci-Fi & Strategy</span>
+                </div>
+            </div>
+
+            <div class="story-card" onclick="selectStory('forest')">
+                <img src="../assets/mind-games/enchanted_forest.png" alt="Enchanted Forest" class="story-image">
+                <div class="story-content">
+                    <div class="story-icon">🌳</div>
+                    <div class="story-title">Enchanted Forest</div>
+                    <div class="story-description">
+                        Step through a magical portal into an enchanted realm. Solve mystical riddles and mediate
+                        between forest spirits.
+                    </div>
+                    <span class="story-badge">Fantasy & Magic</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div class="quiz-screen" id="quiz-screen">
+            <div class="quiz-card">
+                <div class="progress">
+                    <div class="progress-bar" id="progress"></div>
+                </div>
+                <div id="quiz-content"></div>
+            </div>
+            <button class="btn-secondary" onclick="returnToStorySelection()">← Change Story</button>
+        </div>
+    </div>
+
+    <script>
+        const storyData = {
+            island: {
+                title: "Island Adventure",
+                bgClass: "island-bg",
+                questions: [
+                    {
+                        story: "You wake up on a mysterious tropical island with no memory of how you got there. The sun is setting, casting an orange glow across the beach. You hear strange sounds echoing from the jungle.",
+                        question: "What's your first action?",
+                        options: [
+                            "Look for high ground to survey the island and plan strategically",
+                            "Search for other people or signs of civilization immediately",
+                            "Find shelter and secure a safe spot before nightfall",
+                            "Explore the immediate area to gather resources and information"
+                        ],
+                        trait: "approach"
+                    },
+                    {
+                        story: "Walking along the beach at dawn, you discover a locked wooden chest half-buried in the sand. Ancient symbols are carved on its surface, forming what appears to be a riddle.",
+                        question: "How do you approach solving this puzzle?",
+                        options: [
+                            "Study the symbols carefully and think through all logical possibilities",
+                            "Try common combinations while simultaneously analyzing the riddle",
+                            "Look for environmental clues around the chest first",
+                            "Work backwards from what treasures might be inside to deduce the answer"
+                        ],
+                        trait: "problem_solving"
+                    },
+                    {
+                        story: "Inside the chest, you find a map leading to a cave system. Upon arrival, you discover three distinct paths: one glowing with blue bioluminescent algae, one with green moss and dripping water, and one dark passage with fresh air flowing through.",
+                        question: "Which path do you choose?",
+                        options: [
+                            "The blue path - brightest and appears safest to navigate",
+                            "The green path - unusual and might hide something unique",
+                            "The dark path - fresh air suggests it leads outside or to safety",
+                            "Study all three paths more carefully before making a decision"
+                        ],
+                        trait: "decision_making"
+                    },
+                    {
+                        story: "Deep in the cave, you encounter an ancient guardian statue that comes to life. It speaks in riddles and offers you one of three gifts: a detailed map to escape the island, a book containing all the island's secrets and history, or a mysterious glowing orb with unknown powers.",
+                        question: "What do you choose?",
+                        options: [
+                            "The map - practical and directly helps you escape",
+                            "The book - knowledge reveals opportunities and hidden paths",
+                            "The orb - mysterious power might offer extraordinary possibilities",
+                            "Ask the guardian more questions to understand each gift better"
+                        ],
+                        trait: "values"
+                    },
+                    {
+                        story: "Using your chosen gift, you discover other survivors scattered across the island. When you gather them together, tensions rise as people debate different escape strategies - building a raft, searching for a radio, or waiting for rescue.",
+                        question: "How do you handle this situation?",
+                        options: [
+                            "Organize everyone into teams with a clear, structured plan",
+                            "Listen to all opinions and find a compromise everyone accepts",
+                            "Take charge and implement the most logical solution decisively",
+                            "Suggest trying multiple approaches with different groups"
+                        ],
+                        trait: "leadership"
+                    }
+                ]
+            },
+            space: {
+                title: "Space Station",
+                bgClass: "space-bg",
+                questions: [
+                    {
+                        story: "Red alert! You're awakened on the orbital station by urgent alarms. Critical systems are malfunctioning, and you have limited time before life support begins to fail. The crew looks to you for guidance.",
+                        question: "What's your immediate response?",
+                        options: [
+                            "Assess all system failures systematically and prioritize repairs",
+                            "Rally the crew quickly and assign emergency tasks immediately",
+                            "Focus on securing life support first, then address other systems",
+                            "Investigate what caused the malfunction while stabilizing systems"
+                        ],
+                        trait: "approach"
+                    },
+                    {
+                        story: "While repairing systems, the station's AI detects an unknown signal pattern from deep space. It doesn't match any known civilization, and the signal appears to be repeating in mathematical sequences.",
+                        question: "How do you investigate this discovery?",
+                        options: [
+                            "Analyze the mathematical patterns thoroughly before responding",
+                            "Send a simple response signal while continuing analysis",
+                            "Search the station's database for similar historical signals first",
+                            "Consider what the signal's origin might tell us about how to proceed"
+                        ],
+                        trait: "problem_solving"
+                    },
+                    {
+                        story: "A solar storm is approaching, and the station has three options: deploy the full electromagnetic shields (draining power reserves), attempt to navigate to the moon's shadow (risky maneuver), or use partial shields while shutting down non-essential systems (moderate protection).",
+                        question: "Which approach do you choose?",
+                        options: [
+                            "Partial shields and shutdown - balanced and resource-efficient",
+                            "Navigate to moon's shadow - creative solution despite risks",
+                            "Full shields - maximum protection is worth the power cost",
+                            "Analyze all three scenarios in detail before committing"
+                        ],
+                        trait: "decision_making"
+                    },
+                    {
+                        story: "After weathering the storm, you discover an ancient alien artifact in a previously sealed chamber. Scientists want to study it, engineers want to integrate its technology, and security wants to jettison it as a potential threat. You must decide.",
+                        question: "What do you prioritize?",
+                        options: [
+                            "Safety first - carefully study it with maximum precautions",
+                            "Scientific knowledge - this could advance human understanding immensely",
+                            "Technological potential - the artifact might solve our power crisis",
+                            "Gather more information from all experts before deciding"
+                        ],
+                        trait: "values"
+                    },
+                    {
+                        story: "The artifact has revealed a map to Earth-like planets, but the crew is divided. Some want to continue the current mission, others want to investigate immediately, and a few want to return to Earth with this discovery. Everyone has valid points.",
+                        question: "How do you resolve this conflict?",
+                        options: [
+                            "Create a structured plan that sequences all objectives logically",
+                            "Facilitate open discussion until the crew reaches consensus together",
+                            "Make the command decision based on mission parameters and logic",
+                            "Propose testing multiple approaches with different team assignments"
+                        ],
+                        trait: "leadership"
+                    }
+                ]
+            },
+            forest: {
+                title: "Enchanted Forest",
+                bgClass: "forest-bg",
+                questions: [
+                    {
+                        story: "A shimmering portal appears before you in the forest clearing. Through it, you glimpse an enchanted realm with glowing trees and mystical creatures. The portal pulses with ancient magic, beckoning you forward.",
+                        question: "What's your first action?",
+                        options: [
+                            "Observe the portal carefully and analyze its magical patterns first",
+                            "Call out to the creatures you saw - they might provide guidance",
+                            "Gather protective items from the forest before entering",
+                            "Step through immediately to explore this new realm"
+                        ],
+                        trait: "approach"
+                    },
+                    {
+                        story: "A wise old tree spirit presents you with a riddle: 'I speak without a mouth and hear without ears. I have no body, but come alive with fears. What am I?' The forest path only opens when answered correctly.",
+                        question: "How do you approach this mystical challenge?",
+                        options: [
+                            "Think through each line methodically to understand the metaphor",
+                            "Speak your thoughts aloud, using the spirit's reaction as feedback",
+                            "Look for environmental clues in how the forest responds",
+                            "Consider the psychological meaning - what represents human fears?"
+                        ],
+                        trait: "problem_solving"
+                    },
+                    {
+                        story: "The path splits into three mystical routes: a bright moonlit trail lined with singing flowers, a shadowy path where whispers promise secrets, and an overgrown route where nature spirits dance in the mist.",
+                        question: "Which enchanted path calls to you?",
+                        options: [
+                            "Moonlit trail - visible and guided by natural beauty",
+                            "Shadowy path - secrets often hide valuable knowledge",
+                            "Overgrown route - nature spirits might offer wisdom",
+                            "Meditate on each path's energy before choosing"
+                        ],
+                        trait: "decision_making"
+                    },
+                    {
+                        story: "At the heart of the forest, an ancient fairy offers you a magical gift: a mirror showing past and future, a seed that grows any plant instantly, or a crystal that grants one perfect truth. Each has limitations and responsibilities.",
+                        question: "Which magical gift do you accept?",
+                        options: [
+                            "The mirror - foresight helps prevent mistakes",
+                            "The seed - creation and growth benefit everyone",
+                            "The crystal - truth reveals what's most important",
+                            "Ask about the responsibilities before choosing"
+                        ],
+                        trait: "values"
+                    },
+                    {
+                        story: "The forest spirits are in conflict - some want to keep the realm hidden, others wish to share magic with the human world, and a few seek balance between both. They've chosen you to help decide the forest's future.",
+                        question: "How do you guide this decision?",
+                        options: [
+                            "Create a structured plan with rules for both preservation and sharing",
+                            "Help all spirits voice their concerns until harmony emerges naturally",
+                            "Make a clear recommendation based on what's best for the forest",
+                            "Suggest experimental approaches where different areas try different methods"
+                        ],
+                        trait: "leadership"
+                    }
+                ]
+            }
+        };
+
+        const personalityTypes = {
+            "STRATEGIC_PLANNER": {
+                icon: "🎯",
+                title: "The Strategic Planner",
+                description: "You approach challenges with careful analysis and systematic thinking. Your strength lies in planning ahead and considering all variables before taking action. You value logic, preparation, and well-thought-out solutions.",
+                traits: {
+                    "Thinking Style": "Analytical and methodical",
+                    "Strength": "Long-term planning",
+                    "Approach": "Structured and organized",
+                    "Decision Making": "Data-driven and logical"
+                }
+            },
+            "ADAPTIVE_EXPLORER": {
+                icon: "🌟",
+                title: "The Adaptive Explorer",
+                description: "You thrive in dynamic environments and excel at thinking on your feet. Your curiosity drives you to explore new possibilities, and you're comfortable with ambiguity. You balance intuition with practical action.",
+                traits: {
+                    "Thinking Style": "Flexible and creative",
+                    "Strength": "Quick adaptation",
+                    "Approach": "Experimental and open",
+                    "Decision Making": "Intuitive with action"
+                }
+            },
+            "COLLABORATIVE_HARMONIZER": {
+                icon: "🤝",
+                title: "The Collaborative Harmonizer",
+                description: "You excel at bringing people together and finding solutions that work for everyone. Your emotional intelligence and communication skills make you a natural mediator. You value consensus and collective success.",
+                traits: {
+                    "Thinking Style": "Empathetic and inclusive",
+                    "Strength": "Team coordination",
+                    "Approach": "Cooperative and diplomatic",
+                    "Decision Making": "Consensus-building"
+                }
+            },
+            "PRAGMATIC_INNOVATOR": {
+                icon: "💡",
+                title: "The Pragmatic Innovator",
+                description: "You combine creative thinking with practical execution. You're not afraid to take calculated risks and explore unconventional solutions, but you always keep your eyes on tangible results. You balance innovation with practicality.",
+                traits: {
+                    "Thinking Style": "Creative yet grounded",
+                    "Strength": "Innovation with purpose",
+                    "Approach": "Risk-aware and resourceful",
+                    "Decision Making": "Balance of logic and intuition"
+                }
+            }
+        };
+
+        let currentStory = null;
+        let currentQuestion = 0;
+        let answers = [];
+        let selectedAnswer = null;
+
+        function selectStory(storyKey) {
+            currentStory = storyKey;
+            currentQuestion = 0;
+            answers = [];
+            selectedAnswer = null;
+
+            // Update background
+            document.body.className = storyData[storyKey].bgClass;
+
+            // Update subtitle
+            document.getElementById('subtitle').textContent = storyData[storyKey].title;
+
+            // Show quiz screen, hide selection
+            document.getElementById('story-selection').classList.add('hidden');
+            document.getElementById('quiz-screen').style.display = 'block';
+
+            renderQuestion();
+        }
+
+        function returnToStorySelection() {
+            document.body.className = 'default-bg';
+            document.getElementById('subtitle').textContent = 'Choose your adventure and discover your cognitive style';
+            document.getElementById('story-selection').classList.remove('hidden');
+            document.getElementById('quiz-screen').style.display = 'none';
+            currentStory = null;
+        }
+
+        function renderQuestion() {
+            const progress = ((currentQuestion) / storyData[currentStory].questions.length) * 100;
+            document.getElementById('progress').style.width = progress + '%';
+
+            const q = storyData[currentStory].questions[currentQuestion];
+            const labels = ['A', 'B', 'C', 'D'];
+
+            document.getElementById('quiz-content').innerHTML = `
+                <div class="story-context">
+                    <p>📖 ${q.story}</p>
+                </div>
+                <div class="question">${currentQuestion + 1}. ${q.question}</div>
+                <div class="options">
+                    ${q.options.map((opt, i) => `
+                        <div class="option" data-label="${labels[i]}" onclick="selectOption(${i})">
+                            ${opt}
+                        </div>
+                    `).join('')}
+                </div>
+                <button class="btn-primary" onclick="submitAnswer()" id="submit-btn" disabled>
+                    ${currentQuestion < storyData[currentStory].questions.length - 1 ? 'Continue Story →' : 'Reveal Your Mind Type ✨'}
+                </button>
+            `;
+        }
+
+        function selectOption(index) {
+            selectedAnswer = index;
+            document.querySelectorAll('.option').forEach((opt, i) => {
+                opt.classList.toggle('selected', i === index);
+            });
+            document.getElementById('submit-btn').disabled = false;
+        }
+
+        function submitAnswer() {
+            answers.push({
+                trait: storyData[currentStory].questions[currentQuestion].trait,
+                choice: selectedAnswer
+            });
+
+            if (currentQuestion < storyData[currentStory].questions.length - 1) {
+                currentQuestion++;
+                selectedAnswer = null;
+                renderQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function analyzePersonality() {
+            const scores = {
+                strategic: 0,
+                adaptive: 0,
+                collaborative: 0,
+                pragmatic: 0
+            };
+
+            answers.forEach(answer => {
+                const choice = answer.choice;
+                const trait = answer.trait;
+
+                if (trait === "approach") {
+                    if (choice === 0) scores.strategic += 2;
+                    if (choice === 1) scores.collaborative += 2;
+                    if (choice === 2) scores.pragmatic += 2;
+                    if (choice === 3) scores.adaptive += 2;
+                }
+                else if (trait === "problem_solving") {
+                    if (choice === 0) scores.strategic += 2;
+                    if (choice === 1) scores.pragmatic += 2;
+                    if (choice === 2) scores.adaptive += 2;
+                    if (choice === 3) scores.strategic += 1;
+                }
+                else if (trait === "decision_making") {
+                    if (choice === 0) scores.pragmatic += 2;
+                    if (choice === 1) scores.adaptive += 2;
+                    if (choice === 2) scores.strategic += 2;
+                    if (choice === 3) scores.strategic += 1;
+                }
+                else if (trait === "values") {
+                    if (choice === 0) scores.pragmatic += 2;
+                    if (choice === 1) scores.strategic += 2;
+                    if (choice === 2) scores.adaptive += 2;
+                    if (choice === 3) scores.collaborative += 2;
+                }
+                else if (trait === "leadership") {
+                    if (choice === 0) scores.strategic += 2;
+                    if (choice === 1) scores.collaborative += 2;
+                    if (choice === 2) scores.pragmatic += 2;
+                    if (choice === 3) scores.adaptive += 2;
+                }
+            });
+
+            const maxScore = Math.max(scores.strategic, scores.adaptive, scores.collaborative, scores.pragmatic);
+
+            if (scores.strategic === maxScore) return "STRATEGIC_PLANNER";
+            if (scores.adaptive === maxScore) return "ADAPTIVE_EXPLORER";
+            if (scores.collaborative === maxScore) return "COLLABORATIVE_HARMONIZER";
+            return "PRAGMATIC_INNOVATOR";
+        }
+
+        function showResults() {
+            const personalityKey = analyzePersonality();
+            const personality = personalityTypes[personalityKey];
+
+            document.getElementById('quiz-content').innerHTML = `
+                <div class="results">
+                    <div class="personality-type">${personality.icon}</div>
+                    <div class="personality-title">${personality.title}</div>
+                    <div class="personality-description">${personality.description}</div>
+                    
+                    <div class="traits">
+                        ${Object.entries(personality.traits).map(([key, value]) => `
+                            <div class="trait">
+                                <div class="trait-label">${key}</div>
+                                <div class="trait-value">${value}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <button class="btn-primary" onclick="returnToStorySelection()">Try Another Story 🔄</button>
+                </div>
+            `;
+            document.getElementById('progress').style.width = '100%';
+        }
+    </script>
+</body>
+
+</html>

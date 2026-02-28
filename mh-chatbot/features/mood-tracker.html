@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mood Tracker - Mental Health Assistant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 100;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .header p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .card h2 {
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .mood-selector {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .mood-option {
+            flex: 1;
+            min-width: 100px;
+            padding: 20px;
+            border: 3px solid #e0e0e0;
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .mood-option:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .mood-option.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea10, #764ba210);
+            transform: translateY(-5px);
+        }
+
+        .mood-emoji {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .mood-label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .input-group textarea,
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            resize: vertical;
+        }
+
+        .input-group textarea:focus,
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 10px 25px rgba(108, 117, 125, 0.4);
+        }
+
+        .mood-history {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .mood-entry {
+            padding: 15px;
+            border-left: 4px solid #667eea;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .mood-entry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .mood-entry-mood {
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .mood-entry-date {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .mood-entry-notes {
+            color: #333;
+            margin-top: 8px;
+        }
+
+        .mood-entry-triggers {
+            margin-top: 8px;
+            font-size: 13px;
+            color: #555;
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .delete-btn:hover {
+            background: #c82333;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea10, #764ba210);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 20px;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-style: italic;
+        }
+
+        .export-btn {
+            width: auto;
+            padding: 10px 20px;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .mood-selector {
+                flex-direction: column;
+            }
+
+            .mood-option {
+                width: 100%;
+            }
+
+            .header h1 {
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <a href="../mental-health-tools.html" class="back-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+        Back
+    </a>
+
+    <div class="container">
+        <div class="header">
+            <h1>📊 Mood Tracker</h1>
+            <p>Track your emotions and discover patterns in your mental health journey</p>
+        </div>
+
+        <!-- Log Mood Section -->
+        <div class="card">
+            <h2>📝 How are you feeling right now?</h2>
+            <div class="mood-selector" id="moodSelector">
+                <div class="mood-option" data-mood="amazing" data-value="5">
+                    <div class="mood-emoji">😄</div>
+                    <div class="mood-label">Amazing</div>
+                </div>
+                <div class="mood-option" data-mood="good" data-value="4">
+                    <div class="mood-emoji">🙂</div>
+                    <div class="mood-label">Good</div>
+                </div>
+                <div class="mood-option" data-mood="okay" data-value="3">
+                    <div class="mood-emoji">😐</div>
+                    <div class="mood-label">Okay</div>
+                </div>
+                <div class="mood-option" data-mood="bad" data-value="2">
+                    <div class="mood-emoji">😟</div>
+                    <div class="mood-label">Bad</div>
+                </div>
+                <div class="mood-option" data-mood="terrible" data-value="1">
+                    <div class="mood-emoji">😢</div>
+                    <div class="mood-label">Terrible</div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>What triggered this mood? (Optional)</label>
+                <input type="text" id="triggerInput" placeholder="e.g., Work stress, Good news, Exercise...">
+            </div>
+
+            <div class="input-group">
+                <label>Additional Notes (Optional)</label>
+                <textarea id="notesInput" rows="3" placeholder="Share more about how you're feeling..."></textarea>
+            </div>
+
+            <button class="btn" onclick="saveMood()">Save Mood Entry</button>
+        </div>
+
+        <!-- Statistics Section -->
+        <div class="card">
+            <h2>📈 Your Mood Statistics</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalEntries">0</div>
+                    <div class="stat-label">Total Entries</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="avgMood">-</div>
+                    <div class="stat-label">Average Mood</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="streakDays">0</div>
+                    <div class="stat-label">Day Streak</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="topTrigger">-</div>
+                    <div class="stat-label">Top Trigger</div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="moodChart"></canvas>
+            </div>
+
+            <button class="btn btn-secondary export-btn" onclick="exportData()">📥 Export Data</button>
+        </div>
+
+        <!-- Mood History Section -->
+        <div class="card">
+            <h2>📚 Mood History</h2>
+            <div class="mood-history" id="moodHistory">
+                <div class="no-data">No mood entries yet. Start tracking your mood above!</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedMood = null;
+        let moodData = JSON.parse(localStorage.getItem('moodTrackerData')) || [];
+        let moodChart = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function () {
+            setupMoodSelector();
+            displayMoodHistory();
+            updateStatistics();
+            renderChart();
+        });
+
+        function setupMoodSelector() {
+            const moodOptions = document.querySelectorAll('.mood-option');
+            moodOptions.forEach(option => {
+                option.addEventListener('click', function () {
+                    moodOptions.forEach(o => o.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedMood = {
+                        mood: this.dataset.mood,
+                        value: parseInt(this.dataset.value),
+                        emoji: this.querySelector('.mood-emoji').textContent
+                    };
+                });
+            });
+        }
+
+        function saveMood() {
+            if (!selectedMood) {
+                alert('Please select a mood first!');
+                return;
+            }
+
+            const entry = {
+                id: Date.now(),
+                date: new Date().toISOString(),
+                mood: selectedMood.mood,
+                value: selectedMood.value,
+                emoji: selectedMood.emoji,
+                trigger: document.getElementById('triggerInput').value,
+                notes: document.getElementById('notesInput').value
+            };
+
+            moodData.unshift(entry);
+            localStorage.setItem('moodTrackerData', JSON.stringify(moodData));
+
+            // Reset form
+            document.querySelectorAll('.mood-option').forEach(o => o.classList.remove('selected'));
+            document.getElementById('triggerInput').value = '';
+            document.getElementById('notesInput').value = '';
+            selectedMood = null;
+
+            // Update display
+            displayMoodHistory();
+            updateStatistics();
+            renderChart();
+
+            // Show success message
+            alert('✅ Mood logged successfully!');
+        }
+
+        function displayMoodHistory() {
+            const historyContainer = document.getElementById('moodHistory');
+
+            if (moodData.length === 0) {
+                historyContainer.innerHTML = '<div class="no-data">No mood entries yet. Start tracking your mood above!</div>';
+                return;
+            }
+
+            historyContainer.innerHTML = moodData.map(entry => `
+                <div class="mood-entry">
+                    <button class="delete-btn" onclick="deleteMoodEntry(${entry.id})">×</button>
+                    <div class="mood-entry-header">
+                        <div class="mood-entry-mood">
+                            <span>${entry.emoji}</span>
+                            <strong>${entry.mood.charAt(0).toUpperCase() + entry.mood.slice(1)}</strong>
+                        </div>
+                        <div class="mood-entry-date">${formatDate(entry.date)}</div>
+                    </div>
+                    ${entry.trigger ? `<div class="mood-entry-triggers"><strong>Trigger:</strong> ${entry.trigger}</div>` : ''}
+                    ${entry.notes ? `<div class="mood-entry-notes">${entry.notes}</div>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function deleteMoodEntry(id) {
+            if (confirm('Are you sure you want to delete this mood entry?')) {
+                moodData = moodData.filter(entry => entry.id !== id);
+                localStorage.setItem('moodTrackerData', JSON.stringify(moodData));
+                displayMoodHistory();
+                updateStatistics();
+                renderChart();
+            }
+        }
+
+        function updateStatistics() {
+            // Total entries
+            document.getElementById('totalEntries').textContent = moodData.length;
+
+            if (moodData.length === 0) {
+                document.getElementById('avgMood').textContent = '-';
+                document.getElementById('streakDays').textContent = '0';
+                document.getElementById('topTrigger').textContent = '-';
+                return;
+            }
+
+            // Average mood
+            const avgValue = moodData.reduce((sum, entry) => sum + entry.value, 0) / moodData.length;
+            const moodEmojis = { 5: '😄', 4: '🙂', 3: '😐', 2: '😟', 1: '😢' };
+            const avgRounded = Math.round(avgValue);
+            document.getElementById('avgMood').textContent = moodEmojis[avgRounded];
+
+            // Streak calculation
+            const streak = calculateStreak();
+            document.getElementById('streakDays').textContent = streak;
+
+            // Top trigger
+            const triggers = moodData.filter(e => e.trigger).map(e => e.trigger);
+            if (triggers.length > 0) {
+                const triggerCounts = {};
+                triggers.forEach(t => triggerCounts[t] = (triggerCounts[t] || 0) + 1);
+                const topTrigger = Object.keys(triggerCounts).reduce((a, b) =>
+                    triggerCounts[a] > triggerCounts[b] ? a : b
+                );
+                document.getElementById('topTrigger').textContent = topTrigger.substring(0, 15) + (topTrigger.length > 15 ? '...' : '');
+            } else {
+                document.getElementById('topTrigger').textContent = '-';
+            }
+        }
+
+        function calculateStreak() {
+            if (moodData.length === 0) return 0;
+
+            let streak = 0;
+            const today = new Date().setHours(0, 0, 0, 0);
+
+            for (let i = 0; i < moodData.length; i++) {
+                const entryDate = new Date(moodData[i].date).setHours(0, 0, 0, 0);
+                const expectedDate = new Date(today - (streak * 24 * 60 * 60 * 1000));
+
+                if (entryDate === expectedDate.getTime()) {
+                    streak++;
+                } else {
+                    break;
+                }
+            }
+
+            return streak;
+        }
+
+        function renderChart() {
+            const ctx = document.getElementById('moodChart');
+
+            if (moodChart) {
+                moodChart.destroy();
+            }
+
+            if (moodData.length === 0) {
+                return;
+            }
+
+            const last7Days = moodData.slice(0, 7).reverse();
+            const labels = last7Days.map(entry => formatDate(entry.date, true));
+            const values = last7Days.map(entry => entry.value);
+
+            moodChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Mood Score',
+                        data: values,
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true,
+                        pointRadius: 6,
+                        pointHoverRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 5,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0,0,0,0.8)',
+                            padding: 12,
+                            titleFont: { size: 14 },
+                            bodyFont: { size: 13 }
+                        }
+                    }
+                }
+            });
+        }
+
+        function formatDate(dateString, short = false) {
+            const date = new Date(dateString);
+            if (short) {
+                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            }
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function exportData() {
+            if (moodData.length === 0) {
+                alert('No data to export!');
+                return;
+            }
+
+            const csvContent = [
+                ['Date', 'Mood', 'Value', 'Trigger', 'Notes'],
+                ...moodData.map(entry => [
+                    formatDate(entry.date),
+                    entry.mood,
+                    entry.value,
+                    entry.trigger || '',
+                    entry.notes || ''
+                ])
+            ].map(row => row.join(',')).join('\n');
+
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `mood-tracker-${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+
+</html>

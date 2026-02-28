@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 50px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        button {
+            padding: 20px 40px;
+            font-size: 18px;
+            margin: 10px;
+            cursor: pointer;
+        }
+
+        #status {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 5px;
+        }
+
+        #transcript {
+            margin: 20px 0;
+            padding: 15px;
+            background: #e8f4f8;
+            border-radius: 5px;
+            min-height: 50px;
+        }
+
+        .recording {
+            background: red !important;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🎤 Voice Recognition Test</h1>
+    <p>This page tests if speech recognition works in your browser.</p>
+
+    <button id="startBtn">Start Recording</button>
+    <button id="stopBtn" disabled>Stop Recording</button>
+
+    <div id="status">Status: Ready</div>
+    <div id="transcript">Transcript will appear here...</div>
+
+    <h3>Browser Info:</h3>
+    <div id="browserInfo"></div>
+
+    <script>
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const statusDiv = document.getElementById('status');
+        const transcriptDiv = document.getElementById('transcript');
+        const browserInfo = document.getElementById('browserInfo');
+
+        // Display browser info
+        browserInfo.innerHTML = `
+            <p>User Agent: ${navigator.userAgent}</p>
+            <p>Speech Recognition Available: ${'webkitSpeechRecognition' in window || 'SpeechRecognition' in window ? 'YES ✓' : 'NO ✗'}</p>
+            <p>Protocol: ${window.location.protocol}</p>
+        `;
+
+        let recognition = null;
+
+        // Check browser support
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = true;
+            recognition.lang = 'en-US';
+
+            recognition.onstart = () => {
+                console.log('Recognition started');
+                statusDiv.textContent = 'Status: Listening... Speak now!';
+                statusDiv.style.background = '#ffcccc';
+                startBtn.disabled = true;
+                stopBtn.disabled = false;
+                startBtn.classList.add('recording');
+            };
+
+            recognition.onresult = (event) => {
+                console.log('Recognition result:', event);
+                let interimTranscript = '';
+                let finalTranscript = '';
+
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    const transcript = event.results[i][0].transcript;
+                    if (event.results[i].isFinal) {
+                        finalTranscript += transcript + ' ';
+                    } else {
+                        interimTranscript += transcript;
+                    }
+                }
+
+                transcriptDiv.textContent = finalTranscript || interimTranscript || 'Listening...';
+            };
+
+            recognition.onerror = (event) => {
+                console.error('Recognition error:', event.error);
+                statusDiv.textContent = 'Status: Error - ' + event.error;
+                statusDiv.style.background = '#ffcccc';
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+                startBtn.classList.remove('recording');
+            };
+
+            recognition.onend = () => {
+                console.log('Recognition ended');
+                statusDiv.textContent = 'Status: Stopped';
+                statusDiv.style.background = '#f0f0f0';
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+                startBtn.classList.remove('recording');
+            };
+
+            startBtn.addEventListener('click', () => {
+                try {
+                    recognition.start();
+                    console.log('Attempting to start recognition...');
+                } catch (error) {
+                    console.error('Error starting recognition:', error);
+                    statusDiv.textContent = 'Status: Error - ' + error.message;
+                }
+            });
+
+            stopBtn.addEventListener('click', () => {
+                recognition.stop();
+            });
+
+        } else {
+            statusDiv.textContent = 'Status: Speech Recognition NOT supported in this browser!';
+            statusDiv.style.background = '#ffcccc';
+            startBtn.disabled = true;
+            transcriptDiv.textContent = 'Your browser does not support the Web Speech API. Please use Chrome, Edge, or Safari.';
+        }
+    </script>
+</body>
+
+</html>

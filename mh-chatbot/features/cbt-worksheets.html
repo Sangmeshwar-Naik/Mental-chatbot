@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CBT Worksheets - Mental Health Assistant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 100;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .card h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .worksheet-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .worksheet-card {
+            padding: 25px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #667eea10, #764ba210);
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .worksheet-card:hover {
+            border-color: #667eea;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .worksheet-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .worksheet-title {
+            font-weight: 700;
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .worksheet-description {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .worksheet-container {
+            display: none;
+        }
+
+        .worksheet-container.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            margin-top: 10px;
+        }
+
+        .distortion-list {
+            display: grid;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .distortion-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .distortion-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .distortion-desc {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .result-box {
+            padding: 20px;
+            background: #e7f3ff;
+            border-radius: 15px;
+            border-left: 5px solid #667eea;
+            margin: 20px 0;
+        }
+
+        .saved-entries {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .entry-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .entry-date {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .entry-content {
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+
+        .delete-btn:hover {
+            background: #c82333;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="../mental-health-tools.html" class="back-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+        Back
+    </a>
+
+    <div class="container">
+        <div class="header">
+            <h1>📑 CBT Worksheets</h1>
+            <p>Interactive cognitive behavioral therapy worksheets and tools</p>
+        </div>
+
+        <!-- Worksheet Selection -->
+        <div class="card" id="worksheet-selection">
+            <h2>Choose a Worksheet</h2>
+            <div class="worksheet-grid">
+                <div class="worksheet-card" onclick="openWorksheet('thought-record')">
+                    <div class="worksheet-icon">💭</div>
+                    <div class="worksheet-title">Thought Record</div>
+                    <div class="worksheet-description">Track and challenge automatic negative thoughts</div>
+                </div>
+
+                <div class="worksheet-card" onclick="openWorksheet('distortions')">
+                    <div class="worksheet-icon">🔍</div>
+                    <div class="worksheet-title">Cognitive Distortions</div>
+                    <div class="worksheet-description">Identify thinking patterns that may be unhelpful</div>
+                </div>
+
+                <div class="worksheet-card" onclick="openWorksheet('behavioral-activation')">
+                    <div class="worksheet-icon">⚡</div>
+                    <div class="worksheet-title">Behavioral Activation</div>
+                    <div class="worksheet-description">Plan activities to improve mood and motivation</div>
+                </div>
+
+                <div class="worksheet-card" onclick="openWorksheet('core-beliefs')">
+                    <div class="worksheet-icon">🎯</div>
+                    <div class="worksheet-title">Core Beliefs</div>
+                    <div class="worksheet-description">Examine deep-seated beliefs about yourself</div>
+                </div>
+
+                <div class="worksheet-card" onclick="openWorksheet('exposure-hierarchy')">
+                    <div class="worksheet-icon">📊</div>
+                    <div class="worksheet-title">Exposure Hierarchy</div>
+                    <div class="worksheet-description">Create a step-by-step plan to face fears</div>
+                </div>
+
+                <div class="worksheet-card" onclick="openWorksheet('gratitude')">
+                    <div class="worksheet-icon">🙏</div>
+                    <div class="worksheet-title">Gratitude Practice</div>
+                    <div class="worksheet-description">Daily gratitude journaling for positive mindset</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Thought Record Worksheet -->
+        <div class="card worksheet-container" id="thought-record">
+            <h2>💭 Thought Record</h2>
+            <p style="color: #666; margin-bottom: 20px;">Identify and challenge negative automatic thoughts</p>
+
+            <div class="form-group">
+                <label>Situation (What happened?)</label>
+                <textarea id="tr-situation"
+                    placeholder="Describe the situation that triggered the thought..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Automatic Thought (What went through your mind?)</label>
+                <textarea id="tr-thought" placeholder="What did you think when this happened?"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Emotion (How did you feel?)</label>
+                <input type="text" id="tr-emotion" placeholder="e.g., Anxious, Sad, Angry">
+            </div>
+
+            <div class="form-group">
+                <label>Intensity (0-100%)</label>
+                <input type="range" id="tr-intensity" min="0" max="100" value="50">
+                <div style="text-align: center; font-weight: 600; color: #667eea;"><span
+                        id="tr-intensity-value">50</span>%</div>
+            </div>
+
+            <div class="form-group">
+                <label>Evidence For (What supports this thought?)</label>
+                <textarea id="tr-evidence-for" placeholder="List evidence that supports your thought..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Evidence Against (What contradicts this thought?)</label>
+                <textarea id="tr-evidence-against" placeholder="List evidence against your thought..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Alternative Thought (More balanced perspective)</label>
+                <textarea id="tr-alternative" placeholder="What's a more balanced way to think about this?"></textarea>
+            </div>
+
+            <button class="btn" onclick="saveThoughtRecord()">💾 Save Thought Record</button>
+            <button class="btn btn-secondary" onclick="closeWorksheet()">← Back to Worksheets</button>
+
+            <div style="margin-top: 30px;">
+                <h3 style="margin-bottom: 15px;">Saved Thought Records</h3>
+                <div class="saved-entries" id="thought-records-list"></div>
+            </div>
+        </div>
+
+        <!-- Cognitive Distortions -->
+        <div class="card worksheet-container" id="distortions">
+            <h2>🔍 Cognitive Distortions Checker</h2>
+            <p style="color: #666; margin-bottom: 20px;">Identify unhelpful thinking patterns</p>
+
+            <div class="form-group">
+                <label>Your Thought</label>
+                <textarea id="dist-thought" placeholder="Enter a thought you'd like to examine..."></textarea>
+            </div>
+
+            <button class="btn" onclick="analyzeDistortions()">🔍 Analyze for Distortions</button>
+
+            <div id="distortion-results" style="display: none;">
+                <h3 style="margin: 20px 0;">Common Cognitive Distortions:</h3>
+                <div class="distortion-list">
+                    <div class="distortion-item">
+                        <div class="distortion-name">All-or-Nothing Thinking</div>
+                        <div class="distortion-desc">Seeing things in black and white categories</div>
+                    </div>
+                    <div class="distortion-item">
+                        <div class="distortion-name">Overgeneralization</div>
+                        <div class="distortion-desc">Seeing a single negative event as a never-ending pattern</div>
+                    </div>
+                    <div class="distortion-item">
+                        <div class="distortion-name">Mental Filter</div>
+                        <div class="distortion-desc">Focusing only on negative details</div>
+                    </div>
+                    <div class="distortion-item">
+                        <div class="distortion-name">Catastrophizing</div>
+                        <div class="distortion-desc">Expecting the worst possible outcome</div>
+                    </div>
+                    <div class="distortion-item">
+                        <div class="distortion-name">Emotional Reasoning</div>
+                        <div class="distortion-desc">Assuming feelings reflect reality</div>
+                    </div>
+                    <div class="distortion-item">
+                        <div class="distortion-name">Should Statements</div>
+                        <div class="distortion-desc">Using "should," "must," or "ought" statements</div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn btn-secondary" onclick="closeWorksheet()">← Back to Worksheets</button>
+        </div>
+
+        <!-- Behavioral Activation -->
+        <div class="card worksheet-container" id="behavioral-activation">
+            <h2>⚡ Behavioral Activation Planner</h2>
+            <p style="color: #666; margin-bottom: 20px;">Schedule activities to improve your mood</p>
+
+            <div class="form-group">
+                <label>Activity</label>
+                <input type="text" id="ba-activity" placeholder="e.g., Go for a walk, Call a friend">
+            </div>
+
+            <div class="form-group">
+                <label>Scheduled Time</label>
+                <input type="datetime-local" id="ba-time">
+            </div>
+
+            <div class="form-group">
+                <label>Expected Mood Boost (1-10)</label>
+                <input type="range" id="ba-expected" min="1" max="10" value="5">
+                <div style="text-align: center; font-weight: 600; color: #667eea;"><span
+                        id="ba-expected-value">5</span>/10</div>
+            </div>
+
+            <button class="btn" onclick="saveBehavioralActivity()">➕ Add Activity</button>
+            <button class="btn btn-secondary" onclick="closeWorksheet()">← Back to Worksheets</button>
+
+            <div style="margin-top: 30px;">
+                <h3 style="margin-bottom: 15px;">Scheduled Activities</h3>
+                <div class="saved-entries" id="ba-list"></div>
+            </div>
+        </div>
+
+        <!-- Core Beliefs -->
+        <div class="card worksheet-container" id="core-beliefs">
+            <h2>🎯 Core Beliefs Examination</h2>
+            <p style="color: #666; margin-bottom: 20px;">Explore deep-seated beliefs about yourself</p>
+
+            <div class="form-group">
+                <label>Core Belief</label>
+                <input type="text" id="cb-belief" placeholder="e.g., I am not good enough">
+            </div>
+
+            <div class="form-group">
+                <label>Evidence Supporting This Belief</label>
+                <textarea id="cb-support" placeholder="What makes you believe this?"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Evidence Against This Belief</label>
+                <textarea id="cb-against" placeholder="What contradicts this belief?"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Alternative Belief</label>
+                <input type="text" id="cb-alternative" placeholder="A more balanced belief...">
+            </div>
+
+            <button class="btn" onclick="saveCoreBelief()">💾 Save Core Belief Work</button>
+            <button class="btn btn-secondary" onclick="closeWorksheet()">← Back to Worksheets</button>
+
+            <div style="margin-top: 30px;">
+                <h3 style="margin-bottom: 15px;">Saved Core Beliefs</h3>
+                <div class="saved-entries" id="cb-list"></div>
+            </div>
+        </div>
+
+        <!-- Exposure Hierarchy -->
+        <div class="card worksheet-container" id="exposure-hierarchy">
+            <h2>📊 Exposure Hierarchy Builder</h2>
+            <p style="color: #666; margin-bottom: 20px;">Create a step-by-step plan to face your fears</p>
+
+            <div class="form-group">
+                <label>Fear/Anxiety Trigger</label>
+                <input type="text" id="eh-fear" placeholder="What are you afraid of?">
+            </div>
+
+            <div class="form-group">
+                <label>Exposure Step</label>
+                <input type="text" id="eh-step" placeholder="Describe one step towards facing this fear">
+            </div>
+
+            <div class="form-group">
+                <label>Difficulty Level (1-10)</label>
+                <input type="range" id="eh-difficulty" min="1" max="10" value="5">
+                <div style="text-align: center; font-weight: 600; color: #667eea;"><span
+                        id="eh-difficulty-value">5</span>/10</div>
+            </div>
+
+            <button class="btn" onclick="saveExposureStep()">➕ Add Step</button>
+            <button class="btn btn-secondary" onclick="closeWorksheet()">← Back to Worksheets</button>
+
+            <div style="margin-top: 30px;">
+                <h3 style="margin-bottom: 15px;">Your Exposure Steps</h3>
+                <div class="saved-entries" id="eh-list"></div>
+            </div>
+        </div>
+
+        <!-- Gratitude Practice -->
+        <div class="card worksheet-container" id="gratitude">
+            <h2>🙏 Gratitude Practice</h2>
+            <p style="color: #666; margin-bottom: 20px;">Daily gratitude journaling for positive mindset</p>
+
+            <div class="form-group">
+                <label>Three Things I'm Grateful For Today:</label>
+                <textarea id="grat-1" placeholder="1. " rows="2"></textarea>
+                <textarea id="grat-2" placeholder="2. " rows="2" style="margin-top: 10px;"></textarea>
+                <textarea id="grat-3" placeholder="3. " rows="2" style="margin-top: 10px;"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Why am I grateful for these?</label>
+                <textarea id="grat-why" placeholder="Reflect on why these matter to you..."></textarea>
+            </div>
+
+            <button class="btn" onclick="saveGratitude()">💾 Save Gratitude Entry</button>
+            <button class="btn btn-secondary" onclick="closeWorksheet()">← Back to Worksheets</button>
+
+            <div style="margin-top: 30px;">
+                <h3 style="margin-bottom: 15px;">Gratitude Journal</h3>
+                <div class="saved-entries" id="grat-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let cbtData = JSON.parse(localStorage.getItem('cbtWorksheets')) || {
+            thoughtRecords: [],
+            behavioralActivation: [],
+            coreBeliefs: [],
+            exposureHierarchy: [],
+            gratitude: []
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function () {
+            setupSliders();
+            loadAllData();
+        });
+
+        function setupSliders() {
+            document.getElementById('tr-intensity').addEventListener('input', (e) => {
+                document.getElementById('tr-intensity-value').textContent = e.target.value;
+            });
+            document.getElementById('ba-expected').addEventListener('input', (e) => {
+                document.getElementById('ba-expected-value').textContent = e.target.value;
+            });
+            document.getElementById('eh-difficulty').addEventListener('input', (e) => {
+                document.getElementById('eh-difficulty-value').textContent = e.target.value;
+            });
+        }
+
+        function openWorksheet(type) {
+            document.getElementById('worksheet-selection').style.display = 'none';
+            document.getElementById(type).classList.add('active');
+        }
+
+        function closeWorksheet() {
+            document.querySelectorAll('.worksheet-container').forEach(w => w.classList.remove('active'));
+            document.getElementById('worksheet-selection').style.display = 'block';
+        }
+
+        function saveThoughtRecord() {
+            const record = {
+                id: Date.now(),
+                date: new Date().toISOString(),
+                situation: document.getElementById('tr-situation').value,
+                thought: document.getElementById('tr-thought').value,
+                emotion: document.getElementById('tr-emotion').value,
+                intensity: document.getElementById('tr-intensity').value,
+                evidenceFor: document.getElementById('tr-evidence-for').value,
+                evidenceAgainst: document.getElementById('tr-evidence-against').value,
+                alternative: document.getElementById('tr-alternative').value
+            };
+
+            cbtData.thoughtRecords.unshift(record);
+            saveCBTData();
+            clearThoughtRecordForm();
+            displayThoughtRecords();
+            alert('✅ Thought record saved!');
+        }
+
+        function clearThoughtRecordForm() {
+            document.getElementById('tr-situation').value = '';
+            document.getElementById('tr-thought').value = '';
+            document.getElementById('tr-emotion').value = '';
+            document.getElementById('tr-intensity').value = '50';
+            document.getElementById('tr-evidence-for').value = '';
+            document.getElementById('tr-evidence-against').value = '';
+            document.getElementById('tr-alternative').value = '';
+        }
+
+        function displayThoughtRecords() {
+            const list = document.getElementById('thought-records-list');
+            if (cbtData.thoughtRecords.length === 0) {
+                list.innerHTML = '<p style="text-align:center;color:#999;padding:2rem;">No thought records yet</p>';
+                return;
+            }
+
+            list.innerHTML = cbtData.thoughtRecords.map(r => `
+                <div class="entry-item">
+                    <div class="entry-date">${new Date(r.date).toLocaleString()}</div>
+                    <div class="entry-content">
+                        <strong>Situation:</strong> ${r.situation}<br>
+                        <strong>Thought:</strong> ${r.thought}<br>
+                        <strong>Emotion:</strong> ${r.emotion} (${r.intensity}%)<br>
+                        <strong>Alternative:</strong> ${r.alternative}
+                    </div>
+                    <button class="delete-btn" onclick="deleteItem('thoughtRecords', ${r.id})">Delete</button>
+                </div>
+            `).join('');
+        }
+
+        function analyzeDistortions() {
+            document.getElementById('distortion-results').style.display = 'block';
+        }
+
+        function saveBehavioralActivity() {
+            const activity = {
+                id: Date.now(),
+                date: new Date().toISOString(),
+                activity: document.getElementById('ba-activity').value,
+                time: document.getElementById('ba-time').value,
+                expected: document.getElementById('ba-expected').value
+            };
+
+            cbtData.behavioralActivation.unshift(activity);
+            saveCBTData();
+            document.getElementById('ba-activity').value = '';
+            document.getElementById('ba-time').value = '';
+            displayBehavioralActivation();
+            alert('✅ Activity added!');
+        }
+
+        function displayBehavioralActivation() {
+            const list = document.getElementById('ba-list');
+            if (cbtData.behavioralActivation.length === 0) {
+                list.innerHTML = '<p style="text-align:center;color:#999;padding:2rem;">No activities scheduled</p>';
+                return;
+            }
+
+            list.innerHTML = cbtData.behavioralActivation.map(a => `
+                <div class="entry-item">
+                    <div class="entry-content">
+                        <strong>${a.activity}</strong><br>
+                        Scheduled: ${new Date(a.time).toLocaleString()}<br>
+                        Expected Mood Boost: ${a.expected}/10
+                    </div>
+                    <button class="delete-btn" onclick="deleteItem('behavioralActivation', ${a.id})">Delete</button>
+                </div>
+            `).join('');
+        }
+
+        function saveCoreBelief() {
+            const belief = {
+                id: Date.now(),
+                date: new Date().toISOString(),
+                belief: document.getElementById('cb-belief').value,
+                support: document.getElementById('cb-support').value,
+                against: document.getElementById('cb-against').value,
+                alternative: document.getElementById('cb-alternative').value
+            };
+
+            cbtData.coreBeliefs.unshift(belief);
+            saveCBTData();
+            document.getElementById('cb-belief').value = '';
+            document.getElementById('cb-support').value = '';
+            document.getElementById('cb-against').value = '';
+            document.getElementById('cb-alternative').value = '';
+            displayCoreBeliefs();
+            alert('✅ Core belief work saved!');
+        }
+
+        function displayCoreBeliefs() {
+            const list = document.getElementById('cb-list');
+            if (cbtData.coreBeliefs.length === 0) {
+                list.innerHTML = '<p style="text-align:center;color:#999;padding:2rem;">No core beliefs examined yet</p>';
+                return;
+            }
+
+            list.innerHTML = cbtData.coreBeliefs.map(b => `
+                <div class="entry-item">
+                    <div class="entry-date">${new Date(b.date).toLocaleString()}</div>
+                    <div class="entry-content">
+                        <strong>Belief:</strong> ${b.belief}<br>
+                        <strong>Alternative:</strong> ${b.alternative}
+                    </div>
+                    <button class="delete-btn" onclick="deleteItem('coreBeliefs', ${b.id})">Delete</button>
+                </div>
+            `).join('');
+        }
+
+        function saveExposureStep() {
+            const step = {
+                id: Date.now(),
+                date: new Date().toISOString(),
+                fear: document.getElementById('eh-fear').value,
+                step: document.getElementById('eh-step').value,
+                difficulty: document.getElementById('eh-difficulty').value
+            };
+
+            cbtData.exposureHierarchy.unshift(step);
+            saveCBTData();
+            document.getElementById('eh-step').value = '';
+            displayExposureHierarchy();
+            alert('✅ Exposure step added!');
+        }
+
+        function displayExposureHierarchy() {
+            const list = document.getElementById('eh-list');
+            if (cbtData.exposureHierarchy.length === 0) {
+                list.innerHTML = '<p style="text-align:center;color:#999;padding:2rem;">No exposure steps yet</p>';
+                return;
+            }
+
+            const sorted = [...cbtData.exposureHierarchy].sort((a, b) => a.difficulty - b.difficulty);
+            list.innerHTML = sorted.map(s => `
+                <div class="entry-item">
+                    <div class="entry-content">
+                        <strong>Fear:</strong> ${s.fear}<br>
+                        <strong>Step:</strong> ${s.step}<br>
+                        <strong>Difficulty:</strong> ${s.difficulty}/10
+                    </div>
+                    <button class="delete-btn" onclick="deleteItem('exposureHierarchy', ${s.id})">Delete</button>
+                </div>
+            `).join('');
+        }
+
+        function saveGratitude() {
+            const entry = {
+                id: Date.now(),
+                date: new Date().toISOString(),
+                items: [
+                    document.getElementById('grat-1').value,
+                    document.getElementById('grat-2').value,
+                    document.getElementById('grat-3').value
+                ],
+                why: document.getElementById('grat-why').value
+            };
+
+            cbtData.gratitude.unshift(entry);
+            saveCBTData();
+            document.getElementById('grat-1').value = '';
+            document.getElementById('grat-2').value = '';
+            document.getElementById('grat-3').value = '';
+            document.getElementById('grat-why').value = '';
+            displayGratitude();
+            alert('✅ Gratitude entry saved!');
+        }
+
+        function displayGratitude() {
+            const list = document.getElementById('grat-list');
+            if (cbtData.gratitude.length === 0) {
+                list.innerHTML = '<p style="text-align:center;color:#999;padding:2rem;">No gratitude entries yet</p>';
+                return;
+            }
+
+            list.innerHTML = cbtData.gratitude.map(g => `
+                <div class="entry-item">
+                    <div class="entry-date">${new Date(g.date).toLocaleString()}</div>
+                    <div class="entry-content">
+                        ${g.items.filter(i => i).map((item, idx) => `${idx + 1}. ${item}`).join('<br>')}
+                    </div>
+                    <button class="delete-btn" onclick="deleteItem('gratitude', ${g.id})">Delete</button>
+                </div>
+            `).join('');
+        }
+
+        function deleteItem(category, id) {
+            if (confirm('Delete this entry?')) {
+                cbtData[category] = cbtData[category].filter(item => item.id !== id);
+                saveCBTData();
+                loadAllData();
+            }
+        }
+
+        function saveCBTData() {
+            localStorage.setItem('cbtWorksheets', JSON.stringify(cbtData));
+        }
+
+        function loadAllData() {
+            displayThoughtRecords();
+            displayBehavioralActivation();
+            displayCoreBeliefs();
+            displayExposureHierarchy();
+            displayGratitude();
+        }
+    </script>
+</body>
+
+</html>

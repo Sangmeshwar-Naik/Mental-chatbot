@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stress Assessment - Mental Health Assistant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 100;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .card h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .assessment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .assessment-card {
+            padding: 25px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #667eea10, #764ba210);
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .assessment-card:hover {
+            border-color: #667eea;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .assessment-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .assessment-title {
+            font-weight: 700;
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .assessment-description {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .quiz-container {
+            display: none;
+        }
+
+        .quiz-container.active {
+            display: block;
+        }
+
+        .question {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+
+        .question-text {
+            font-weight: 600;
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option {
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .option.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea20, #764ba220);
+            font-weight: 600;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .results-container {
+            display: none;
+        }
+
+        .results-container.active {
+            display: block;
+        }
+
+        .score-display {
+            text-align: center;
+            padding: 40px;
+            background: linear-gradient(135deg, #667eea10, #764ba210);
+            border-radius: 20px;
+            margin-bottom: 30px;
+        }
+
+        .score-number {
+            font-size: 72px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .score-label {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .score-interpretation {
+            font-size: 16px;
+            color: #666;
+            line-height: 1.8;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .recommendations {
+            background: #fff3cd;
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 5px solid #ffc107;
+            margin-top: 20px;
+        }
+
+        .recommendations h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .recommendations ul {
+            margin-left: 20px;
+            line-height: 2;
+            color: #333;
+        }
+
+        .chart-container {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin-top: 30px;
+        }
+
+        .chart-container h3 {
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
+        }
+
+        .history-grid {
+            display: grid;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .history-item {
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .history-date {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .history-score {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .history-level {
+            font-size: 14px;
+            font-weight: 600;
+            padding: 5px 15px;
+            border-radius: 20px;
+            background: #667eea20;
+            color: #667eea;
+        }
+
+        .progress-indicator {
+            margin: 20px 0;
+            text-align: center;
+            color: #666;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 32px;
+            }
+
+            .assessment-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <a href="../mental-health-tools.html" class="back-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+        Back
+    </a>
+
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Stress Assessment</h1>
+            <p>Evaluate your stress levels with validated psychological scales</p>
+        </div>
+
+        <!-- Assessment Selection -->
+        <div class="card" id="selectionScreen">
+            <h2>Choose an Assessment</h2>
+            <div class="assessment-grid">
+                <div class="assessment-card" onclick="startAssessment('pss10')">
+                    <div class="assessment-icon">📊</div>
+                    <div class="assessment-title">Perceived Stress Scale (PSS-10)</div>
+                    <div class="assessment-description">Measures the degree to which situations in your life are
+                        appraised as stressful</div>
+                </div>
+
+                <div class="assessment-card" onclick="startAssessment('gad7')">
+                    <div class="assessment-icon">😰</div>
+                    <div class="assessment-title">GAD-7 (Anxiety)</div>
+                    <div class="assessment-description">Screens for generalized anxiety disorder and measures severity
+                    </div>
+                </div>
+
+                <div class="assessment-card" onclick="startAssessment('phq9')">
+                    <div class="assessment-icon">💙</div>
+                    <div class="assessment-title">PHQ-9 (Depression)</div>
+                    <div class="assessment-description">Screens for major depression and measures symptom severity</div>
+                </div>
+
+                <div class="assessment-card" onclick="startAssessment('burnout')">
+                    <div class="assessment-icon">🔥</div>
+                    <div class="assessment-title">Burnout Assessment</div>
+                    <div class="assessment-description">Evaluates emotional exhaustion and professional burnout levels
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Container (Hidden by default) -->
+        <div class="card quiz-container" id="quizContainer">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                <h2 id="quizTitle">Assessment</h2>
+                <button class="btn-secondary" onclick="returnToSelection()"
+                    style="width: auto; padding: 10px 20px; border-radius: 10px; border: none; cursor: pointer; font-weight: 600; color: white;">Cancel</button>
+            </div>
+
+            <div class="progress-indicator" id="progressIndicator">Question 1 of 10</div>
+
+            <div id="questionsContainer"></div>
+
+            <button class="btn" id="submitBtn" onclick="calculateResults()" disabled>Submit Assessment</button>
+        </div>
+
+        <!-- Results Container (Hidden by default) -->
+        <div class="card results-container" id="resultsContainer">
+            <h2 id="resultsTitle">Your Results</h2>
+
+            <div class="score-display">
+                <div class="score-number" id="scoreNumber">0</div>
+                <div class="score-label" id="scoreLevel">-</div>
+                <div class="score-interpretation" id="scoreInterpretation">-</div>
+            </div>
+
+            <div class="recommendations" id="recommendations"></div>
+
+            <div class="chart-container" id="chartContainer" style="display: none;">
+                <h3>Your Assessment History</h3>
+                <canvas id="historyChart"></canvas>
+                <div class="history-grid" id="historyGrid"></div>
+            </div>
+
+            <button class="btn" onclick="returnToSelection()">Take Another Assessment</button>
+        </div>
+    </div>
+
+    <script>
+        let currentAssessment = null;
+        let answers = {};
+        let assessmentHistory = JSON.parse(localStorage.getItem('assessmentHistory')) || {};
+
+        const assessments = {
+            pss10: {
+                title: "Perceived Stress Scale (PSS-10)",
+                questions: [
+                    "In the last month, how often have you been upset because of something that happened unexpectedly?",
+                    "In the last month, how often have you felt that you were unable to control the important things in your life?",
+                    "In the last month, how often have you felt nervous and stressed?",
+                    "In the last month, how often have you felt confident about your ability to handle your personal problems?",
+                    "In the last month, how often have you felt that things were going your way?",
+                    "In the last month, how often have you found that you could not cope with all the things that you had to do?",
+                    "In the last month, how often have you been able to control irritations in your life?",
+                    "In the last month, how often have you felt that you were on top of things?",
+                    "In the last month, how often have you been angered because of things that were outside of your control?",
+                    "In the last month, how often have you felt difficulties were piling up so high that you could not overcome them?"
+                ],
+                options: [
+                    { text: "Never", value: 0 },
+                    { text: "Almost Never", value: 1 },
+                    { text: "Sometimes", value: 2 },
+                    { text: "Fairly Often", value: 3 },
+                    { text: "Very Often", value: 4 }
+                ],
+                reverseScored: [3, 4, 6, 7],
+                interpretations: {
+                    low: { max: 13, label: "Low Stress", color: "#28a745", message: "Your stress levels are relatively low. You're managing well!" },
+                    moderate: { max: 26, label: "Moderate Stress", color: "#ffc107", message: "You're experiencing moderate stress. Consider stress management techniques." },
+                    high: { max: 40, label: "High Stress", color: "#dc3545", message: "Your stress levels are high. It's important to seek support and implement coping strategies." }
+                }
+            },
+            gad7: {
+                title: "Generalized Anxiety Disorder (GAD-7)",
+                questions: [
+                    "Feeling nervous, anxious, or on edge",
+                    "Not being able to stop or control worrying",
+                    "Worrying too much about different things",
+                    "Trouble relaxing",
+                    "Being so restless that it's hard to sit still",
+                    "Becoming easily annoyed or irritable",
+                    "Feeling afraid as if something awful might happen"
+                ],
+                options: [
+                    { text: "Not at all", value: 0 },
+                    { text: "Several days", value: 1 },
+                    { text: "More than half the days", value: 2 },
+                    { text: "Nearly every day", value: 3 }
+                ],
+                reverseScored: [],
+                interpretations: {
+                    minimal: { max: 4, label: "Minimal Anxiety", color: "#28a745", message: "Your anxiety levels are minimal." },
+                    mild: { max: 9, label: "Mild Anxiety", color: "#17a2b8", message: "You have mild anxiety symptoms." },
+                    moderate: { max: 14, label: "Moderate Anxiety", color: "#ffc107", message: "You have moderate anxiety. Consider talking to a mental health professional." },
+                    severe: { max: 21, label: "Severe Anxiety", color: "#dc3545", message: "You have severe anxiety. It's important to seek professional help." }
+                }
+            },
+            phq9: {
+                title: "Patient Health Questionnaire (PHQ-9)",
+                questions: [
+                    "Little interest or pleasure in doing things",
+                    "Feeling down, depressed, or hopeless",
+                    "Trouble falling or staying asleep, or sleeping too much",
+                    "Feeling tired or having little energy",
+                    "Poor appetite or overeating",
+                    "Feeling bad about yourself or that you are a failure or have let yourself or your family down",
+                    "Trouble concentrating on things, such as reading the newspaper or watching television",
+                    "Moving or speaking so slowly that other people could have noticed, or being so fidgety or restless that you have been moving around a lot more than usual",
+                    "Thoughts that you would be better off dead, or thoughts of hurting yourself in some way"
+                ],
+                options: [
+                    { text: "Not at all", value: 0 },
+                    { text: "Several days", value: 1 },
+                    { text: "More than half the days", value: 2 },
+                    { text: "Nearly every day", value: 3 }
+                ],
+                reverseScored: [],
+                interpretations: {
+                    minimal: { max: 4, label: "Minimal Depression", color: "#28a745", message: "Your depression symptoms are minimal." },
+                    mild: { max: 9, label: "Mild Depression", color: "#17a2b8", message: "You have mild depression symptoms. Monitor and consider support." },
+                    moderate: { max: 14, label: "Moderate Depression", color: "#ffc107", message: "You have moderate depression. Professional treatment may be beneficial." },
+                    moderate_severe: { max: 19, label: "Moderately Severe Depression", color: "#fd7e14", message: "Your depression is moderately severe. Treatment is recommended." },
+                    severe: { max: 27, label: "Severe Depression", color: "#dc3545", message: "You have severe depression. It's crucial to seek professional help immediately." }
+                }
+            },
+            burnout: {
+                title: "Burnout Assessment",
+                questions: [
+                    "I feel emotionally drained from my work/studies",
+                    "I feel used up at the end of the workday/school day",
+                    "I feel tired when I get up in the morning and have to face another day",
+                    "Working with people all day is really a strain for me",
+                    "I feel burned out from my work/studies",
+                    "I have become less interested in my work/studies since I started",
+                    "I have become less enthusiastic about my work/studies",
+                    "I doubt the significance of my work/studies",
+                    "I can effectively solve the problems that arise in my work/studies",
+                    "I feel I'm making an effective contribution to what this organization does"
+                ],
+                options: [
+                    { text: "Never", value: 0 },
+                    { text: "Rarely", value: 1 },
+                    { text: "Sometimes", value: 2 },
+                    { text: "Often", value: 3 },
+                    { text: "Always", value: 4 }
+                ],
+                reverseScored: [8, 9],
+                interpretations: {
+                    low: { max: 13, label: "Low Burnout", color: "#28a745", message: "You're managing well with minimal burnout." },
+                    moderate: { max: 26, label: "Moderate Burnout", color: "#ffc107", message: "You're experiencing moderate burnout. Consider work-life balance strategies." },
+                    high: { max: 40, label: "High Burnout", color: "#dc3545", message: "You have high burnout. It's important to make changes and seek support." }
+                }
+            }
+        };
+
+        function startAssessment(type) {
+            currentAssessment = type;
+            answers = {};
+
+            document.getElementById('selectionScreen').style.display = 'none';
+            document.getElementById('quizContainer').classList.add('active');
+            document.getElementById('quizTitle').textContent = assessments[type].title;
+
+            renderQuestions();
+        }
+
+        function renderQuestions() {
+            const container = document.getElementById('questionsContainer');
+            const assessment = assessments[currentAssessment];
+
+            container.innerHTML = assessment.questions.map((question, index) => `
+                <div class="question">
+                    <div class="question-text">${index + 1}. ${question}</div>
+                    <div class="options">
+                        ${assessment.options.map((option, optIndex) => `
+                            <div class="option" onclick="selectOption(${index}, ${option.value})">
+                                ${option.text}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+
+            updateProgress();
+        }
+
+        function selectOption(questionIndex, value) {
+            answers[questionIndex] = value;
+
+            // Update UI
+            const questionDiv = document.querySelectorAll('.question')[questionIndex];
+            questionDiv.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+            event.target.classList.add('selected');
+
+            updateProgress();
+            checkComplete();
+        }
+
+        function updateProgress() {
+            const total = assessments[currentAssessment].questions.length;
+            const answered = Object.keys(answers).length;
+            document.getElementById('progressIndicator').textContent = `Question ${answered} of ${total} answered`;
+        }
+
+        function checkComplete() {
+            const total = assessments[currentAssessment].questions.length;
+            const answered = Object.keys(answers).length;
+            document.getElementById('submitBtn').disabled = answered < total;
+        }
+
+        function calculateResults() {
+            const assessment = assessments[currentAssessment];
+            let score = 0;
+
+            // Calculate score with reverse scoring
+            Object.keys(answers).forEach(key => {
+                const questionIndex = parseInt(key);
+                let value = answers[key];
+
+                if (assessment.reverseScored.includes(questionIndex)) {
+                    const maxValue = Math.max(...assessment.options.map(o => o.value));
+                    value = maxValue - value;
+                }
+
+                score += value;
+            });
+
+            // Find interpretation
+            let interpretation = null;
+            for (const [key, value] of Object.entries(assessment.interpretations)) {
+                if (score <= value.max) {
+                    interpretation = value;
+                    break;
+                }
+            }
+
+            // Save to history
+            if (!assessmentHistory[currentAssessment]) {
+                assessmentHistory[currentAssessment] = [];
+            }
+            assessmentHistory[currentAssessment].push({
+                date: new Date().toISOString(),
+                score: score,
+                level: interpretation.label
+            });
+            localStorage.setItem('assessmentHistory', JSON.stringify(assessmentHistory));
+
+            // Display results
+            showResults(score, interpretation);
+        }
+
+        function showResults(score, interpretation) {
+            document.getElementById('quizContainer').classList.remove('active');
+            document.getElementById('resultsContainer').classList.add('active');
+            document.getElementById('resultsTitle').textContent = assessments[currentAssessment].title + " Results";
+
+            document.getElementById('scoreNumber').textContent = score;
+            document.getElementById('scoreNumber').style.color = interpretation.color;
+            document.getElementById('scoreLevel').textContent = interpretation.label;
+            document.getElementById('scoreInterpretation').textContent = interpretation.message;
+
+            // Recommendations
+            const recommendationsHTML = `
+                <h3>💡 Recommendations</h3>
+                <ul>
+                    <li>Practice daily relaxation techniques like meditation or deep breathing</li>
+                    <li>Engage in regular physical exercise (30 minutes, 3-5 times per week)</li>
+                    <li>Maintain a consistent sleep schedule</li>
+                    <li>Connect with friends, family, or support groups</li>
+                    <li>Consider journaling to process your thoughts and emotions</li>
+                    ${score > (assessments[currentAssessment].questions.length * 2) ? '<li><strong>Consider consulting with a mental health professional</strong></li>' : ''}
+                </ul>
+            `;
+            document.getElementById('recommendations').innerHTML = recommendationsHTML;
+
+            // Show history if available
+            if (assessmentHistory[currentAssessment] && assessmentHistory[currentAssessment].length > 1) {
+                document.getElementById('chartContainer').style.display = 'block';
+                renderHistoryChart();
+                renderHistoryList();
+            }
+        }
+
+        function renderHistoryChart() {
+            const history = assessmentHistory[currentAssessment];
+            const ctx = document.getElementById('historyChart');
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: history.map(h => new Date(h.date).toLocaleDateString()),
+                    datasets: [{
+                        label: 'Score',
+                        data: history.map(h => h.score),
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        function renderHistoryList() {
+            const history = assessmentHistory[currentAssessment];
+            const container = document.getElementById('historyGrid');
+
+            container.innerHTML = history.slice().reverse().map(item => `
+                <div class="history-item">
+                    <div>
+                        <div class="history-date">${new Date(item.date).toLocaleDateString()}</div>
+                        <div class="history-level">${item.level}</div>
+                    </div>
+                    <div class="history-score">${item.score}</div>
+                </div>
+            `).join('');
+        }
+
+        function returnToSelection() {
+            document.getElementById('quizContainer').classList.remove('active');
+            document.getElementById('resultsContainer').classList.remove('active');
+            document.getElementById('selectionScreen').style.display = 'block';
+            currentAssessment = null;
+            answers = {};
+        }
+    </script>
+</body>
+
+</html>

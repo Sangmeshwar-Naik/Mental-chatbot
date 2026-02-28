@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cognitive Games - Mental Health Support</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.2);
+            -webkit-backdrop-filter:backdrop-filter:
+            backdrop-filter: blur(10px);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .games-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            padding: 20px;
+        }
+
+        .game-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .game-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .game-card h3 {
+            font-size: 22px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .game-card p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .game-card .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .games-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <a href="/chat" class="back-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+        Back to Chat
+    </a>
+
+    <div class="header">
+        <h1>🎮 Cognitive Games</h1>
+        <p>Engage your mind with therapeutic games designed for mental wellness</p>
+    </div>
+
+    <div class="games-grid">
+        <div class="game-card" onclick="location.href='games/chess.html'">
+            <div class="game-icon">♟️</div>
+            <h3>Chess</h3>
+            <p>Improve concentration and strategic thinking with AI opponents</p>
+            <span class="badge">3 Difficulty Levels</span>
+        </div>
+
+        <div class="game-card" onclick="location.href='games/memory-match.html'">
+            <div class="game-icon">🎴</div>
+            <h3>Memory Match</h3>
+            <p>Enhance memory with card matching games</p>
+            <span class="badge">Progressive Difficulty</span>
+        </div>
+
+        <div class="game-card" onclick="location.href='games/bubble-shooter.html'">
+            <div class="game-icon">🎯</div>
+            <h3>Bubble Shooter</h3>
+            <p>Colorful stress-relief bubble popping game</p>
+            <span class="badge">Endless Levels</span>
+        </div>
+
+        <div class="game-card" onclick="location.href='games/block-blast.html'">
+            <div class="game-icon">🧩</div>
+            <h3>Block Blast Puzzle</h3>
+            <p>Spatial reasoning and focus improvement</p>
+            <span class="badge">Challenge Mode</span>
+        </div>
+
+        <div class="game-card" onclick="location.href='games/reaction-time.html'">
+            <div class="game-icon">⚡</div>
+            <h3>Reaction Time</h3>
+            <p>Test and improve your focus and attention</p>
+            <span class="badge">Leaderboard</span>
+        </div>
+
+        <div class="game-card" onclick="location.href='games/color-therapy.html'">
+            <div class="game-icon">🎨</div>
+            <h3>Color Therapy</h3>
+            <p>Calming drawing kit with color matching exercises</p>
+            <span class="badge">Drawing Tools</span>
+        </div>
+
+        <div class="game-card" onclick="location.href='features/mind-games.html'">
+            <div class="game-icon">🧠</div>
+            <h3>Mind Games</h3>
+            <p>Story-based cognitive assessment to discover your thinking style</p>
+            <span class="badge">Personality Analysis</span>
+        </div>
+    </div>
+</body>
+
+</html>

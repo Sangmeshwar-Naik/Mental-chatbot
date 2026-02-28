@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Self-Care Planner</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.2);
+            -webkit-backdrop-filter:backdrop-filter:
+            backdrop-filter: blur(10px);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 100;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .card h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .category-card {
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .category-card.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea10, #764ba210);
+        }
+
+        .category-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .category-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .activity-grid {
+            display: grid;
+            gap: 15px;
+        }
+
+        .activity-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .activity-item.completed {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .streak-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background: #ffc107;
+            color: #333;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="../mental-health-tools.html" class="back-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+        Back
+    </a>
+    <div class="container">
+        <div class="header">
+            <h1>🌟 Self-Care Planner</h1>
+            <p style="font-size: 18px; opacity: 0.9;">Schedule and track personalized self-care activities</p>
+        </div>
+
+        <div class="card">
+            <h2>Choose Self-Care Category</h2>
+            <div class="category-grid">
+                <div class="category-card" onclick="selectCategory('physical')">
+                    <div class="category-icon">💪</div>
+                    <div class="category-name">Physical</div>
+                </div>
+                <div class="category-card" onclick="selectCategory('emotional')">
+                    <div class="category-icon">❤️</div>
+                    <div class="category-name">Emotional</div>
+                </div>
+                <div class="category-card" onclick="selectCategory('social')">
+                    <div class="category-icon">👥</div>
+                    <div class="category-name">Social</div>
+                </div>
+                <div class="category-card" onclick="selectCategory('spiritual')">
+                    <div class="category-icon">🙏</div>
+                    <div class="category-name">Spiritual</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Add Self-Care Activity</h2>
+            <div class="form-group">
+                <label>Activity</label>
+                <input type="text" id="activity-name" placeholder="e.g., 30-minute walk, Call a friend">
+            </div>
+            <div class="form-group">
+                <label>Category</label>
+                <select id="activity-category">
+                    <option value="physical">💪 Physical</option>
+                    <option value="emotional">❤️ Emotional</option>
+                    <option value="social">👥 Social</option>
+                    <option value="spiritual">🙏 Spiritual</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Scheduled Time</label>
+                <input type="datetime-local" id="activity-time">
+            </div>
+            <button class="btn" onclick="addActivity()">➕ Add Activity</button>
+        </div>
+
+        <div class="card">
+            <h2>Today's Self-Care</h2>
+            <div class="streak-badge">🔥 Current Streak: <span id="streak-count">0</span> days</div>
+            <div class="activity-grid" id="activities-list" style="margin-top: 20px;">
+                <p style="text-align:center;color:#999;padding:2rem;">No activities scheduled yet</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>💡 Self-Care Suggestions</h2>
+            <div class="activity-grid">
+                <div class="activity-item">
+                    <span>💪 Take a 15-minute walk</span>
+                    <button onclick="quickAdd('Take a 15-minute walk', 'physical')"
+                        style="padding:8px 16px;background:#667eea;color:white;border:none;border-radius:8px;cursor:pointer;">Quick
+                        Add</button>
+                </div>
+                <div class="activity-item">
+                    <span>📖 Read for 20 minutes</span>
+                    <button onclick="quickAdd('Read for 20 minutes', 'emotional')"
+                        style="padding:8px 16px;background:#667eea;color:white;border:none;border-radius:8px;cursor:pointer;">Quick
+                        Add</button>
+                </div>
+                <div class="activity-item">
+                    <span>🧘 Practice meditation</span>
+                    <button onclick="quickAdd('Practice meditation', 'spiritual')"
+                        style="padding:8px 16px;background:#667eea;color:white;border:none;border-radius:8px;cursor:pointer;">Quick
+                        Add</button>
+                </div>
+                <div class="activity-item">
+                    <span>☎️ Call a loved one</span>
+                    <button onclick="quickAdd('Call a loved one', 'social')"
+                        style="padding:8px 16px;background:#667eea;color:white;border:none;border-radius:8px;cursor:pointer;">Quick
+                        Add</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selfCareData = JSON.parse(localStorage.getItem('selfCareData')) || { activities: [], streak: 0 };
+
+        function selectCategory(category) {
+            document.querySelectorAll('.category-card').forEach(c => c.classList.remove('selected'));
+            event.target.closest('.category-card').classList.add('selected');
+            document.getElementById('activity-category').value = category;
+        }
+
+        function addActivity() {
+            const activity = {
+                id: Date.now(),
+                name: document.getElementById('activity-name').value,
+                category: document.getElementById('activity-category').value,
+                time: document.getElementById('activity-time').value,
+                completed: false,
+                date: new Date().toISOString()
+            };
+
+            if (!activity.name) {
+                alert('Please enter an activity name');
+                return;
+            }
+
+            selfCareData.activities.unshift(activity);
+            localStorage.setItem('selfCareData', JSON.stringify(selfCareData));
+            document.getElementById('activity-name').value = '';
+            displayActivities();
+            alert('✅ Activity added!');
+        }
+
+        function quickAdd(name, category) {
+            const activity = {
+                id: Date.now(),
+                name: name,
+                category: category,
+                time: new Date().toISOString(),
+                completed: false,
+                date: new Date().toISOString()
+            };
+
+            selfCareData.activities.unshift(activity);
+            localStorage.setItem('selfCareData', JSON.stringify(selfCareData));
+            displayActivities();
+            alert('✅ Activity added!');
+        }
+
+        function toggleComplete(id) {
+            const activity = selfCareData.activities.find(a => a.id === id);
+            if (activity) {
+                activity.completed = !activity.completed;
+                localStorage.setItem('selfCareData', JSON.stringify(selfCareData));
+                displayActivities();
+                if (activity.completed) updateStreak();
+            }
+        }
+
+        function deleteActivity(id) {
+            if (confirm('Delete this activity?')) {
+                selfCareData.activities = selfCareData.activities.filter(a => a.id !== id);
+                localStorage.setItem('selfCareData', JSON.stringify(selfCareData));
+                displayActivities();
+            }
+        }
+
+        function displayActivities() {
+            const list = document.getElementById('activities-list');
+            if (selfCareData.activities.length === 0) {
+                list.innerHTML = '<p style="text-align:center;color:#999;padding:2rem;">No activities scheduled yet</p>';
+                return;
+            }
+
+            const categoryIcons = { physical: '💪', emotional: '❤️', social: '👥', spiritual: '🙏' };
+            list.innerHTML = selfCareData.activities.map(a => `
+                <div class="activity-item ${a.completed ? 'completed' : ''}">
+                    <div>
+                        <strong>${categoryIcons[a.category]} ${a.name}</strong><br>
+                        <small>${new Date(a.time).toLocaleString()}</small>
+                    </div>
+                    <div style="display:flex;gap:10px;">
+                        <button onclick="toggleComplete(${a.id})" style="padding:8px 16px;background:${a.completed ? '#28a745' : '#667eea'};color:white;border:none;border-radius:8px;cursor:pointer;">
+                            ${a.completed ? '✓ Done' : 'Mark Done'}
+                        </button>
+                        <button onclick="deleteActivity(${a.id})" style="padding:8px 16px;background:#dc3545;color:white;border:none;border-radius:8px;cursor:pointer;">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateStreak() {
+            selfCareData.streak = (selfCareData.streak || 0) + 1;
+            localStorage.setItem('selfCareData', JSON.stringify(selfCareData));
+            document.getElementById('streak-count').textContent = selfCareData.streak;
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            displayActivities();
+            document.getElementById('streak-count').textContent = selfCareData.streak || 0;
+        });
+    </script>
+</body>
+
+</html>

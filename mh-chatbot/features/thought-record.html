@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thought Record</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.2);
+            -webkit-backdrop-filter:backdrop-filter:
+            backdrop-filter: blur(10px);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 100;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .card h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            margin-top: 10px;
+        }
+
+        .thought-item {
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            border-left: 5px solid #667eea;
+        }
+
+        .thought-date {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .thought-content {
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .thought-content strong {
+            color: #667eea;
+        }
+
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+
+        .delete-btn:hover {
+            background: #c82333;
+        }
+
+        .ai-suggestion {
+            padding: 20px;
+            background: #e7f3ff;
+            border-radius: 15px;
+            border-left: 5px solid #0066cc;
+            margin: 20px 0;
+        }
+
+        .ai-suggestion h3 {
+            color: #0066cc;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="../mental-health-tools.html" class="back-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+        Back
+    </a>
+    <div class="container">
+        <div class="header">
+            <h1>💭 Thought Record</h1>
+            <p style="font-size: 18px; opacity: 0.9;">Challenge negative thoughts with structured cognitive techniques
+            </p>
+        </div>
+
+        <div class="card">
+            <h2>Record Your Thought</h2>
+            <p style="color: #666; margin-bottom: 20px;">Use the STEB method: Situation, Thought, Emotion, Behavior</p>
+
+            <div class="form-group">
+                <label>Situation (What happened?)</label>
+                <textarea id="situation" placeholder="Describe the situation that triggered your thought..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Thought (What went through your mind?)</label>
+                <textarea id="thought" placeholder="What automatic thought did you have?"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Emotion (How did you feel?)</label>
+                <input type="text" id="emotion" placeholder="e.g., Anxious, Sad, Angry, Frustrated">
+            </div>
+
+            <div class="form-group">
+                <label>Emotion Intensity (0-100%)</label>
+                <input type="range" id="intensity" min="0" max="100" value="50">
+                <div style="text-align: center; font-weight: 600; color: #667eea; margin-top: 5px;"><span
+                        id="intensity-value">50</span>%</div>
+            </div>
+
+            <div class="form-group">
+                <label>Behavior (What did you do?)</label>
+                <textarea id="behavior" placeholder="How did you react or behave?"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Evidence For (What supports this thought?)</label>
+                <textarea id="evidence-for" placeholder="List facts that support your thought..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Evidence Against (What contradicts this thought?)</label>
+                <textarea id="evidence-against" placeholder="List facts that contradict your thought..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Alternative Perspective (More balanced thought)</label>
+                <textarea id="alternative" placeholder="What's a more balanced way to think about this?"></textarea>
+            </div>
+
+            <button class="btn" onclick="saveThought()">💾 Save Thought Record</button>
+            <button class="btn btn-secondary" onclick="generateAISuggestion()">✨ Get AI Suggestion</button>
+
+            <div id="ai-suggestion" style="display: none;" class="ai-suggestion">
+                <h3>💡 AI-Generated Alternative Perspective</h3>
+                <p id="ai-text"></p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📚 Your Thought Records</h2>
+            <div id="thoughts-list"></div>
+        </div>
+    </div>
+
+    <script>
+        let thoughtData = JSON.parse(localStorage.getItem('thoughtRecords')) || [];
+
+        document.getElementById('intensity').addEventListener('input', (e) => {
+            document.getElementById('intensity-value').textContent = e.target.value;
+        });
+
+        function saveThought() {
+            const record = {
+                id: Date.now(),
+                date: new Date().toISOString(),
+                situation: document.getElementById('situation').value,
+                thought: document.getElementById('thought').value,
+                emotion: document.getElementById('emotion').value,
+                intensity: document.getElementById('intensity').value,
+                behavior: document.getElementById('behavior').value,
+                evidenceFor: document.getElementById('evidence-for').value,
+                evidenceAgainst: document.getElementById('evidence-against').value,
+                alternative: document.getElementById('alternative').value
+            };
+
+            if (!record.situation || !record.thought) {
+                alert('Please fill in at least the situation and thought fields');
+                return;
+            }
+
+            thoughtData.unshift(record);
+            localStorage.setItem('thoughtRecords', JSON.stringify(thoughtData));
+            clearForm();
+            displayThoughts();
+            alert('✅ Thought record saved!');
+        }
+
+        function clearForm() {
+            document.getElementById('situation').value = '';
+            document.getElementById('thought').value = '';
+            document.getElementById('emotion').value = '';
+            document.getElementById('intensity').value = '50';
+            document.getElementById('behavior').value = '';
+            document.getElementById('evidence-for').value = '';
+            document.getElementById('evidence-against').value = '';
+            document.getElementById('alternative').value = '';
+            document.getElementById('ai-suggestion').style.display = 'none';
+        }
+
+        function displayThoughts() {
+            const list = document.getElementById('thoughts-list');
+            if (thoughtData.length === 0) {
+                list.innerHTML = '<p style="text-align:center;color:#999;padding:2rem;">No thought records yet</p>';
+                return;
+            }
+
+            list.innerHTML = thoughtData.map(t => `
+                <div class="thought-item">
+                    <div class="thought-date">${new Date(t.date).toLocaleString()}</div>
+                    <div class="thought-content">
+                        <strong>Situation:</strong> ${t.situation}<br>
+                        <strong>Thought:</strong> ${t.thought}<br>
+                        <strong>Emotion:</strong> ${t.emotion} (${t.intensity}%)<br>
+                        ${t.alternative ? `<strong>Alternative:</strong> ${t.alternative}` : ''}
+                    </div>
+                    <button class="delete-btn" onclick="deleteThought(${t.id})">Delete</button>
+                </div>
+            `).join('');
+        }
+
+        function deleteThought(id) {
+            if (confirm('Delete this thought record?')) {
+                thoughtData = thoughtData.filter(t => t.id !== id);
+                localStorage.setItem('thoughtRecords', JSON.stringify(thoughtData));
+                displayThoughts();
+            }
+        }
+
+        function generateAISuggestion() {
+            const thought = document.getElementById('thought').value;
+            if (!thought) {
+                alert('Please enter a thought first');
+                return;
+            }
+
+            // Simulate AI suggestion (in real app, call Gemini API)
+            const suggestions = [
+                "Consider that this thought might be based on assumptions rather than facts. What evidence do you have?",
+                "Try reframing this thought in a more balanced way. What would you tell a friend in this situation?",
+                "This sounds like all-or-nothing thinking. Are there shades of gray you're not considering?",
+                "Remember that feelings are not facts. Just because you feel this way doesn't mean it's true.",
+                "What's the worst that could happen? And if it did, how would you cope?"
+            ];
+
+            const suggestion = suggestions[Math.floor(Math.random() * suggestions.length)];
+            document.getElementById('ai-text').textContent = suggestion;
+            document.getElementById('ai-suggestion').style.display = 'block';
+        }
+
+        document.addEventListener('DOMContentLoaded', displayThoughts);
+    </script>
+</body>
+
+</html>

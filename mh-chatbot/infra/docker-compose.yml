@@ -1,0 +1,231 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: mh-postgres
+    environment:
+      POSTGRES_DB: mental_health_db
+      POSTGRES_USER: mh_user
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-changeme123}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mh_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - mh-network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: mh-redis
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - mh-network
+
+  # Flask Backend API
+  backend:
+    build:
+      context: ../backend-flask
+      dockerfile: Dockerfile
+    container_name: mh-backend
+    environment:
+      FLASK_ENV: ${FLASK_ENV:-development}
+      SECRET_KEY: ${SECRET_KEY:-dev-secret-key-change-in-production}
+      DATABASE_URL: postgresql://mh_user:${DB_PASSWORD:-changeme123}@postgres:5432/mental_health_db
+      REDIS_URL: redis://redis:6379/0
+      AI_PROVIDER: ${AI_PROVIDER:-gemini}
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      GROQ_API_KEY: ${GROQ_API_KEY}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-jwt-secret-change-me}
+      SMTP_SERVER: ${SMTP_SERVER}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USERNAME: ${SMTP_USERNAME}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+    volumes:
+      - ../backend-flask:/app
+      - backend_uploads:/app/uploads
+    ports:
+      - "5000:5000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: python app.py
+    networks:
+      - mh-network
+    restart: unless-stopped
+
+  # Celery Worker for Background Tasks
+  celery-worker:
+    build:
+      context: ../backend-flask
+      dockerfile: Dockerfile
+    container_name: mh-celery-worker
+    environment:
+      FLASK_ENV: ${FLASK_ENV:-development}
+      DATABASE_URL: postgresql://mh_user:${DB_PASSWORD:-changeme123}@postgres:5432/mental_health_db
+      REDIS_URL: redis://redis:6379/0
+      AI_PROVIDER: ${AI_PROVIDER:-gemini}
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      SMTP_SERVER: ${SMTP_SERVER}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USERNAME: ${SMTP_USERNAME}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+    volumes:
+      - ../backend-flask:/app
+    depends_on:
+      - redis
+      - postgres
+    command: celery -A backend.tasks.celery_app worker --loglevel=info
+    networks:
+      - mh-network
+    restart: unless-stopped
+
+  # Celery Beat for Scheduled Tasks
+  celery-beat:
+    build:
+      context: ../backend-flask
+      dockerfile: Dockerfile
+    container_name: mh-celery-beat
+    environment:
+      FLASK_ENV: ${FLASK_ENV:-development}
+      REDIS_URL: redis://redis:6379/0
+    volumes:
+      - ../backend-flask:/app
+    depends_on:
+      - redis
+    command: celery -A backend.tasks.celery_app beat --loglevel=info
+    networks:
+      - mh-network
+    restart: unless-stopped
+
+  # Node.js Real-time Service (Socket.IO)
+  realtime:
+    build:
+      context: ../node-services/realtime
+      dockerfile: Dockerfile
+    container_name: mh-realtime
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      REDIS_URL: redis://redis:6379/0
+      JWT_SECRET: ${JWT_SECRET_KEY:-jwt-secret-change-me}
+      BACKEND_URL: http://backend:5000
+    volumes:
+      - ../node-services/realtime:/app
+      - /app/node_modules
+    ports:
+      - "3001:3001"
+    depends_on:
+      - redis
+    networks:
+      - mh-network
+    restart: unless-stopped
+
+  # Node.js i18n Translation Service
+  i18n:
+    build:
+      context: ../node-services/i18n
+      dockerfile: Dockerfile
+    container_name: mh-i18n
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      GOOGLE_TRANSLATE_API_KEY: ${GOOGLE_TRANSLATE_API_KEY}
+    volumes:
+      - ../node-services/i18n:/app
+      - /app/node_modules
+    ports:
+      - "3002:3002"
+    networks:
+      - mh-network
+    restart: unless-stopped
+
+  # Node.js STT/TTS Service
+  stt-tts:
+    build:
+      context: ../node-services/stt_tts
+      dockerfile: Dockerfile
+    container_name: mh-stt-tts
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      DEEPGRAM_API_KEY: ${DEEPGRAM_API_KEY}
+    volumes:
+      - ../node-services/stt_tts:/app
+      - /app/node_modules
+    ports:
+      - "3003:3003"
+    networks:
+      - mh-network
+    restart: unless-stopped
+
+  # React Frontend
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+      target: development
+    container_name: mh-frontend
+    environment:
+      REACT_APP_API_URL: http://localhost:5000/api
+      REACT_APP_SOCKET_URL: http://localhost:3001
+    volumes:
+      - ../frontend:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+      - realtime
+    networks:
+      - mh-network
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+
+  # Nginx Reverse Proxy
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: mh-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - nginx_logs:/var/log/nginx
+    depends_on:
+      - backend
+      - frontend
+      - realtime
+    networks:
+      - mh-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
+  backend_uploads:
+  nginx_logs:
+
+networks:
+  mh-network:
+    driver: bridge

@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breathing Exercises</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background-attachment: fixed;
+            padding: 2rem;
+        }
+
+        .feature-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .feature-header {
+            background: rgba(255, 255, 255, 0.95);
+            -webkit-backdrop-filter:backdrop-filter:
+            backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .feature-header h1 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .breathing-card {
+            background: rgba(255, 255, 255, 0.95);
+            -webkit-backdrop-filter:backdrop-filter:
+            backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            padding: 3rem 2rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .bubble-container {
+            width: 300px;
+            height: 300px;
+            margin: 2rem auto;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .breathing-bubble {
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border-radius: 50%;
+            box-shadow: 0 20px 40px rgba(79, 172, 254, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .breathing-bubble.inhale {
+            animation: inhale 4s ease-in-out;
+        }
+
+        .breathing-bubble.hold {
+            animation: hold 7s ease-in-out;
+        }
+
+        .breathing-bubble.exhale {
+            animation: exhale 8s ease-in-out;
+        }
+
+        .breathing-bubble.box-inhale {
+            animation: boxInhale 4s ease-in-out;
+        }
+
+        .breathing-bubble.box-hold {
+            animation: boxHold 4s ease-in-out;
+        }
+
+        .breathing-bubble.box-exhale {
+            animation: boxExhale 4s ease-in-out;
+        }
+
+        .breathing-bubble.box-hold-2 {
+            animation: boxHold2 4s ease-in-out;
+        }
+
+        @keyframes inhale {
+            0% {
+                transform: scale(1);
+            }
+
+            100% {
+                transform: scale(2);
+            }
+        }
+
+        @keyframes hold {
+
+            0%,
+            100% {
+                transform: scale(2);
+            }
+        }
+
+        @keyframes exhale {
+            0% {
+                transform: scale(2);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes boxInhale {
+            0% {
+                transform: scale(1);
+            }
+
+            100% {
+                transform: scale(2);
+            }
+        }
+
+        @keyframes boxHold {
+
+            0%,
+            100% {
+                transform: scale(2);
+            }
+        }
+
+        @keyframes boxExhale {
+            0% {
+                transform: scale(2);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes boxHold2 {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .instruction-text {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-purple);
+            margin-top: 1.5rem;
+            min-height: 3rem;
+        }
+
+        .counter-text {
+            font-size: 4rem;
+            font-weight: 700;
+            color: var(--gray-800);
+            margin: 1rem 0;
+        }
+
+        .technique-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .technique-btn {
+            padding: 1rem;
+            background: var(--gray-100);
+            border: 2px solid transparent;
+            border-radius: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .technique-btn:hover {
+            background: var(--gray-200);
+        }
+
+        .technique-btn.active {
+            background: rgba(102, 126, 234, 0.1);
+            border-color: var(--primary-purple);
+        }
+
+        .technique-btn h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 0.25rem;
+        }
+
+        .technique-btn p {
+            font-size: 0.75rem;
+            color: var(--gray-600);
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .btn-primary,
+        .btn-secondary {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--gray-200);
+            color: var(--gray-700);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-300);
+        }
+
+        .stats-card {
+            background: var(--gray-50);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            margin-top: 2rem;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-purple);
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: 2rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.2s;
+            margin-bottom: 1rem;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="feature-container">
+        <a href="../index.html" class="back-btn">
+            <span>←</span> Back to Dashboard
+        </a>
+
+        <div class="feature-header">
+            <h1>🫁 Breathing Exercises</h1>
+            <p>Calm your mind and reduce anxiety with guided breathing</p>
+        </div>
+
+        <div class="breathing-card">
+            <div class="technique-selector">
+                <div class="technique-btn active" onclick="selectTechnique('478')">
+                    <h3>4-7-8 Breathing</h3>
+                    <p>Relaxation</p>
+                </div>
+                <div class="technique-btn" onclick="selectTechnique('box')">
+                    <h3>Box Breathing</h3>
+                    <p>Focus</p>
+                </div>
+                <div class="technique-btn" onclick="selectTechnique('calm')">
+                    <h3>Calm Breathing</h3>
+                    <p>Stress Relief</p>
+                </div>
+            </div>
+
+            <div class="bubble-container">
+                <div class="breathing-bubble" id="bubble"></div>
+            </div>
+
+            <div class="counter-text" id="counter">4</div>
+            <div class="instruction-text" id="instruction">Ready to begin</div>
+
+            <div class="control-buttons">
+                <button class="btn-primary" id="startBtn" onclick="startExercise()">Start Exercise</button>
+                <button class="btn-secondary" id="stopBtn" onclick="stopExercise()" style="display: none;">Stop</button>
+            </div>
+
+            <div class="stats-card">
+                <div class="stat-item">
+                    <div class="stat-value" id="sessions-today">0</div>
+                    <div class="stat-label">Sessions Today</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="total-sessions">0</div>
+                    <div class="stat-label">Total Sessions</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="minutes-practiced">0</div>
+                    <div class="stat-label">Minutes Practiced</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../utils/storage.js"></script>
+    <script>
+        let currentTechnique = '478';
+        let isRunning = false;
+        let currentCycle = 0;
+        let cycleInterval = null;
+        let audio = null;
+
+        const techniques = {
+            '478': {
+                name: '4-7-8 Breathing',
+                cycles: [
+                    { phase: 'inhale', duration: 4, text: 'Breathe In', class: 'inhale' },
+                    { phase: 'hold', duration: 7, text: 'Hold', class: 'hold' },
+                    { phase: 'exhale', duration: 8, text: 'Breathe Out', class: 'exhale' }
+                ]
+            },
+            'box': {
+                name: 'Box Breathing',
+                cycles: [
+                    { phase: 'inhale', duration: 4, text: 'Breathe In', class: 'box-inhale' },
+                    { phase: 'hold1', duration: 4, text: 'Hold', class: 'box-hold' },
+                    { phase: 'exhale', duration: 4, text: 'Breathe Out', class: 'box-exhale' },
+                    { phase: 'hold2', duration: 4, text: 'Hold', class: 'box-hold-2' }
+                ]
+            },
+            'calm': {
+                name: 'Calm Breathing',
+                cycles: [
+                    { phase: 'inhale', duration: 5, text: 'Breathe In Slowly', class: 'inhale' },
+                    { phase: 'exhale', duration: 5, text: 'Breathe Out Slowly', class: 'exhale' }
+                ]
+            }
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function () {
+            loadStats();
+        });
+
+        function selectTechnique(technique) {
+            if (isRunning) {
+                stopExercise();
+            }
+
+            currentTechnique = technique;
+
+            // Update UI
+            document.querySelectorAll('.technique-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.closest('.technique-btn').classList.add('active');
+
+            document.getElementById('instruction').textContent = 'Ready to begin';
+            document.getElementById('counter').textContent = techniques[technique].cycles[0].duration;
+        }
+
+        function startExercise() {
+            if (isRunning) return;
+
+            isRunning = true;
+            currentCycle = 0;
+
+            // Update UI
+            document.getElementById('startBtn').style.display = 'none';
+            document.getElementById('stopBtn').style.display = 'block';
+
+            // Start the breathing cycle
+            runCycle();
+        }
+
+        function runCycle() {
+            if (!isRunning) return;
+
+            const technique = techniques[currentTechnique];
+            const cycle = technique.cycles[currentCycle % technique.cycles.length];
+
+            const bubble = document.getElementById('bubble');
+            const counter = document.getElementById('counter');
+            const instruction = document.getElementById('instruction');
+
+            // Reset bubble classes
+            bubble.className = 'breathing-bubble';
+
+            // Add animation class
+            setTimeout(() => {
+                bubble.classList.add(cycle.class);
+            }, 50);
+
+            // Update instruction
+            instruction.textContent = cycle.text;
+
+            // Countdown
+            let timeLeft = cycle.duration;
+            counter.textContent = timeLeft;
+
+            const countdown = setInterval(() => {
+                timeLeft--;
+                counter.textContent = timeLeft;
+
+                if (timeLeft <= 0) {
+                    clearInterval(countdown);
+
+                    // Move to next cycle
+                    currentCycle++;
+
+                    // Check if we completed a full round
+                    if (currentCycle % technique.cycles.length === 0) {
+                        // Log a completed cycle
+                        logBreathingSession();
+                    }
+
+                    if (isRunning) {
+                        setTimeout(runCycle, 100);
+                    }
+                }
+            }, 1000);
+        }
+
+        function stopExercise() {
+            isRunning = false;
+
+            // Reset UI
+            document.getElementById('startBtn').style.display = 'block';
+            document.getElementById('stopBtn').style.display = 'none';
+            document.getElementById('instruction').textContent = 'Ready to begin';
+
+            const bubble = document.getElementById('bubble');
+            bubble.className = 'breathing-bubble';
+
+            const technique = techniques[currentTechnique];
+            document.getElementById('counter').textContent = technique.cycles[0].duration;
+        }
+
+        function logBreathingSession() {
+            const sessions = Storage.load('mh_breathing_sessions') || [];
+            const technique = techniques[currentTechnique];
+
+            // Calculate duration
+            const duration = technique.cycles.reduce((sum, cycle) => sum + cycle.duration, 0);
+
+            sessions.push({
+                timestamp: new Date().toISOString(),
+                technique: currentTechnique,
+                duration: duration / 60 // in minutes
+            });
+
+            Storage.save('mh_breathing_sessions', sessions);
+            Storage.incrementActivity();
+
+            loadStats();
+        }
+
+        function loadStats() {
+            const sessions = Storage.load('mh_breathing_sessions') || [];
+
+            // Today's sessions
+            const today = new Date().toDateString();
+            const todaySessions = sessions.filter(s =>
+                new Date(s.timestamp).toDateString() === today
+            );
+
+            document.getElementById('sessions-today').textContent = todaySessions.length;
+            document.getElementById('total-sessions').textContent = sessions.length;
+
+            // Total minutes
+            const totalMinutes = sessions.reduce((sum, s) => sum + (s.duration || 0), 0);
+            document.getElementById('minutes-practiced').textContent = Math.round(totalMinutes);
+        }
+    </script>
+</body>
+
+</html>

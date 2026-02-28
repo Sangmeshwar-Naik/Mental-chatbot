@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relaxation Scripts</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.2);
+            -webkit-backdrop-filter:backdrop-filter:
+            backdrop-filter: blur(10px);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 100;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .card h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .script-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .script-card {
+            padding: 25px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #667eea10, #764ba210);
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .script-card:hover {
+            border-color: #667eea;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .script-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .script-title {
+            font-weight: 700;
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .script-duration {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .script-content {
+            display: none;
+        }
+
+        .script-content.active {
+            display: block;
+        }
+
+        .script-text {
+            line-height: 2;
+            color: #333;
+            font-size: 16px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .control-panel {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .control-btn {
+            padding: 15px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .control-btn:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+        }
+
+        .control-btn.playing {
+            background: #28a745;
+        }
+
+        .timer-display {
+            text-align: center;
+            font-size: 48px;
+            font-weight: 700;
+            color: #667eea;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="../mental-health-tools.html" class="back-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+        Back
+    </a>
+    <div class="container">
+        <div class="header">
+            <h1>🎧 Relaxation Scripts</h1>
+            <p style="font-size: 18px; opacity: 0.9;">Guided visualization and progressive muscle relaxation exercises
+            </p>
+        </div>
+
+        <div class="card" id="script-selection">
+            <h2>Choose a Relaxation Exercise</h2>
+            <div class="script-grid">
+                <div class="script-card" onclick="openScript('visualization')">
+                    <div class="script-icon">🌅</div>
+                    <div class="script-title">Guided Visualization</div>
+                    <div class="script-duration">10 minutes</div>
+                </div>
+                <div class="script-card" onclick="openScript('pmr')">
+                    <div class="script-icon">💆</div>
+                    <div class="script-title">Progressive Muscle Relaxation</div>
+                    <div class="script-duration">15 minutes</div>
+                </div>
+                <div class="script-card" onclick="openScript('body-scan')">
+                    <div class="script-icon">🧘</div>
+                    <div class="script-title">Body Scan Meditation</div>
+                    <div class="script-duration">12 minutes</div>
+                </div>
+                <div class="script-card" onclick="openScript('autogenic')">
+                    <div class="script-icon">🌊</div>
+                    <div class="script-title">Autogenic Training</div>
+                    <div class="script-duration">8 minutes</div>
+                </div>
+                <div class="script-card" onclick="openScript('breathing')">
+                    <div class="script-icon">🫁</div>
+                    <div class="script-title">Deep Breathing Exercise</div>
+                    <div class="script-duration">5 minutes</div>
+                </div>
+                <div class="script-card" onclick="openScript('loving-kindness')">
+                    <div class="script-icon">💖</div>
+                    <div class="script-title">Loving-Kindness Meditation</div>
+                    <div class="script-duration">10 minutes</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card script-content" id="script-player">
+            <h2 id="script-title">Relaxation Exercise</h2>
+            <div class="timer-display" id="timer">00:00</div>
+            <div class="control-panel">
+                <button class="control-btn" id="play-btn" onclick="togglePlay()">▶️ Start</button>
+                <button class="control-btn" onclick="resetScript()">🔄 Reset</button>
+                <button class="control-btn" onclick="closeScript()">← Back</button>
+            </div>
+            <div class="script-text" id="script-text"></div>
+        </div>
+    </div>
+
+    <script>
+        const scripts = {
+            visualization: {
+                title: "Guided Visualization",
+                duration: 600,
+                text: `Find a comfortable position and close your eyes...
+
+Take a deep breath in... and slowly exhale...
+
+Imagine yourself in a peaceful place... perhaps a quiet beach, a serene forest, or a calm mountain meadow...
+
+Notice the details around you... the colors, the sounds, the gentle breeze...
+
+Feel the warmth of the sun on your skin... hear the soothing sounds of nature...
+
+With each breath, you feel more relaxed... more at peace...
+
+Let go of any tension in your body... release any worries from your mind...
+
+Stay in this peaceful place for as long as you need...
+
+When you're ready, slowly bring your awareness back to the present moment...
+
+Take a final deep breath... and gently open your eyes...`
+            },
+            pmr: {
+                title: "Progressive Muscle Relaxation",
+                duration: 900,
+                text: `Get comfortable and close your eyes...
+
+We'll tense and relax each muscle group, starting with your feet...
+
+Curl your toes tightly... hold for 5 seconds... and release...
+
+Notice the difference between tension and relaxation...
+
+Tighten your calf muscles... hold... and release...
+
+Tense your thighs... hold... and let go...
+
+Clench your fists... hold... and release...
+
+Tense your arms... hold... and relax...
+
+Raise your shoulders to your ears... hold... and drop them down...
+
+Scrunch your facial muscles... hold... and release...
+
+Feel the deep relaxation throughout your entire body...
+
+Take a few deep breaths and enjoy this peaceful state...`
+            },
+            'body-scan': {
+                title: "Body Scan Meditation",
+                duration: 720,
+                text: `Lie down comfortably and close your eyes...
+
+Bring your attention to your breath... breathing naturally...
+
+Now, bring awareness to your toes... notice any sensations...
+
+Slowly move your attention up to your feet... your ankles... your calves...
+
+Continue scanning up through your knees... thighs... hips...
+
+Notice your lower back... your abdomen... your chest...
+
+Bring awareness to your fingers... hands... arms... shoulders...
+
+Scan through your neck... jaw... face... and the top of your head...
+
+Notice your entire body as one connected whole...
+
+Take a few more breaths before slowly opening your eyes...`
+            },
+            autogenic: {
+                title: "Autogenic Training",
+                duration: 480,
+                text: `Close your eyes and take a deep breath...
+
+Repeat silently: "My arms are heavy and warm..."
+
+Feel the weight and warmth in your arms...
+
+"My legs are heavy and warm..."
+
+Feel the relaxation spreading through your legs...
+
+"My heartbeat is calm and regular..."
+
+"My breathing is slow and peaceful..."
+
+"My abdomen is warm and comfortable..."
+
+"My forehead is cool and relaxed..."
+
+Enjoy this state of deep relaxation...`
+            },
+            breathing: {
+                title: "Deep Breathing Exercise",
+                duration: 300,
+                text: `Sit comfortably with your back straight...
+
+Place one hand on your chest and one on your abdomen...
+
+Breathe in slowly through your nose for 4 counts...
+
+Hold your breath for 4 counts...
+
+Exhale slowly through your mouth for 6 counts...
+
+Feel your abdomen rise and fall with each breath...
+
+Continue this pattern... breathing deeply and slowly...
+
+Notice how each breath brings more calm and relaxation...
+
+When ready, return to your natural breathing...`
+            },
+            'loving-kindness': {
+                title: "Loving-Kindness Meditation",
+                duration: 600,
+                text: `Sit comfortably and close your eyes...
+
+Bring to mind someone you love deeply...
+
+Silently repeat: "May you be happy... May you be healthy... May you be safe... May you live with ease..."
+
+Now bring yourself to mind...
+
+"May I be happy... May I be healthy... May I be safe... May I live with ease..."
+
+Think of someone neutral... someone you don't know well...
+
+Extend these wishes to them...
+
+Finally, think of all beings everywhere...
+
+"May all beings be happy... May all beings be healthy... May all beings be safe... May all beings live with ease..."
+
+Sit with these feelings of loving-kindness for a few moments...`
+            }
+        };
+
+        let currentScript = null;
+        let isPlaying = false;
+        let timer = 0;
+        let interval = null;
+
+        function openScript(type) {
+            currentScript = scripts[type];
+            document.getElementById('script-selection').style.display = 'none';
+            document.getElementById('script-player').classList.add('active');
+            document.getElementById('script-title').textContent = currentScript.title;
+            document.getElementById('script-text').textContent = currentScript.text;
+            resetScript();
+        }
+
+        function closeScript() {
+            document.getElementById('script-player').classList.remove('active');
+            document.getElementById('script-selection').style.display = 'block';
+            resetScript();
+        }
+
+        function togglePlay() {
+            isPlaying = !isPlaying;
+            const btn = document.getElementById('play-btn');
+
+            if (isPlaying) {
+                btn.textContent = '⏸️ Pause';
+                btn.classList.add('playing');
+                startTimer();
+            } else {
+                btn.textContent = '▶️ Resume';
+                btn.classList.remove('playing');
+                stopTimer();
+            }
+        }
+
+        function startTimer() {
+            interval = setInterval(() => {
+                timer++;
+                updateTimerDisplay();
+
+                if (timer >= currentScript.duration) {
+                    resetScript();
+                    alert('✅ Relaxation exercise complete!');
+                }
+            }, 1000);
+        }
+
+        function stopTimer() {
+            if (interval) {
+                clearInterval(interval);
+                interval = null;
+            }
+        }
+
+        function resetScript() {
+            stopTimer();
+            timer = 0;
+            isPlaying = false;
+            document.getElementById('play-btn').textContent = '▶️ Start';
+            document.getElementById('play-btn').classList.remove('playing');
+            updateTimerDisplay();
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timer / 60);
+            const seconds = timer % 60;
+            document.getElementById('timer').textContent =
+                `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+    </script>
+</body>
+
+</html>

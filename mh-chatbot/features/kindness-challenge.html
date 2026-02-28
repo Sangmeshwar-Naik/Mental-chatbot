@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kindness Challenge</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.2);
+            -webkit-backdrop-filter:backdrop-filter:
+            backdrop-filter: blur(10px);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .challenge-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .challenge-item {
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border-left: 4px solid #667eea;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .challenge-item:hover {
+            transform: translateX(10px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .challenge-item.completed {
+            opacity: 0.6;
+            border-left-color: #10b981;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1));
+        }
+
+        .challenge-item h3 {
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .challenge-item p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 30px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+    </style>
+</head>
+
+<body>
+    <a href="../index.html" class="back-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+        Back to Dashboard
+    </a>
+
+    <div class="container">
+        <div class="header">
+            <h1>❤️ Kindness Challenge</h1>
+            <p>Spread positivity and gratitude every day</p>
+        </div>
+
+        <div class="challenge-card">
+            <h2 style="margin-bottom: 20px;">Today's Challenges</h2>
+            <div id="challenges-list"></div>
+            <button class="btn-primary" onclick="generateNewChallenges()">Get New Challenges</button>
+        </div>
+
+        <div class="challenge-card">
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-value" id="completed-count">0</div>
+                    <div class="stat-label">Completed Today</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="streak-count">0</div>
+                    <div class="stat-label">Day Streak</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="total-count">0</div>
+                    <div class="stat-label">Total Completed</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const challenges = [
+            { title: "Compliment Someone", desc: "Give a genuine compliment to a friend, family member, or colleague" },
+            { title: "Help a Stranger", desc: "Hold the door, help carry groceries, or offer your seat" },
+            { title: "Send a Thank You", desc: "Message someone to thank them for something they did" },
+            { title: "Share Positivity", desc: "Post or share something inspiring on social media" },
+            { title: "Listen Actively", desc: "Have a conversation where you just listen without interrupting" },
+            { title: "Donate or Give", desc: "Donate clothes, food, or money to someone in need" },
+            { title: "Smile at 5 People", desc: "Brighten someone's day with a genuine smile" },
+            { title: "Write a Note", desc: "Leave a kind note for someone to find" },
+            { title: "Call a Friend", desc: "Reach out to someone you haven't talked to in a while" },
+            { title: "Practice Patience", desc: "Be extra patient with someone who needs it today" },
+            { title: "Share Your Knowledge", desc: "Teach someone something you know" },
+            { title: "Forgive Someone", desc: "Let go of a grudge and forgive" }
+        ];
+
+        let completedToday = [];
+        let todaysChallenges = [];
+
+        function generateNewChallenges() {
+            const shuffled = [...challenges].sort(() => Math.random() - 0.5);
+            todaysChallenges = shuffled.slice(0, 5);
+            renderChallenges();
+            localStorage.setItem('kindness_challenges', JSON.stringify(todaysChallenges));
+        }
+
+        function renderChallenges() {
+            const list = document.getElementById('challenges-list');
+            list.innerHTML = todaysChallenges.map((challenge, index) => `
+                <div class="challenge-item ${completedToday.includes(index) ? 'completed' : ''}" 
+                     onclick="toggleChallenge(${index})">
+                    <h3>${completedToday.includes(index) ? '✓ ' : ''}${challenge.title}</h3>
+                    <p>${challenge.desc}</p>
+                </div>
+            `).join('');
+        }
+
+        function toggleChallenge(index) {
+            if (completedToday.includes(index)) {
+                completedToday = completedToday.filter(i => i !== index);
+            } else {
+                completedToday.push(index);
+                updateStats();
+            }
+            renderChallenges();
+            localStorage.setItem('kindness_completed_today', JSON.stringify(completedToday));
+        }
+
+        function updateStats() {
+            const total = parseInt(localStorage.getItem('kindness_total') || '0') + 1;
+            localStorage.setItem('kindness_total', total);
+            document.getElementById('total-count').textContent = total;
+        }
+
+        function loadStats() {
+            document.getElementById('completed-count').textContent = completedToday.length;
+            document.getElementById('total-count').textContent = localStorage.getItem('kindness_total') || '0';
+            document.getElementById('streak-count').textContent = localStorage.getItem('kindness_streak') || '0';
+        }
+
+        // Initialize
+        const saved = localStorage.getItem('kindness_challenges');
+        if (saved) {
+            todaysChallenges = JSON.parse(saved);
+        } else {
+            generateNewChallenges();
+        }
+
+        const savedCompleted = localStorage.getItem('kindness_completed_today');
+        if (savedCompleted) {
+            completedToday = JSON.parse(savedCompleted);
+        }
+
+        renderChallenges();
+        loadStats();
+    </script>
+</body>
+
+</html>

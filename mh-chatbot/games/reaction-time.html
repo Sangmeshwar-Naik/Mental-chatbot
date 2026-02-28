@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reaction Time Pro - Train Your Speed</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.2);
+            -webkit-backdrop-filter:backdrop-filter:
+            backdrop-filter: blur(10px);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            z-index: 1000;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .mode-selection {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .mode-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+
+        .mode-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .mode-card.active {
+            border-color: #667eea;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .mode-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .mode-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .mode-description {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .game-area {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .reaction-test {
+            width: 100%;
+            max-width: 600px;
+            height: 350px;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 24px;
+            font-weight: 600;
+            transition: all 0.3s;
+            user-select: none;
+            position: relative;
+        }
+
+        .reaction-test.idle {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .reaction-test.waiting {
+            background: #ffd93d;
+            color: #333;
+        }
+
+        .reaction-test.ready {
+            background: #6BCF7F;
+            color: white;
+        }
+
+        .reaction-test.too-soon {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .reaction-test.result {
+            background: #667eea;
+            color: white;
+        }
+
+        .test-instruction {
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+
+        .test-detail {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-subtext {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        .achievement-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            z-index: 2000;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .achievement-popup.show {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .achievement-icon {
+            font-size: 64px;
+            margin-bottom: 15px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .round-indicator {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 28px;
+            }
+
+            .reaction-test {
+                height: 300px;
+            }
+
+            .test-instruction {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <a href="../games.html" class="back-btn">← Back to Games</a>
+
+    <div class="container">
+        <div class="header">
+            <h1>⚡ Reaction Time Pro</h1>
+            <p>Train your reflexes with multiple test modes</p>
+        </div>
+
+        <!-- Mode Selection -->
+        <div class="mode-selection">
+            <div class="mode-card active" onclick="selectMode('click')">
+                <div class="mode-icon">👆</div>
+                <div class="mode-title">Click Test</div>
+                <div class="mode-description">Classic reaction time test</div>
+            </div>
+            <div class="mode-card" onclick="selectMode('sequence')">
+                <div class="mode-icon">🎯</div>
+                <div class="mode-title">Sequence Test</div>
+                <div class="mode-description">Remember and repeat patterns</div>
+            </div>
+            <div class="mode-card" onclick="selectMode('multi')">
+                <div class="mode-icon">🎪</div>
+                <div class="mode-title">Multi-Target</div>
+                <div class="mode-description">Click appearing targets</div>
+            </div>
+        </div>
+
+        <!-- Game Area -->
+        <div class="game-area">
+            <div class="round-indicator" id="roundIndicator">Round 1/5</div>
+            <div class="reaction-test idle" id="testArea">
+                <div class="test-instruction">Click to Start</div>
+                <div class="test-detail">Test your reaction speed</div>
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Current</div>
+                <div class="stat-value" id="currentTime">-</div>
+                <div class="stat-subtext">Last reaction</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Average</div>
+                <div class="stat-value" id="averageTime">-</div>
+                <div class="stat-subtext">This session</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Best</div>
+                <div class="stat-value" id="bestTime">-</div>
+                <div class="stat-subtext">Personal record</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Tests</div>
+                <div class="stat-value" id="totalTests">0</div>
+                <div class="stat-subtext">Completed</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Achievement Popup -->
+    <div class="achievement-popup" id="achievementPopup">
+        <div class="achievement-icon">🏆</div>
+        <h2 id="achievementTitle">Achievement Unlocked!</h2>
+        <p id="achievementDesc">You're getting faster!</p>
+        <button class="btn-primary" onclick="closeAchievement()">Continue</button>
+    </div>
+
+    <script>
+        let currentMode = 'click';
+        let gameState = 'idle';
+        let startTime;
+        let scores = [];
+        let currentRound = 1;
+        const maxRounds = 5;
+        let bestScore = localStorage.getItem('bestReactionTime') ? parseInt(localStorage.getItem('bestReactionTime')) : Infinity;
+        let totalCompleted = localStorage.getItem('totalReactionTests') ? parseInt(localStorage.getItem('totalReactionTests')) : 0;
+
+        const testArea = document.getElementById('testArea');
+        const instructions = {
+            click: { main: 'Click when GREEN', detail: 'Wait for the screen to turn green' },
+            sequence: { main: 'Remember the pattern', detail: 'Watch and repeat' },
+            multi: { main: 'Click all targets', detail: 'React to appearing circles' }
+        };
+
+        function selectMode(mode) {
+            currentMode = mode;
+            document.querySelectorAll('.mode-card').forEach((card, i) => {
+                card.classList.remove('active');
+                if ((mode === 'click' && i === 0) || (mode === 'sequence' && i === 1) || (mode === 'multi' && i === 2)) {
+                    card.classList.add('active');
+                }
+            });
+            resetTest();
+        }
+
+        function resetTest() {
+            gameState = 'idle';
+            currentRound = 1;
+            scores = [];
+            testArea.className = 'reaction-test idle pulse';
+            testArea.innerHTML = `
+                <div class="test-instruction">Click to Start</div>
+                <div class="test-detail">${instructions[currentMode].detail}</div>
+            `;
+            updateRoundIndicator();
+            updateStats();
+        }
+
+        function updateRoundIndicator() {
+            document.getElementById('roundIndicator').textContent = `Round ${currentRound}/${maxRounds}`;
+        }
+
+        function updateStats() {
+            document.getElementById('currentTime').textContent = scores.length > 0 ? scores[scores.length - 1] + 'ms' : '-';
+
+            if (scores.length > 0) {
+                const avg = Math.round(scores.reduce((a, b) => a + b) / scores.length);
+                document.getElementById('averageTime').textContent = avg + 'ms';
+            } else {
+                document.getElementById('averageTime').textContent = '-';
+            }
+
+            document.getElementById('bestTime').textContent = bestScore !== Infinity ? bestScore + 'ms' : '-';
+            document.getElementById('totalTests').textContent = totalCompleted;
+        }
+
+        function startClickTest() {
+            if (gameState === 'idle') {
+                gameState = 'waiting';
+                testArea.className = 'reaction-test waiting';
+                testArea.innerHTML = `
+                    <div class="test-instruction">Wait for it...</div>
+                    <div class="test-detail">Stay focused</div>
+                `;
+
+                const delay = Math.random() * 3000 + 2000; // 2-5 seconds
+                setTimeout(() => {
+                    if (gameState === 'waiting') {
+                        gameState = 'ready';
+                        testArea.className = 'reaction-test ready';
+                        testArea.innerHTML = `
+                            <div class="test-instruction">CLICK NOW!</div>
+                            <div class="test-detail">⚡</div>
+                        `;
+                        startTime = Date.now();
+                    }
+                }, delay);
+            } else if (gameState === 'waiting') {
+                gameState = 'too-soon';
+                testArea.className = 'reaction-test too-soon';
+                testArea.innerHTML = `
+                    <div class="test-instruction">Too Soon!</div>
+                    <div class="test-detail">Wait for green</div>
+                `;
+                setTimeout(() => {
+                    gameState = 'idle';
+                    testArea.className = 'reaction-test idle';
+                    testArea.innerHTML = `
+                        <div class="test-instruction">Click to Try Again</div>
+                        <div class="test-detail">Wait for the green signal</div>
+                    `;
+                }, 1500);
+            } else if (gameState === 'ready') {
+                const reactionTime = Date.now() - startTime;
+                scores.push(reactionTime);
+
+                // Check for achievements
+                if (reactionTime < 200 && !localStorage.getItem('achievement_sub200')) {
+                    showAchievement('Speed Demon!', 'Reaction under 200ms!');
+                    localStorage.setItem('achievement_sub200', 'true');
+                }
+
+                // Update best score
+                if (reactionTime < bestScore) {
+                    bestScore = reactionTime;
+                    localStorage.setItem('bestReactionTime', bestScore);
+                    if (bestScore < 250) {
+                        showAchievement('New Record!', `${bestScore}ms - Amazing!`);
+                    }
+                }
+
+                // Update total completed
+                totalCompleted++;
+                localStorage.setItem('totalReactionTests', totalCompleted);
+
+                // Check milestones
+                if (totalCompleted === 10 && !localStorage.getItem('achievement_10tests')) {
+                    showAchievement('Getting Started!', '10 tests completed');
+                    localStorage.setItem('achievement_10tests', 'true');
+                } else if (totalCompleted === 50 && !localStorage.getItem('achievement_50tests')) {
+                    showAchievement('Dedicated!', '50 tests completed');
+                    localStorage.setItem('achievement_50tests', 'true');
+                }
+
+                updateStats();
+
+                gameState = 'result';
+                testArea.className = 'reaction-test result';
+
+                let feedback = '';
+                if (reactionTime < 200) feedback = '🔥 Lightning Fast!';
+                else if (reactionTime < 250) feedback = '⚡ Excellent!';
+                else if (reactionTime < 300) feedback = '👍 Great!';
+                else if (reactionTime < 350) feedback = '✓ Good';
+                else feedback = '💪 Keep Practicing';
+
+                testArea.innerHTML = `
+                    <div class="test-instruction">${reactionTime}ms</div>
+                    <div class="test-detail">${feedback}</div>
+                `;
+
+                currentRound++;
+
+                if (currentRound <= maxRounds) {
+                    setTimeout(() => {
+                        gameState = 'idle';
+                        testArea.className = 'reaction-test idle';
+                        testArea.innerHTML = `
+                            <div class="test-instruction">Click for Round ${currentRound}</div>
+                            <div class="test-detail">Keep going!</div>
+                        `;
+                        updateRoundIndicator();
+                    }, 2000);
+                } else {
+                    setTimeout(() => {
+                        showResults();
+                    }, 2000);
+                }
+            }
+        }
+
+        function showResults() {
+            const avg = Math.round(scores.reduce((a, b) => a + b) / scores.length);
+            const consistency = Math.max(...scores) - Math.min(...scores);
+
+            testArea.className = 'reaction-test idle';
+            testArea.innerHTML = `
+                <div class="test-instruction">Session Complete!</div>
+                <div class="test-detail">Average: ${avg}ms | Consistency: ±${Math.round(consistency / 2)}ms</div>
+                <button class="btn-primary" onclick="resetTest()">Start New Session</button>
+            `;
+        }
+
+        function showAchievement(title, desc) {
+            const popup = document.getElementById('achievementPopup');
+            document.getElementById('achievementTitle').textContent = title;
+            document.getElementById('achievementDesc').textContent = desc;
+            popup.classList.add('show');
+        }
+
+        function closeAchievement() {
+            document.getElementById('achievementPopup').classList.remove('show');
+        }
+
+        testArea.addEventListener('click', () => {
+            if (currentMode === 'click') {
+                startClickTest();
+            }
+        });
+
+        // Initialize
+        updateStats();
+    </script>
+</body>
+
+</html>

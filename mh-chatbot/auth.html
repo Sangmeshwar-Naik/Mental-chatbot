@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - AI Mental Health Support</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Interactive particle canvas */
+        #particleCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .auth-container {
+            background: rgba(255, 255, 255, 0.98);
+            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25);
+            width: 100%;
+            max-width: 450px;
+            max-height: 90vh;
+            position: relative;
+            z-index: 1;
+            overflow-y: auto;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        .auth-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .auth-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .auth-container::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .auth-header {
+            text-align: center;
+            padding: 40px 40px 20px;
+            background: linear-gradient(135deg, #edeef2 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .auth-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .auth-header p {
+            font-size: 14px;
+            opacity: 0.95;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f5f7fa;
+            margin: 0;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 16px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 15px;
+            color: #64748b;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .tab.active {
+            color: #667eea;
+            background: white;
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .auth-body {
+            padding: 32px 40px 40px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .auth-methods {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .method-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            color: #475569;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .method-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .method-btn.active {
+            border-color: #667eea;
+            background: #f0f4ff;
+            color: #667eea;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 8px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 15px;
+            font-family: inherit;
+            transition: all 0.3s;
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-input.error {
+            border-color: #ef4444;
+        }
+
+        .error-message {
+            color: #ef4444;
+            font-size: 13px;
+            margin-top: 6px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            transition: all 0.3s;
+            background: transparent;
+        }
+
+        .password-toggle:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .password-toggle::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #667eea;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .password-toggle::after {
+            content: '';
+            position: absolute;
+            width: 2px;
+            height: 0;
+            background: #667eea;
+            transform: rotate(45deg);
+            transition: height 0.3s;
+        }
+
+        .password-toggle.visible::after {
+            height: 24px;
+        }
+
+        .password-toggle.visible::before {
+            border-color: #10b981;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #0c2325 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 24px 0;
+            color: #94a3b8;
+            font-size: 13px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e2e8f0;
+        }
+
+        .divider span {
+            padding: 0 16px;
+        }
+
+        .social-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .social-btn {
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        .social-btn:hover {
+            border-color: #cbd5e1;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .social-btn img {
+            width: 20px;
+            height: 20px;
+        }
+
+        .forgot-password {
+            text-align: right;
+            margin-top: -10px;
+            margin-bottom: 20px;
+        }
+
+        .forgot-password a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+
+        .otp-inputs {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin: 24px 0;
+        }
+
+        .otp-input {
+            width: 50px;
+            height: 56px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 600;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .otp-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        .resend-otp {
+            text-align: center;
+            margin-top: 16px;
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        .resend-otp a {
+            color: #667eea;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .resend-otp a:hover {
+            text-decoration: underline;
+        }
+
+        .success-message {
+            background: #10b981;
+            color: white;
+            padding: 14px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .success-message.show {
+            display: flex;
+        }
+
+        @media (max-width: 480px) {
+            .auth-container {
+                border-radius: 16px;
+            }
+
+            .auth-header,
+            .auth-body {
+                padding: 24px;
+            }
+
+            .social-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .otp-input {
+                width: 45px;
+                height: 50px;
+                font-size: 20px;
+            }
+        }
+
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="particleCanvas"></canvas>
+    <div class="auth-container">
+        <div class="auth-header">
+            <h1>🤖 AI Mental Health Support</h1>
+            <p>Secure access to compassionate support</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" data-tab="login">Login</button>
+            <button class="tab" data-tab="signup">Sign Up</button>
+        </div>
+
+        <div class="auth-body">
+            <!-- Login Tab -->
+            <div class="tab-content active" id="login">
+                <div class="auth-methods">
+                    <button class="method-btn active" data-method="email">📧 Email</button>
+                    <button class="method-btn" data-method="phone">📱 Phone</button>
+                </div>
+
+                <!-- Email Login -->
+                <div class="method-content" id="email-login">
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" class="form-input" id="login-email" placeholder="your@email.com"
+                                required>
+                            <div class="error-message">Please enter a valid email</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Password</label>
+                            <div class="input-wrapper">
+                                <input type="password" class="form-input" id="login-password" placeholder="••••••••"
+                                    required>
+                                <span class="password-toggle" onclick="togglePassword('login-password')">👁️</span>
+                            </div>
+                        </div>
+
+                        <div class="forgot-password">
+                            <a href="#" onclick="showForgotPassword(); return false;">Forgot password?</a>
+                        </div>
+
+                        <button type="submit" class="btn-primary">Sign In</button>
+                    </form>
+                </div>
+
+                <!-- Phone Login (hidden by default) -->
+                <div class="method-content" id="phone-login" style="display: none;">
+                    <div id="phone-step-1">
+                        <div class="form-group">
+                            <label>Phone Number</label>
+                            <input type="tel" class="form-input" id="login-phone" placeholder="+1 (555) 000-0000"
+                                required>
+                        </div>
+                        <button type="button" class="btn-primary" onclick="sendOTP('login')">Send OTP</button>
+                    </div>
+
+                    <div id="phone-step-2" style="display: none;">
+                        <label style="display: block; text-align: center; margin-bottom: 10px; font-weight: 600;">Enter
+                            OTP</label>
+                        <div class="otp-inputs">
+                            <input type="text" class="otp-input" maxlength="1" data-index="0">
+                            <input type="text" class="otp-input" maxlength="1" data-index="1">
+                            <input type="text" class="otp-input" maxlength="1" data-index="2">
+                            <input type="text" class="otp-input" maxlength="1" data-index="3">
+                            <input type="text" class="otp-input" maxlength="1" data-index="4">
+                            <input type="text" class="otp-input" maxlength="1" data-index="5">
+                        </div>
+                        <div class="resend-otp">
+                            Didn't receive code? <a onclick="sendOTP('login')">Resend</a>
+                        </div>
+                        <button type="button" class="btn-primary" onclick="verifyOTP('login')">Verify & Sign In</button>
+                    </div>
+                </div>
+
+                <div class="divider"><span>OR CONTINUE WITH</span></div>
+
+                <div class="social-buttons">
+                    <button class="social-btn" onclick="socialLogin('google')">
+                        <svg width="20" height="20" viewBox="0 0 20 20">
+                            <path fill="#4285F4"
+                                d="M19.6 10.23c0-.82-.1-1.42-.25-2.05H10v3.72h5.5c-.15.96-.74 2.31-2.04 3.22v2.45h3.16c1.89-1.73 2.98-4.3 2.98-7.34z" />
+                            <path fill="#34A853"
+                                d="M13.46 15.13c-.83.59-1.96 1-3.46 1-2.64 0-4.88-1.74-5.68-4.15H1.07v2.52C2.72 17.75 6.09 20 10 20c2.7 0 4.96-.89 6.62-2.42l-3.16-2.45z" />
+                            <path fill="#FBBC05"
+                                d="M3.99 10c0-.69.12-1.35.32-1.97V5.51H1.07A9.973 9.973 0 000 10c0 1.61.39 3.14 1.07 4.49l3.24-2.52c-.2-.62-.32-1.28-.32-1.97z" />
+                            <path fill="#EA4335"
+                                d="M10 3.88c1.88 0 3.13.81 3.85 1.48l2.84-2.76C14.96.99 12.7 0 10 0 6.09 0 2.72 2.25 1.07 5.51l3.24 2.52C5.12 5.62 7.36 3.88 10 3.88z" />
+                        </svg>
+                        Google
+                    </button>
+                    <button class="social-btn" onclick="socialLogin('apple')">
+                        <svg width="20" height="20" viewBox="0 0 814 1000">
+                            <path
+                                d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76.5 0-103.7 40.8-165.9 40.8s-105.6-57-155.5-127C46.7 790.7 0 663 0 541.8c0-194.4 126.4-297.5 250.8-297.5 66.1 0 121.2 43.4 162.7 43.4 39.5 0 101.1-46 176.3-46 28.5 0 130.9 2.6 198.3 99.2zm-234-181.5c31.1-36.9 53.1-88.1 53.1-139.3 0-7.1-.6-14.3-1.9-20.1-50.6 1.9-110.8 33.7-147.1 75.8-28.5 32.4-55.1 83.6-55.1 135.5 0 7.8 1.3 15.6 1.9 18.1 3.2.6 8.4 1.3 13.6 1.3 45.4 0 102.5-30.4 135.5-71.3z" />
+                        </svg>
+                        Apple
+                    </button>
+                    <button class="social-btn" onclick="socialLogin('facebook')">
+                        <svg width="20" height="20" viewBox="0 0 24 24">
+                            <path fill="#1877F2"
+                                d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                        </svg>
+                        Facebook
+                    </button>
+                    <button class="social-btn" onclick="socialLogin('linkedin')">
+                        <svg width="20" height="20" viewBox="0 0 24 24">
+                            <path fill="#0A66C2"
+                                d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                        </svg>
+                        LinkedIn
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sign Up Tab -->
+            <div class="tab-content" id="signup">
+                <div class="auth-methods">
+                    <button class="method-btn active" data-method="email">📧 Email</button>
+                    <button class="method-btn" data-method="phone">📱 Phone</button>
+                </div>
+
+                <!-- Email Sign Up -->
+                <div class="method-content" id="email-signup">
+                    <form id="signupForm">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" class="form-input" id="signup-name" placeholder="John Doe" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" class="form-input" id="signup-email" placeholder="your@email.com"
+                                required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Password</label>
+                            <div class="input-wrapper">
+                                <input type="password" class="form-input" id="signup-password"
+                                    placeholder="Min. 8 characters" required>
+                                <span class="password-toggle" onclick="togglePassword('signup-password')">👁️</span>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-primary">Create Account</button>
+                    </form>
+                </div>
+
+                <!-- Phone Sign Up (hidden by default) -->
+                <div class="method-content" id="phone-signup" style="display: none;">
+                    <div id="signup-phone-step-1">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" class="form-input" id="signup-phone-name" placeholder="John Doe"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label>Phone Number</label>
+                            <input type="tel" class="form-input" id="signup-phone" placeholder="+1 (555) 000-0000"
+                                required>
+                        </div>
+                        <button type="button" class="btn-primary" onclick="sendOTP('signup')">Send OTP</button>
+                    </div>
+
+                    <div id="signup-phone-step-2" style="display: none;">
+                        <label style="display: block; text-align: center; margin-bottom: 10px; font-weight: 600;">Enter
+                            OTP</label>
+                        <div class="otp-inputs">
+                            <input type="text" class="otp-input" maxlength="1" data-index="0">
+                            <input type="text" class="otp-input" maxlength="1" data-index="1">
+                            <input type="text" class="otp-input" maxlength="1" data-index="2">
+                            <input type="text" class="otp-input" maxlength="1" data-index="3">
+                            <input type="text" class="otp-input" maxlength="1" data-index="4">
+                            <input type="text" class="otp-input" maxlength="1" data-index="5">
+                        </div>
+                        <div class="resend-otp">
+                            Didn't receive code? <a onclick="sendOTP('signup')">Resend</a>
+                        </div>
+                        <button type="button" class="btn-primary" onclick="verifyOTP('signup')">Verify & Create
+                            Account</button>
+                    </div>
+                </div>
+
+                <div class="divider"><span>OR CONTINUE WITH</span></div>
+
+                <div class="social-buttons">
+                    <button class="social-btn" onclick="socialLogin('google')">
+                        <svg width="20" height="20" viewBox="0 0 20 20">
+                            <path fill="#4285F4"
+                                d="M19.6 10.23c0-.82-.1-1.42-.25-2.05H10v3.72h5.5c-.15.96-.74 2.31-2.04 3.22v2.45h3.16c1.89-1.73 2.98-4.3 2.98-7.34z" />
+                            <path fill="#34A853"
+                                d="M13.46 15.13c-.83.59-1.96 1-3.46 1-2.64 0-4.88-1.74-5.68-4.15H1.07v2.52C2.72 17.75 6.09 20 10 20c2.7 0 4.96-.89 6.62-2.42l-3.16-2.45z" />
+                            <path fill="#FBBC05"
+                                d="M3.99 10c0-.69.12-1.35.32-1.97V5.51H1.07A9.973 9.973 0 000 10c0 1.61.39 3.14 1.07 4.49l3.24-2.52c-.2-.62-.32-1.28-.32-1.97z" />
+                            <path fill="#EA4335"
+                                d="M10 3.88c1.88 0 3.13.81 3.85 1.48l2.84-2.76C14.96.99 12.7 0 10 0 6.09 0 2.72 2.25 1.07 5.51l3.24 2.52C5.12 5.62 7.36 3.88 10 3.88z" />
+                        </svg>
+                        Google
+                    </button>
+                    <button class="social-btn" onclick="socialLogin('apple')">
+                        <svg width="20" height="20" viewBox="0 0 814 1000">
+                            <path
+                                d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76.5 0-103.7 40.8-165.9 40.8s-105.6-57-155.5-127C46.7 790.7 0 663 0 541.8c0-194.4 126.4-297.5 250.8-297.5 66.1 0 121.2 43.4 162.7 43.4 39.5 0 101.1-46 176.3-46 28.5 0 130.9 2.6 198.3 99.2zm-234-181.5c31.1-36.9 53.1-88.1 53.1-139.3 0-7.1-.6-14.3-1.9-20.1-50.6 1.9-110.8 33.7-147.1 75.8-28.5 32.4-55.1 83.6-55.1 135.5 0 7.8 1.3 15.6 1.9 18.1 3.2.6 8.4 1.3 13.6 1.3 45.4 0 102.5-30.4 135.5-71.3z" />
+                        </svg>
+                        Apple
+                    </button>
+                    <button class="social-btn" onclick="socialLogin('facebook')">
+                        <svg width="20" height="20" viewBox="0 0 24 24">
+                            <path fill="#1877F2"
+                                d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                        </svg>
+                        Facebook
+                    </button>
+                    <button class="social-btn" onclick="socialLogin('linkedin')">
+                        <svg width="20" height="20" viewBox="0 0 24 24">
+                            <path fill="#0A66C2"
+                                d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                        </svg>
+                        LinkedIn
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Interactive Particle System
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        const particles = [];
+        const particleCount = 80;
+        const mouse = { x: null, y: null, radius: 150 };
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.baseX = this.x;
+                this.baseY = this.y;
+                this.size = Math.random() * 3 + 1;
+                this.speedX = (Math.random() - 0.5) * 0.5;
+                this.speedY = (Math.random() - 0.5) * 0.5;
+                this.opacity = Math.random() * 0.5 + 0.3;
+            }
+
+            update() {
+                // Natural movement
+                this.baseX += this.speedX;
+                this.baseY += this.speedY;
+
+                // Wrap around
+                if (this.baseX < 0 || this.baseX > canvas.width) this.speedX *= -1;
+                if (this.baseY < 0 || this.baseY > canvas.height) this.speedY *= -1;
+
+                // Mouse interaction - particles move away from cursor
+                if (mouse.x != null && mouse.y != null) {
+                    const dx = mouse.x - this.baseX;
+                    const dy = mouse.y - this.baseY;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < mouse.radius) {
+                        const force = (mouse.radius - distance) / mouse.radius;
+                        const dirX = dx / distance;
+                        const dirY = dy / distance;
+                        this.x = this.baseX - dirX * force * 50;
+                        this.y = this.baseY - dirY * force * 50;
+                    } else {
+                        // Smoothly return to base position
+                        this.x += (this.baseX - this.x) * 0.05;
+                        this.y += (this.baseY - this.y) * 0.05;
+                    }
+                } else {
+                    this.x = this.baseX;
+                    this.y = this.baseY;
+                }
+            }
+
+            draw() {
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        // Create particles
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new Particle());
+        }
+
+        // Connect nearby particles
+        function connect() {
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 120) {
+                        const opacity = (1 - distance / 120) * 0.2;
+                        ctx.strokeStyle = `rgba(255, 255, 255, ${opacity})`;
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        // Animation loop
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+
+            connect();
+            requestAnimationFrame(animate);
+        }
+
+        // Mouse tracking
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+
+        window.addEventListener('mouseleave', () => {
+            mouse.x = null;
+            mouse.y = null;
+        });
+
+        animate();
+
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabName = tab.dataset.tab;
+
+                // Update active tab
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                // Update active content
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(tabName).classList.add('active');
+            });
+        });
+
+        // Method switching (Email/Phone)
+        document.querySelectorAll('.method-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const method = this.dataset.method;
+                const parentTab = this.closest('.tab-content').id;
+
+                // Update active method button
+                this.closest('.auth-methods').querySelectorAll('.method-btn').forEach(b => {
+                    b.classList.remove('active');
+                });
+                this.classList.add('active');
+
+                // Show/hide content based on method
+                const isLogin = parentTab === 'login';
+                if (method === 'email') {
+                    document.getElementById(isLogin ? 'email-login' : 'email-signup').style.display = 'block';
+                    document.getElementById(isLogin ? 'phone-login' : 'phone-signup').style.display = 'none';
+                } else {
+                    document.getElementById(isLogin ? 'email-login' : 'email-signup').style.display = 'none';
+                    document.getElementById(isLogin ? 'phone-login' : 'phone-signup').style.display = 'block';
+                }
+            });
+        });
+
+        // Creative password toggle
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const toggle = event.currentTarget;
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                toggle.classList.add('visible');
+                toggle.title = 'Hide password';
+            } else {
+                input.type = 'password';
+                toggle.classList.remove('visible');
+                toggle.title = 'Show password';
+            }
+        }
+
+        // OTP input handling
+        document.querySelectorAll('.otp-input').forEach((input, index, inputs) => {
+            input.addEventListener('input', (e) => {
+                if (e.target.value.length === 1 && index < inputs.length - 1) {
+                    inputs[index + 1].focus();
+                }
+            });
+
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                    inputs[index - 1].focus();
+                }
+            });
+        });
+
+        // Login form submission
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            const btn = e.target.querySelector('.btn-primary');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> Signing in...';
+
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    window.location.href = '/chat';
+                } else {
+                    alert(data.error || 'Invalid credentials');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                alert('Could not connect to server. Make sure backend is running on port 5000.');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Sign In';
+            }
+        });
+
+        // Sign up form submission
+
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('signup-name').value;
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+
+            const btn = e.target.querySelector('.btn-primary');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> Creating account...';
+
+            try {
+                const response = await fetch('/api/auth/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    window.location.href = '/chat';
+                } else {
+                    alert(data.error || 'Sign up failed');
+                }
+            } catch (error) {
+                console.error('Signup error:', error);
+                alert('Could not connect to server. Make sure backend is running on port 5000.');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Create Account';
+            }
+        });
+
+
+        // Send OTP
+        async function sendOTP(type) {
+            const phoneInput = type === 'login' ?
+                document.getElementById('login-phone') :
+                document.getElementById('signup-phone');
+
+            const phone = phoneInput.value;
+
+            if (!phone) {
+                alert('Please enter a phone number');
+                return;
+            }
+
+            // TODO: Replace with actual API call
+            console.log('Sending OTP to:', phone);
+
+            // Show OTP input step
+            const step1 = document.getElementById(type === 'login' ? 'phone-step-1' : 'signup-phone-step-1');
+            const step2 = document.getElementById(type === 'login' ? 'phone-step-2' : 'signup-phone-step-2');
+
+            step1.style.display = 'none';
+            step2.style.display = 'block';
+        }
+
+        // Verify OTP
+        async function verifyOTP(type) {
+            const otpInputs = document.querySelectorAll('.otp-input');
+            const otp = Array.from(otpInputs).map(input => input.value).join('');
+
+            if (otp.length !== 6) {
+                alert('Please enter the complete OTP');
+                return;
+            }
+
+            // TODO: Replace with actual API call
+            console.log('Verifying OTP:', otp);
+
+            // Redirect to chat on success
+            window.location.href = '/chat';
+        }
+
+        // Social login
+        async function socialLogin(provider) {
+            console.log('Social login with:', provider);
+
+            // TODO: Implement OAuth flow for each provider
+            // For now, just show a message
+            alert(`${provider.charAt(0).toUpperCase() + provider.slice(1)} login will be implemented with OAuth`);
+        }
+
+        // Forgot password
+        function showForgotPassword() {
+            const email = prompt('Enter your email address to reset password:');
+            if (email) {
+                // TODO: Implement password reset flow
+                alert('Password reset link sent to ' + email);
+            }
+        }
+    </script>
+</body>
+
+</html>

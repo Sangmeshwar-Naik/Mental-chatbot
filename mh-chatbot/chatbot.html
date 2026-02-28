@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Mental Health Chatbot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f8f9fa;
+        }
+
+        .message {
+            margin-bottom: 16px;
+            display: flex;
+            gap: 12px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .message.user .avatar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .message.assistant .avatar {
+            background: #e9ecef;
+        }
+
+        .content {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 16px;
+            line-height: 1.5;
+        }
+
+        .message.user .content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.assistant .content {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-bottom-left-radius: 4px;
+        }
+
+        .welcome {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .welcome h2 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .welcome p {
+            color: #6c757d;
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 8px 12px;
+        }
+
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #667eea;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+
+            0%,
+            60%,
+            100% {
+                transform: translateY(0);
+                opacity: 0.7;
+            }
+
+            30% {
+                transform: translateY(-10px);
+                opacity: 1;
+            }
+        }
+
+        .input-area {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .voice-status {
+            text-align: center;
+            color: #667eea;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            min-height: 18px;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 12px;
+        }
+
+        input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            border-color: #667eea;
+        }
+
+        button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .voice-button {
+            width: 48px;
+            height: 48px;
+            padding: 0;
+            background: white;
+            border: 2px solid #667eea;
+            color: #667eea;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .voice-button:hover {
+            background: #667eea;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .voice-button.recording {
+            background: #ef4444;
+            border-color: #ef4444;
+            color: white;
+            animation: pulse 1.5s infinite;
+        }
+
+        .voice-button.speaking {
+            background: #10b981;
+            border-color: #10b981;
+            color: white;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .voice-status {
+            text-align: center;
+            color: #667eea;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 5px;
+            min-height: 18px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="index.html" class="back-btn">← Dashboard</a>
+            <h1>🤖 AI Mental Health Support</h1>
+        </div>
+
+
+        <div class="messages" id="messages">
+            <div class="welcome">
+                <h2>Welcome! 💙</h2>
+                <p>I'm here to listen and provide support. How are you feeling today?</p>
+            </div>
+        </div>
+
+        <div class="input-area">
+            <div class="voice-status" id="voiceStatus"></div>
+            <div class="input-container">
+                <button class="voice-button" id="micButton" title="Voice Input">
+                    <span id="micIcon">🎤</span>
+                </button>
+                <input type="text" id="messageInput"
+                    placeholder="Type your message or use voice... (Press Enter to send)" autocomplete="off">
+                <button id="sendButton">Send</button>
+                <button class="voice-button" id="speakerButton" title="Toggle Voice Output">
+                    <span id="speakerIcon">🔊</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const messagesContainer = document.getElementById('messages');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+
+        // Backend API URL - Connect to auth_app.py backend
+        const API_URL = 'http://localhost:5000';
+
+        // Add message to chat
+        function addMessage(content, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'assistant'}`;
+
+            messageDiv.innerHTML = `
+                <div class="avatar">${isUser ? 'U' : '🤖'}</div>
+                <div class="content">${content}</div>
+            `;
+
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Show typing indicator
+        function showTyping() {
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message assistant';
+            typingDiv.id = 'typing';
+            typingDiv.innerHTML = `
+                <div class="avatar">🤖</div>
+                <div class="typing-indicator show">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            `;
+            messagesContainer.appendChild(typingDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Hide typing indicator
+        function hideTyping() {
+            const typing = document.getElementById('typing');
+            if (typing) typing.remove();
+        }
+
+        // Send message
+        async function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message) return;
+
+            // Clear input
+            messageInput.value = '';
+
+            // Add user message
+            addMessage(message, true);
+
+            // Disable send button
+            sendButton.disabled = true;
+            messageInput.disabled = true;
+
+            // Show typing
+            showTyping();
+
+            try {
+                // Call AI API - using /api/chat endpoint
+                const response = await fetch(`${API_URL}/api/chat`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: message
+                    })
+                });
+
+                hideTyping();
+
+                if (response.ok) {
+                    const data = await response.json();
+                    addMessage(data.response || 'I\'m here to help. Could you tell me more?', false);
+                } else {
+                    addMessage('I apologize, but I\'m having trouble connecting right now. Please try again.', false);
+                }
+
+            } catch (error) {
+                hideTyping();
+                console.error('Error:', error);
+                addMessage('Connection error. Please make sure the backend server is running on http://localhost:5000', false);
+            }
+
+            // Re-enable input
+            sendButton.disabled = false;
+            messageInput.disabled = false;
+            messageInput.focus();
+        }
+
+        // Make sendMessage and addMessage globally accessible for voice.js
+        window.sendMessage = sendMessage;
+        window.addMessage = addMessage;
+
+        sendButton.addEventListener('click', sendMessage);
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Welcome message
+        setTimeout(() => {
+            const welcome = messagesContainer.querySelector('.welcome');
+            if (welcome) welcome.remove();
+            addMessage("Hello! I'm your AI mental health support assistant. I'm here to listen and provide guidance. How can I help you today?", false);
+        }, 1000);
+    </script>
+
+    <!-- Voice Functionality - Inline -->
+    <script>
+        // Voice Recognition Setup
+        (function () {
+            let recognition = null;
+            let synthesis = window.speechSynthesis;
+            let isRecording = false;
+            let voiceOutputEnabled = true;
+
+            const micButton = document.getElementById('micButton');
+            const micIcon = document.getElementById('micIcon');
+            const speakerButton = document.getElementById('speakerButton');
+            const speakerIcon = document.getElementById('speakerIcon');
+            const voiceStatus = document.getElementById('voiceStatus');
+
+            function initVoiceRecognition() {
+                if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                    recognition = new SpeechRecognition();
+                    recognition.continuous = false;
+                    recognition.interimResults = true;
+                    recognition.lang = 'en-US';
+
+                    recognition.onstart = () => {
+                        isRecording = true;
+                        micButton.classList.add('recording');
+                        micIcon.textContent = '🔴';
+                        voiceStatus.textContent = 'Listening... Speak now';
+                    };
+
+                    recognition.onresult = (event) => {
+                        let finalTranscript = '';
+                        for (let i = event.resultIndex; i < event.results.length; i++) {
+                            if (event.results[i].isFinal) {
+                                finalTranscript += event.results[i][0].transcript + ' ';
+                            } else {
+                                document.getElementById('messageInput').value = event.results[i][0].transcript;
+                            }
+                        }
+                        if (finalTranscript) {
+                            document.getElementById('messageInput').value = finalTranscript.trim();
+                            voiceStatus.textContent = 'Voice input captured ✓';
+                            setTimeout(() => {
+                                if (window.sendMessage) window.sendMessage();
+                            }, 500);
+                        }
+                    };
+
+                    recognition.onerror = (event) => {
+                        isRecording = false;
+                        micButton.classList.remove('recording');
+                        micIcon.textContent = '🎤';
+                        voiceStatus.textContent = 'Error: ' + event.error;
+                        setTimeout(() => voiceStatus.textContent = '', 3000);
+                    };
+
+                    recognition.onend = () => {
+                        isRecording = false;
+                        micButton.classList.remove('recording');
+                        micIcon.textContent = '🎤';
+                    };
+
+                    voiceStatus.textContent = 'Voice ready! Click 🎤';
+                    setTimeout(() => voiceStatus.textContent = '', 3000);
+                    console.log('Voice recognition initialized!');
+                } else {
+                    micButton.disabled = true;
+                    console.warn('Speech recognition not supported');
+                }
+            }
+
+            micButton.addEventListener('click', () => {
+                if (!recognition) return;
+                if (isRecording) {
+                    recognition.stop();
+                } else {
+                    try {
+                        recognition.start();
+                    } catch (e) {
+                        console.error('Error starting recognition:', e);
+                    }
+                }
+            });
+
+            speakerButton.addEventListener('click', () => {
+                voiceOutputEnabled = !voiceOutputEnabled;
+                speakerIcon.textContent = voiceOutputEnabled ? '🔊' : '🔇';
+                voiceStatus.textContent = voiceOutputEnabled ? 'Voice output enabled' : 'Voice output muted';
+                setTimeout(() => voiceStatus.textContent = '', 2000);
+                if (!voiceOutputEnabled) synthesis.cancel();
+            });
+
+            const originalAddMessage = window.addMessage;
+            window.addMessage = function (content, isUser) {
+                originalAddMessage(content, isUser);
+                if (!isUser && voiceOutputEnabled && synthesis) {
+                    synthesis.cancel();
+                    const utterance = new SpeechSynthesisUtterance(content);
+                    utterance.rate = 0.9;
+                    synthesis.speak(utterance);
+                }
+            };
+
+            initVoiceRecognition();
+        })();
+    </script>
+</body>
+
+</html>

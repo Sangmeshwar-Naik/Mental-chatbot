@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grounding Exercise - 5 Senses</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background-attachment: fixed;
+            padding: 2rem;
+        }
+
+        .feature-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .feature-header {
+            background: rgba(255, 255, 255, 0.95);
+            -webkit-backdrop-filter:backdrop-filter:
+            backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .feature-header h1 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .grounding-card {
+            background: rgba(255, 255, 255, 0.95);
+            -webkit-backdrop-filter:backdrop-filter:
+            backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .instruction-box {
+            background: rgba(102, 126, 234, 0.1);
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .instruction-box p {
+            color: var(--gray-700);
+            line-height: 1.6;
+        }
+
+        .sense-step {
+            background: var(--gray-50);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.5;
+            transition: all 0.3s;
+        }
+
+        .sense-step.active {
+            opacity: 1;
+            background: rgba(102, 126, 234, 0.05);
+            border: 2px solid var(--primary-purple);
+        }
+
+        .sense-step.completed {
+            opacity: 1;
+            background: rgba(16, 185, 129, 0.05);
+            border: 2px solid var(--success);
+        }
+
+        .sense-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .sense-icon {
+            font-size: 3rem;
+        }
+
+        .sense-title {
+            flex: 1;
+        }
+
+        .sense-title h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .sense-title p {
+            color: var(--gray-600);
+            font-size: 0.875rem;
+        }
+
+        .input-area {
+            margin-top: 1rem;
+        }
+
+        .input-area textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--gray-200);
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-family: inherit;
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .input-area textarea:focus {
+            outline: none;
+            border-color: var(--primary-purple);
+        }
+
+        .btn-primary,
+        .btn-secondary {
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 1rem;
+        }
+
+        .btn-primary {
+            width: 100%;
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            width: 100%;
+            background: var(--gray-200);
+            color: var(--gray-700);
+        }
+
+        .progress-bar-container {
+            background: var(--gray-200);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--gradient-primary);
+            transition: width 0.3s;
+        }
+
+        .completion-card {
+            background: rgba(16, 185, 129, 0.1);
+            border: 2px solid var(--success);
+            border-radius: 1rem;
+            padding: 2rem;
+            text-align: center;
+            display: none;
+        }
+
+        .completion-card.show {
+            display: block;
+        }
+
+        .completion-card h2 {
+            color: var(--success);
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: 2rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.2s;
+            margin-bottom: 1rem;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="feature-container">
+        <a href="../index.html" class="back-btn">
+            <span>←</span> Back to Dashboard
+        </a>
+
+        <div class="feature-header">
+            <h1>🌿 Grounding Exercise</h1>
+            <p>Use the 5-4-3-2-1 technique to calm anxiety and stay present</p>
+        </div>
+
+        <div class="grounding-card">
+            <div class="instruction-box">
+                <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;">How it works</h3>
+                <p>
+                    This grounding technique helps you focus on the present moment by engaging your five senses.
+                    Notice and describe each item thoughtfully. Take your time.
+                </p>
+            </div>
+
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+            </div>
+
+            <!-- 5 Things You Can See -->
+            <div class="sense-step active" id="step-see">
+                <div class="sense-header">
+                    <div class="sense-icon">👁️</div>
+                    <div class="sense-title">
+                        <h3>5 Things You Can See</h3>
+                        <p>Look around and name 5 things you can see right now</p>
+                    </div>
+                </div>
+                <div class="input-area">
+                    <textarea id="input-see"
+                        placeholder="Example: A blue coffee mug, a plant on the desk, sunlight through the window..."></textarea>
+                    <button class="btn-primary" onclick="nextStep('see')">Continue →</button>
+                </div>
+            </div>
+
+            <!-- 4 Things You Can Touch -->
+            <div class="sense-step" id="step-touch">
+                <div class="sense-header">
+                    <div class="sense-icon">✋</div>
+                    <div class="sense-title">
+                        <h3>4 Things You Can Touch</h3>
+                        <p>Notice the texture and temperature of 4 things around you</p>
+                    </div>
+                </div>
+                <div class="input-area">
+                    <textarea id="input-touch"
+                        placeholder="Example: The smooth desk surface, the soft fabric of my shirt, cool metal of my phone..."></textarea>
+                    <button class="btn-primary" onclick="nextStep('touch')">Continue →</button>
+                </div>
+            </div>
+
+            <!-- 3 Things You Can Hear -->
+            <div class="sense-step" id="step-hear">
+                <div class="sense-header">
+                    <div class="sense-icon">👂</div>
+                    <div class="sense-title">
+                        <h3>3 Things You Can Hear</h3>
+                        <p>Listen carefully and identify 3 sounds</p>
+                    </div>
+                </div>
+                <div class="input-area">
+                    <textarea id="input-hear"
+                        placeholder="Example: Birds chirping outside, the hum of the computer, distant traffic..."></textarea>
+                    <button class="btn-primary" onclick="nextStep('hear')">Continue →</button>
+                </div>
+            </div>
+
+            <!-- 2 Things You Can Smell -->
+            <div class="sense-step" id="step-smell">
+                <div class="sense-header">
+                    <div class="sense-icon">👃</div>
+                    <div class="sense-title">
+                        <h3>2 Things You Can Smell</h3>
+                        <p>What scents can you notice? (Or think of 2 favorite scents)</p>
+                    </div>
+                </div>
+                <div class="input-area">
+                    <textarea id="input-smell"
+                        placeholder="Example: Fresh air from the window, the scent of my coffee..."></textarea>
+                    <button class="btn-primary" onclick="nextStep('smell')">Continue →</button>
+                </div>
+            </div>
+
+            <!-- 1 Thing You Can Taste -->
+            <div class="sense-step" id="step-taste">
+                <div class="sense-header">
+                    <div class="sense-icon">👅</div>
+                    <div class="sense-title">
+                        <h3>1 Thing You Can Taste</h3>
+                        <p>Notice any taste in your mouth, or think of a favorite flavor</p>
+                    </div>
+                </div>
+                <div class="input-area">
+                    <textarea id="input-taste"
+                        placeholder="Example: The minty freshness from my toothpaste, or I imagine the taste of chocolate..."></textarea>
+                    <button class="btn-primary" onclick="completeExercise()">Complete Exercise</button>
+                </div>
+            </div>
+
+            <!-- Completion -->
+            <div class="completion-card" id="completion">
+                <h2>✨ Exercise Complete!</h2>
+                <p style="font-size: 1.125rem; color: var(--gray-700); margin-bottom: 1.5rem;">
+                    Great job staying present! You've successfully completed the 5-4-3-2-1 grounding exercise.
+                    How do you feel now?
+                </p>
+                <button class="btn-secondary" onclick="restartExercise()">Do It Again</button>
+                <button class="btn-primary" onclick="saveSession()">Save Session</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../utils/storage.js"></script>
+    <script>
+        const senses = ['see', 'touch', 'hear', 'smell', 'taste'];
+        let currentStep = 0;
+        let sessionData = {};
+
+        function nextStep(sense) {
+            const input = document.getElementById(`input-${sense}`).value.trim();
+            if (!input) {
+                alert(`Please describe what you can ${sense}`);
+                return;
+            }
+
+            // Save input
+            sessionData[sense] = input;
+
+            // Mark current as completed
+            document.getElementById(`step-${sense}`).classList.remove('active');
+            document.getElementById(`step-${sense}`).classList.add('completed');
+
+            // Move to next
+            currentStep++;
+            if (currentStep < senses.length) {
+                document.getElementById(`step-${senses[currentStep]}`).classList.add('active');
+            }
+
+            // Update progress
+            const progress = ((currentStep) / senses.length) * 100;
+            document.getElementById('progress-bar').style.width = progress + '%';
+        }
+
+        function completeExercise() {
+            const input = document.getElementById('input-taste').value.trim();
+            if (!input) {
+                alert('Please describe what you can taste');
+                return;
+            }
+
+            sessionData.taste = input;
+
+            // Mark as completed
+            document.getElementById('step-taste').classList.remove('active');
+            document.getElementById('step-taste').classList.add('completed');
+
+            // Update progress to 100%
+            document.getElementById('progress-bar').style.width = '100%';
+
+            // Show completion
+            document.getElementById('completion').classList.add('show');
+
+            // Scroll to completion
+            document.getElementById('completion').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function saveSession() {
+            const sessions = Storage.load('mh_grounding_sessions') || [];
+            sessions.push({
+                timestamp: new Date().toISOString(),
+                responses: sessionData
+            });
+            Storage.save('mh_grounding_sessions', sessions);
+            Storage.incrementActivity();
+
+            alert('✅ Session saved! Great job staying grounded.');
+            window.location.href = '../index.html';
+        }
+
+        function restartExercise() {
+            // Reset everything
+            currentStep = 0;
+            sessionData = {};
+
+            // Clear inputs
+            senses.forEach(sense => {
+                document.getElementById(`input-${sense}`).value = '';
+                const step = document.getElementById(`step-${sense}`);
+                step.classList.remove('active', 'completed');
+            });
+
+            // Reset first step
+            document.getElementById('step-see').classList.add('active');
+            document.getElementById('completion').classList.remove('show');
+            document.getElementById('progress-bar').style.width = '0%';
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+
+</html>

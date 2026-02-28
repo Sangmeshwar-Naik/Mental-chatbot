@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crisis Support - Mental Health Assistant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 100;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .alert-box {
+            background: #ff4444;
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(255, 68, 68, 0.3);
+        }
+
+        .alert-box h2 {
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+
+        .alert-box p {
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .card h2 {
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .hotline-grid {
+            display: grid;
+            gap: 15px;
+        }
+
+        .hotline-card {
+            padding: 20px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #667eea10, #764ba210);
+            border-left: 5px solid #667eea;
+            transition: all 0.3s;
+        }
+
+        .hotline-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .hotline-name {
+            font-weight: 700;
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .hotline-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: #667eea;
+            margin: 10px 0;
+            letter-spacing: 2px;
+        }
+
+        .hotline-info {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .action-btn:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+        }
+
+        .grounding-exercise {
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .grounding-exercise:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+        }
+
+        .exercise-title {
+            font-weight: 600;
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .exercise-description {
+            color: #666;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .contact-list {
+            list-style: none;
+        }
+
+        .contact-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .contact-info {
+            flex: 1;
+        }
+
+        .contact-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .contact-number {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .btn-delete:hover {
+            background: #c82333;
+        }
+
+        .add-contact-form {
+            display: none;
+            margin-top: 15px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .add-contact-form.active {
+            display: block;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn-primary {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            padding: 12px 24px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .resource-card {
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea10, #764ba210);
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .resource-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .resource-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .safety-plan {
+            padding: 20px;
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .safety-plan h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .safety-plan ol {
+            margin-left: 20px;
+            line-height: 2;
+        }
+
+        .no-contacts {
+            text-align: center;
+            padding: 30px;
+            color: #999;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 32px;
+            }
+
+            .hotline-number {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <a href="../mental-health-tools.html" class="back-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+        Back
+    </a>
+
+    <div class="container">
+        <div class="header">
+            <h1>🆘 Crisis Support</h1>
+            <p>Immediate help and resources for difficult moments</p>
+        </div>
+
+        <!-- Emergency Alert -->
+        <div class="alert-box">
+            <h2>⚠️ If you're in immediate danger</h2>
+            <p>Please call emergency services (911 in US, 112 in EU, 999 in UK) or go to your nearest emergency room.
+                Your life is valuable, and help is available 24/7.</p>
+        </div>
+
+        <!-- Crisis Hotlines -->
+        <div class="card">
+            <h2>📞 24/7 Crisis Hotlines</h2>
+            <div class="hotline-grid">
+                <div class="hotline-card">
+                    <div class="hotline-name">🇺🇸 National Suicide Prevention Lifeline (US)</div>
+                    <div class="hotline-number">988</div>
+                    <div class="hotline-info">24/7, free and confidential support for people in distress, prevention and
+                        crisis resources</div>
+                    <a href="tel:988" class="action-btn">📞 Call Now</a>
+                </div>
+
+                <div class="hotline-card">
+                    <div class="hotline-name">💬 Crisis Text Line (US)</div>
+                    <div class="hotline-number">Text HOME to 741741</div>
+                    <div class="hotline-info">24/7 text-based support. Text from anywhere in the US</div>
+                    <a href="sms:741741&body=HOME" class="action-btn">💬 Text Now</a>
+                </div>
+
+                <div class="hotline-card">
+                    <div class="hotline-name">🇮🇳 AASRA (India)</div>
+                    <div class="hotline-number">91-9820466726</div>
+                    <div class="hotline-info">24/7 suicide prevention helpline. Available in English and Hindi</div>
+                    <a href="tel:+919820466726" class="action-btn">📞 Call Now</a>
+                </div>
+
+                <div class="hotline-card">
+                    <div class="hotline-name">🇬🇧 Samaritans (UK)</div>
+                    <div class="hotline-number">116 123</div>
+                    <div class="hotline-info">24/7 emotional support for anyone in distress</div>
+                    <a href="tel:116123" class="action-btn">📞 Call Now</a>
+                </div>
+
+                <div class="hotline-card">
+                    <div class="hotline-name">🌍 International Association for Suicide Prevention</div>
+                    <div class="hotline-info">Find crisis centers and hotlines worldwide</div>
+                    <a href="https://www.iasp.info/resources/Crisis_Centres/" target="_blank" class="action-btn">🌐 Find
+                        Local Help</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grounding Techniques -->
+        <div class="card">
+            <h2>🧘 Immediate Grounding Techniques</h2>
+            <p style="color: #666; margin-bottom: 20px;">These exercises can help you feel more present and calm right
+                now.</p>
+
+            <div class="grounding-exercise" onclick="startExercise('5-4-3-2-1')">
+                <div class="exercise-title">5-4-3-2-1 Grounding</div>
+                <div class="exercise-description">
+                    Notice 5 things you can see, 4 things you can touch, 3 things you can hear, 2 things you can smell,
+                    and 1 thing you can taste.
+                </div>
+            </div>
+
+            <div class="grounding-exercise" onclick="startExercise('box-breathing')">
+                <div class="exercise-title">Box Breathing (4-4-4-4)</div>
+                <div class="exercise-description">
+                    Breathe in for 4 seconds, hold for 4 seconds, exhale for 4 seconds, hold for 4 seconds. Repeat 4
+                    times.
+                </div>
+            </div>
+
+            <div class="grounding-exercise" onclick="startExercise('cold-water')">
+                <div class="exercise-title">Cold Water Technique</div>
+                <div class="exercise-description">
+                    Splash cold water on your face or hold an ice cube. The shock can help reset your nervous system and
+                    bring you to the present moment.
+                </div>
+            </div>
+
+            <div class="grounding-exercise" onclick="startExercise('progressive-relaxation')">
+                <div class="exercise-title">Progressive Muscle Relaxation</div>
+                <div class="exercise-description">
+                    Tense each muscle group for 5 seconds, then release. Start with your toes and work up to your head.
+                </div>
+            </div>
+        </div>
+
+        <!-- Safety Plan -->
+        <div class="card">
+            <h2>📝 Create Your Safety Plan</h2>
+            <div class="safety-plan">
+                <h3>Steps to Take When in Crisis:</h3>
+                <ol>
+                    <li>Recognize your warning signs (thoughts, images, mood, behavior)</li>
+                    <li>Use coping strategies (exercise, meditation, journaling)</li>
+                    <li>Reach out to supportive people</li>
+                    <li>Contact mental health professionals</li>
+                    <li>Call crisis hotlines if needed</li>
+                    <li>Make your environment safe (remove potential means of self-harm)</li>
+                </ol>
+            </div>
+            <button class="action-btn" onclick="window.open('features/grounding.html', '_blank')">
+                ✏️ Download Safety Plan Template
+            </button>
+        </div>
+
+        <!-- Emergency Contacts -->
+        <div class="card">
+            <h2>👥 Your Emergency Contacts</h2>
+            <p style="color: #666; margin-bottom: 20px;">Add trusted people you can reach out to in a crisis.</p>
+
+            <button class="btn-primary" onclick="toggleAddContact()">➕ Add Contact</button>
+
+            <div class="add-contact-form" id="addContactForm">
+                <div class="input-group">
+                    <label>Name</label>
+                    <input type="text" id="contactName" placeholder="e.g., Mom, Best Friend, Therapist">
+                </div>
+                <div class="input-group">
+                    <label>Phone Number</label>
+                    <input type="tel" id="contactPhone" placeholder="e.g., +1-234-567-8900">
+                </div>
+                <div class="input-group">
+                    <label>Relationship (Optional)</label>
+                    <input type="text" id="contactRelation" placeholder="e.g., Family, Friend, Professional">
+                </div>
+                <button class="btn-primary" onclick="saveContact()">💾 Save Contact</button>
+                <button class="btn-secondary" onclick="toggleAddContact()">❌ Cancel</button>
+            </div>
+
+            <ul class="contact-list" id="contactList">
+                <div class="no-contacts">No emergency contacts added yet. Click "Add Contact" to get started.</div>
+            </ul>
+        </div>
+
+        <!-- Additional Resources -->
+        <div class="card">
+            <h2>📚 Additional Resources</h2>
+            <div class="resources-grid">
+                <div class="resource-card">
+                    <div class="resource-icon">🧠</div>
+                    <div class="resource-title">Mental Health America</div>
+                    <a href="https://www.mhanational.org" target="_blank" class="action-btn">Visit Website</a>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-icon">💚</div>
+                    <div class="resource-title">NAMI (National Alliance on Mental Illness)</div>
+                    <a href="https://www.nami.org" target="_blank" class="action-btn">Visit Website</a>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-icon">🤝</div>
+                    <div class="resource-title">Crisis Text Line</div>
+                    <a href="https://www.crisistextline.org" target="_blank" class="action-btn">Visit Website</a>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-icon">🌟</div>
+                    <div class="resource-title">The Trevor Project (LGBTQ+)</div>
+                    <a href="https://www.thetrevorproject.org" target="_blank" class="action-btn">Visit Website</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let emergencyContacts = JSON.parse(localStorage.getItem('emergencyContacts')) || [];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function () {
+            displayContacts();
+        });
+
+        function toggleAddContact() {
+            const form = document.getElementById('addContactForm');
+            form.classList.toggle('active');
+        }
+
+        function saveContact() {
+            const name = document.getElementById('contactName').value.trim();
+            const phone = document.getElementById('contactPhone').value.trim();
+            const relation = document.getElementById('contactRelation').value.trim();
+
+            if (!name || !phone) {
+                alert('Please enter both name and phone number');
+                return;
+            }
+
+            const contact = {
+                id: Date.now(),
+                name: name,
+                phone: phone,
+                relation: relation
+            };
+
+            emergencyContacts.push(contact);
+            localStorage.setItem('emergencyContacts', JSON.stringify(emergencyContacts));
+
+            // Clear form
+            document.getElementById('contactName').value = '';
+            document.getElementById('contactPhone').value = '';
+            document.getElementById('contactRelation').value = '';
+
+            toggleAddContact();
+            displayContacts();
+        }
+
+        function deleteContact(id) {
+            if (confirm('Are you sure you want to delete this contact?')) {
+                emergencyContacts = emergencyContacts.filter(c => c.id !== id);
+                localStorage.setItem('emergencyContacts', JSON.stringify(emergencyContacts));
+                displayContacts();
+            }
+        }
+
+        function displayContacts() {
+            const listContainer = document.getElementById('contactList');
+
+            if (emergencyContacts.length === 0) {
+                listContainer.innerHTML = '<div class="no-contacts">No emergency contacts added yet. Click "Add Contact" to get started.</div>';
+                return;
+            }
+
+            listContainer.innerHTML = emergencyContacts.map(contact => `
+                <li class="contact-item">
+                    <div class="contact-info">
+                        <div class="contact-name">${contact.name} ${contact.relation ? `(${contact.relation})` : ''}</div>
+                        <div class="contact-number">
+                            <a href="tel:${contact.phone}" style="color: #667eea; text-decoration: none;">
+                                📞 ${contact.phone}
+                            </a>
+                        </div>
+                    </div>
+                    <button class="btn-delete" onclick="deleteContact(${contact.id})">Delete</button>
+                </li>
+            `).join('');
+        }
+
+        function startExercise(type) {
+            const exercises = {
+                '5-4-3-2-1': 'Great choice! Take a moment now:\n\n5 things you SEE\n4 things you can TOUCH\n3 things you can HEAR\n2 things you can SMELL\n1 thing you can TASTE\n\nTake your time with each one.',
+                'box-breathing': 'Let\'s breathe together:\n\n1. Breathe IN for 4 seconds\n2. HOLD for 4 seconds\n3. Breathe OUT for 4 seconds\n4. HOLD for 4 seconds\n\nRepeat 4 times. You\'re doing great!',
+                'cold-water': 'Try this now:\n\n1. Go to your sink or bathroom\n2. Splash cold water on your face\n3. Or hold an ice cube in your hand\n4. Notice the sensation\n\nThis activates your parasympathetic nervous system and can help calm you down.',
+                'progressive-relaxation': 'Let\'s relax your body:\n\n1. Start with your toes - tense for 5 seconds, then release\n2. Move to your calves, thighs, stomach\n3. Continue to your hands, arms, shoulders\n4. Finally, your face and head\n\nNotice the difference between tension and relaxation.'
+            };
+
+            alert(exercises[type] || 'Exercise starting...');
+        }
+    </script>
+</body>
+
+</html>

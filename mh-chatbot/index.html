@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mental Health Companion - Your Wellness Journey</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="main-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">🌸</span>
+                    <h1>Mental Health Companion</h1>
+                </div>
+                <nav class="main-nav">
+                    <button class="nav-btn active" data-section="dashboard">
+                        <span>🏠</span> Dashboard
+                    </button>
+                    <button class="nav-btn" data-section="profile">
+                        <span>👤</span> Profile
+                    </button>
+                    <button class="nav-btn" onclick="logout()"
+                        style="background: rgba(220, 38, 38, 0.1); color: #dc2626;">
+                        <span>🚪</span> Logout
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+
+            <!-- Dashboard Section -->
+            <section id="dashboard-section" class="content-section active">
+
+                <!-- Welcome Banner -->
+                <div class="welcome-banner">
+                    <div class="welcome-content">
+                        <h2>Welcome back! 👋</h2>
+                        <p>Your mental wellness journey continues here. Choose an activity below.</p>
+                    </div>
+                    <div class="welcome-stats">
+                        <div class="stat-card">
+                            <span class="stat-value" id="streak-days">0</span>
+                            <span class="stat-label">Day Streak</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-value" id="activities-completed">0</span>
+                            <span class="stat-label">Activities</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mental Health Tools -->
+                <div class="feature-category">
+                    <h3 class="category-title">🧠 Mental Health Tools</h3>
+                    <div class="feature-grid">
+                        <div class="feature-card" onclick="window.location.href='mental-health-tools.html'"
+                            style="cursor: pointer;">
+                            <div class="feature-icon">🧠</div>
+                            <h4>Mental Health Tools</h4>
+                            <p>Access 5 powerful tools: Coping Plan, Therapy Exercises, AI Journal, Habit Tracker &
+                                Voice Chat</p>
+                            <span class="feature-badge new">5 Tools</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wellness & Relaxation -->
+                <div class="feature-category">
+                    <h3 class="category-title">🧘 Wellness & Relaxation</h3>
+                    <div class="feature-grid">
+                        <div class="feature-card" onclick="window.location.href='wellness.html'"
+                            style="cursor: pointer;">
+                            <div class="feature-icon">🧘</div>
+                            <h4>Wellness & Relaxation</h4>
+                            <p>4 calming activities: Breathing Exercises, Focus Timer, Grounding & Guided Meditation</p>
+                            <span class="feature-badge new">4 Activities</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cognitive Games -->
+                <div class="feature-category">
+                    <h3 class="category-title">🎮 Cognitive Games</h3>
+                    <div class="feature-grid">
+                        <div class="feature-card" onclick="window.location.href='games.html'" style="cursor: pointer;">
+                            <div class="feature-icon">🎮</div>
+                            <h4>Cognitive Games</h4>
+                            <p>Play 6 brain training games: Chess, Memory Match, Bubble Shooter, Block Blast, Reaction
+                                Time & Color Therapy</p>
+                            <span class="feature-badge new">6 Games</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Social Wellness -->
+                <div class="feature-category">
+                    <h3 class="category-title">💞 Social Wellness</h3>
+                    <div class="feature-grid">
+                        <div class="feature-card" onclick="window.location.href='social-wellness.html'"
+                            style="cursor: pointer;">
+                            <div class="feature-icon">💞</div>
+                            <h4>Social Wellness</h4>
+                            <p>4 social activities: Kindness Challenge, Mood Matching, Empathy Quiz & Wellness Bingo</p>
+                            <span class="feature-badge new">4 Activities</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Professional Tools -->
+                <div class="feature-category">
+                    <h3 class="category-title">👥 Professional Tools</h3>
+                    <div class="feature-grid">
+                        <div class="feature-card" data-feature="clinician-dashboard">
+                            <div class="feature-icon">📊</div>
+                            <h4>Clinician Dashboard</h4>
+                            <p>Professional mental health monitoring tools</p>
+                            <span class="feature-badge pro">Pro</span>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+
+
+            <!-- Profile Section -->
+            <section id="profile-section" class="content-section">
+                <div class="section-container">
+                    <div class="profile-header">
+                        <div class="profile-avatar">
+                            <span>👤</span>
+                        </div>
+                        <h2>Your Profile</h2>
+                    </div>
+                    <div class="profile-content">
+                        <div class="profile-card">
+                            <h3>Personal Information</h3>
+                            <div class="profile-field">
+                                <label>Display Name</label>
+                                <input type="text" id="display-name" placeholder="Enter your name">
+                            </div>
+                            <div class="profile-field">
+                                <label>Email</label>
+                                <input type="email" id="email" placeholder="your.email@example.com">
+                            </div>
+                        </div>
+
+                        <div class="profile-card">
+                            <h3>Your Progress</h3>
+                            <div class="progress-stats">
+                                <div class="progress-item">
+                                    <span class="progress-label">Total Activities</span>
+                                    <span class="progress-value" id="total-activities">0</span>
+                                </div>
+                                <div class="progress-item">
+                                    <span class="progress-label">Journal Entries</span>
+                                    <span class="progress-value" id="journal-count">0</span>
+                                </div>
+                                <div class="progress-item">
+                                    <span class="progress-label">Days Active</span>
+                                    <span class="progress-value" id="days-active">0</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="profile-card">
+                            <h3>Data Management</h3>
+                            <div class="data-actions">
+                                <button class="btn-secondary" id="export-data">
+                                    <span>📥</span> Export Your Data
+                                </button>
+                                <button class="btn-secondary" id="import-data">
+                                    <span>📤</span> Import Data
+                                </button>
+                                <button class="btn-danger" id="clear-data">
+                                    <span>🗑️</span> Clear All Data
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container">
+            <p>🌸 Mental Health Companion - Your wellness journey matters</p>
+            <p class="footer-note">This is a support tool and not a replacement for professional help. If you're in
+                crisis, please contact emergency services.</p>
+        </div>
+    </footer>
+
+
+    <!-- Floating Chatbot Button -->
+    <div class="floating-chat-button" id="floating-chat-btn" title="Open AI Chatbot">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+                d="M12 2C6.48 2 2 6.48 2 12C2 13.54 2.38 15 3.06 16.3L2 22L7.7 20.94C9 21.62 10.46 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2Z"
+                fill="white" />
+            <circle cx="8" cy="12" r="1.5" fill="#667eea" />
+            <circle cx="12" cy="12" r="1.5" fill="#667eea" />
+            <circle cx="16" cy="12" r="1.5" fill="#667eea" />
+        </svg>
+    </div>
+
+    <style>
+        .floating-chat-button {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .floating-chat-button:hover {
+            transform: scale(1.1) translateY(-4px);
+            box-shadow: 0 12px 32px rgba(102, 126, 234, 0.6);
+        }
+
+        .floating-chat-button:active {
+            transform: scale(0.95);
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        .floating-chat-button svg {
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+    </style>
+
+
+    <!-- Scripts -->
+    <script>
+        // Floating chat button click handler
+        document.getElementById('floating-chat-btn').addEventListener('click', function () {
+            window.location.href = 'chatbot.html';
+        });
+
+        // Logout function
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                window.location.href = '/logout';
+            }
+        }
+    </script>
+    <script src="utils/storage.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>

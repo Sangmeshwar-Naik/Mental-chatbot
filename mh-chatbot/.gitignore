@@ -1,0 +1,111 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+*.manifest
+*.spec
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+*.log
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Flask
+instance/
+.webassets-cache
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+.pnpm-debug.log*
+
+# Build outputs
+frontend/build/
+frontend/dist/
+
+# Docker
+*.log
+
+# Secrets
+secrets.yaml
+*.key
+*.pem
+*.crt
+
+# Temporary files
+*.tmp
+*.bak
+.DS_Store
+Thumbs.db
+
+# Alembic
+alembic/versions/*.pyc
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# Redis
+dump.rdb
+
+# User uploads
+uploads/
+static/uploads/
+
+# Vector DB
+*.faiss
+*.index
+chroma_db/

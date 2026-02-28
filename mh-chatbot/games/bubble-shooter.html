@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bubble Shooter</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.15);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .back-btn {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .game-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .game-wrapper {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .score-panel {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .score-item {
+            text-align: center;
+            padding: 15px;
+            background: linear-gradient(135deg, #f0f4ff, #e8f0ff);
+            border-radius: 12px;
+        }
+
+        .score-item .label {
+            font-size: 11px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+
+        .score-item .value {
+            font-size: 26px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .combo-display {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            font-size: 48px;
+            font-weight: 900;
+            color: #ffd93d;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+            pointer-events: none;
+            z-index: 1000;
+            transition: all 0.3s;
+        }
+
+        .combo-display.show {
+            transform: translate(-50%, -50%) scale(1.5);
+            opacity: 0;
+        }
+
+        canvas {
+            display: block;
+            border: 3px solid #667eea;
+            border-radius: 12px;
+            cursor: crosshair;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .controls {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .info-text {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .power-ups-container {
+            margin: 15px 0;
+            padding: 15px;
+            background: #f0f4ff;
+            border-radius: 12px;
+        }
+
+        .power-ups-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .power-ups-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .power-up-btn {
+            padding: 8px;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .power-up-bomb {
+            background: #ff6b6b;
+        }
+
+        .power-up-rainbow {
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1);
+        }
+
+        .power-up-laser {
+            background: #667eea;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>🎯 Bubble Shooter</h1>
+        <a href="../games.html" class="back-btn">← Back</a>
+    </div>
+    <div class="game-container">
+        <div class="game-wrapper">
+            <div class="score-panel">
+                <div class="score-item">
+                    <div class="label">Score</div>
+                    <div class="value" id="score">0</div>
+                </div>
+                <div class="score-item">
+                    <div class="label">Level</div>
+                    <div class="value" id="level">1</div>
+                </div>
+                <div class="score-item">
+                    <div class="label">Bubbles</div>
+                    <div class="value" id="bubbles">50</div>
+                </div>
+                <div class="score-item">
+                    <div class="label">High Score</div>
+                    <div class="value" id="highScore">0</div>
+                </div>
+                <div class="score-item">
+                    <div class="label">Lives</div>
+                    <div class="value" id="lives">❤️❤️❤️</div>
+                </div>
+            </div>
+            <div class="power-ups-container">
+                <div class="power-ups-label">Power-Ups</div>
+                <div class="power-ups-grid">
+                    <button id="bomb-btn" class="power-up-btn power-up-bomb">
+                        💣 Bomb (<span id="bomb-count">3</span>)
+                    </button>
+                    <button id="rainbow-btn" class="power-up-btn power-up-rainbow">
+                        🌈 Rainbow (<span id="rainbow-count">2</span>)
+                    </button>
+                    <button id="laser-btn" class="power-up-btn power-up-laser">
+                        ⚡ Laser (<span id="laser-count">2</span>)
+                    </button>
+                </div>
+            </div>
+            <div class="combo-display" id="comboDisplay"></div>
+            <canvas id="gameCanvas" width="500" height="600"></canvas>
+            <div class="info-text">🎯 Match 3+ bubbles | 💥 Combos = Bonus Points</div>
+            <div class="controls">
+                <button id="new-game-btn">🔄 New Game</button>
+                <button id="pauseBtn">⏸️ Pause</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const BUBBLE_SIZE = 30;
+        const ROWS = 8;
+        const COLS = 10;
+        const COLORS = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8', '#F7DC6F', '#BB8FCE'];
+
+        let bubbles = [];
+        let shooter = { x: 250, y: 550, angle: -90, color: COLORS[0] };
+        let projectile = null;
+        let score = 0;
+        let level = 1;
+        let bubblesLeft = 50;
+        let paused = false;
+        let highScore = localStorage.getItem('bubbleShooterHigh') || 0;
+        let combo = 0;
+        let lastMatchCount = 0;
+        let lives = 3;
+        let powerUps = { bomb: 3, rainbow: 2, laser: 2 };
+        let activePowerUp = null;
+
+        document.getElementById('highScore').textContent = highScore;
+        updateLivesDisplay();
+
+        function initGame() {
+            bubbles = [];
+            for (let row = 0; row < ROWS; row++) {
+                for (let col = 0; col < COLS; col++) {
+                    if (row < 5) {
+                        const x = col * BUBBLE_SIZE + (row % 2 ? BUBBLE_SIZE / 2 : 0) + BUBBLE_SIZE / 2;
+                        const y = row * BUBBLE_SIZE + BUBBLE_SIZE / 2;
+                        bubbles.push({
+                            x, y,
+                            color: COLORS[Math.floor(Math.random() * COLORS.length)],
+                            row, col
+                        });
+                    }
+                }
+            }
+            shooter.color = COLORS[Math.floor(Math.random() * COLORS.length)];
+        }
+
+        function drawBubble(x, y, color, size = BUBBLE_SIZE) {
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc(x, y, size / 2 - 2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw bubbles
+            bubbles.forEach(b => drawBubble(b.x, b.y, b.color));
+
+            // Draw shooter
+            drawBubble(shooter.x, shooter.y, shooter.color, 25);
+
+            // Draw aim line
+            ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(shooter.x, shooter.y);
+            ctx.lineTo(
+                shooter.x + Math.cos(shooter.angle * Math.PI / 180) * 100,
+                shooter.y + Math.sin(shooter.angle * Math.PI / 180) * 100
+            );
+            ctx.stroke();
+
+            // Draw projectile
+            if (projectile) {
+                drawBubble(projectile.x, projectile.y, projectile.color, 25);
+            }
+        }
+
+        function update() {
+            if (paused) return;
+
+            if (projectile) {
+                projectile.x += projectile.vx;
+                projectile.y += projectile.vy;
+
+                // Wall collision
+                if (projectile.x <= BUBBLE_SIZE / 2 || projectile.x >= canvas.width - BUBBLE_SIZE / 2) {
+                    projectile.vx *= -1;
+                }
+
+                // Check collision with bubbles
+                for (let bubble of bubbles) {
+                    const dx = projectile.x - bubble.x;
+                    const dy = projectile.y - bubble.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < BUBBLE_SIZE) {
+                        attachBubble(projectile, bubble);
+                        projectile = null;
+                        break;
+                    }
+                }
+
+                // Top collision
+                if (projectile && projectile.y <= BUBBLE_SIZE / 2) {
+                    attachBubble(projectile, null);
+                    projectile = null;
+                }
+            }
+
+            draw();
+            requestAnimationFrame(update);
+        }
+
+        function attachBubble(proj, nearBubble) {
+            let row, col, x, y;
+
+            if (nearBubble) {
+                row = nearBubble.row;
+                col = nearBubble.col;
+                // Find empty adjacent position
+                const positions = [
+                    { r: row - 1, c: col }, { r: row + 1, c: col },
+                    { r: row, c: col - 1 }, { r: row, c: col + 1 }
+                ];
+
+                for (let pos of positions) {
+                    if (!bubbles.some(b => b.row === pos.r && b.col === pos.c)) {
+                        row = pos.r;
+                        col = pos.c;
+                        break;
+                    }
+                }
+
+                x = col * BUBBLE_SIZE + (row % 2 ? BUBBLE_SIZE / 2 : 0) + BUBBLE_SIZE / 2;
+                y = row * BUBBLE_SIZE + BUBBLE_SIZE / 2;
+            } else {
+                row = 0;
+                col = Math.round(proj.x / BUBBLE_SIZE);
+                x = col * BUBBLE_SIZE + BUBBLE_SIZE / 2;
+                y = BUBBLE_SIZE / 2;
+            }
+
+            bubbles.push({ x, y, color: proj.color, row, col });
+            checkMatches({ x, y, color: proj.color, row, col });
+            bubblesLeft--;
+            document.getElementById('bubbles').textContent = bubblesLeft;
+            shooter.color = COLORS[Math.floor(Math.random() * COLORS.length)];
+
+            if (bubblesLeft <= 0 || bubbles.length === 0) {
+                level++;
+                bubblesLeft = 50;
+                document.getElementById('level').textContent = level;
+                document.getElementById('bubbles').textContent = bubblesLeft;
+                initGame();
+            }
+        }
+
+        function checkMatches(newBubble) {
+            const toCheck = [newBubble];
+            const matched = [];
+            const visited = new Set();
+
+            while (toCheck.length > 0) {
+                const current = toCheck.pop();
+                const key = `${current.row},${current.col}`;
+
+                if (visited.has(key)) continue;
+                visited.add(key);
+                matched.push(current);
+
+                // Find adjacent same-color bubbles
+                bubbles.forEach(b => {
+                    if (b.color === newBubble.color) {
+                        const dx = Math.abs(b.x - current.x);
+                        const dy = Math.abs(b.y - current.y);
+                        if (dx < BUBBLE_SIZE && dy < BUBBLE_SIZE && !visited.has(`${b.row},${b.col}`)) {
+                            toCheck.push(b);
+                        }
+                    }
+                });
+            }
+
+            if (matched.length >= 3) {
+                matched.forEach(m => {
+                    bubbles = bubbles.filter(b => b !== m);
+                });
+
+                // Combo system
+                if (lastMatchCount > 0) {
+                    combo++;
+                    showCombo(combo);
+                } else {
+                    combo = 0;
+                }
+                lastMatchCount = matched.length;
+
+                // Scoring with combo multiplier
+                const basePoints = matched.length * 10;
+                const comboBonus = combo * 50;
+                score += basePoints + comboBonus;
+
+                document.getElementById('score').textContent = score;
+
+                // Update high score
+                if (score > highScore) {
+                    highScore = score;
+                    localStorage.setItem('bubbleShooterHigh', highScore);
+                    document.getElementById('highScore').textContent = highScore;
+                }
+            } else {
+                combo = 0;
+                lastMatchCount = 0;
+            }
+        }
+
+        function showCombo(comboCount) {
+            const display = document.getElementById('comboDisplay');
+            display.textContent = `${comboCount}x COMBO!`;
+            display.classList.add('show');
+            setTimeout(() => {
+                display.classList.remove('show');
+            }, 800);
+        }
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (paused) return;
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            shooter.angle = Math.atan2(y - shooter.y, x - shooter.x) * 180 / Math.PI;
+            if (shooter.angle > -10) shooter.angle = -10;
+            if (shooter.angle < -170) shooter.angle = -170;
+        });
+
+        canvas.addEventListener('click', (e) => {
+            if (paused) return;
+
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            // Check if using power-up
+            if (activePowerUp && usePowerUpEffect(x, y)) {
+                return;
+            }
+
+            if (!projectile) {
+                const speed = 8;
+                projectile = {
+                    x: shooter.x,
+                    y: shooter.y,
+                    vx: Math.cos(shooter.angle * Math.PI / 180) * speed,
+                    vy: Math.sin(shooter.angle * Math.PI / 180) * speed,
+                    color: shooter.color
+                };
+            }
+        });
+
+        function newGame() {
+            score = 0;
+            level = 1;
+            bubblesLeft = 50;
+            lives = 3;
+            powerUps = { bomb: 3, rainbow: 2, laser: 2 };
+            activePowerUp = null;
+            document.getElementById('score').textContent = '0';
+            document.getElementById('level').textContent = '1';
+            document.getElementById('bubbles').textContent = '50';
+            updateLivesDisplay();
+            updatePowerUpCounts();
+            initGame();
+        }
+
+        function updateLivesDisplay() {
+            document.getElementById('lives').textContent = '❤️'.repeat(lives);
+            if (lives <= 0) {
+                alert('Game Over! Final Score: ' + score);
+                newGame();
+            }
+        }
+
+        function updatePowerUpCounts() {
+            document.getElementById('bomb-count').textContent = powerUps.bomb;
+            document.getElementById('rainbow-count').textContent = powerUps.rainbow;
+            document.getElementById('laser-count').textContent = powerUps.laser;
+        }
+
+        function activatePowerUp(type) {
+            if (powerUps[type] <= 0) {
+                alert('No more ' + type + ' power-ups!');
+                return;
+            }
+            activePowerUp = type;
+            alert('✨ ' + type.toUpperCase() + ' power-up activated! Click to use.');
+        }
+
+        function usePowerUpEffect(x, y) {
+            if (!activePowerUp) return false;
+
+            powerUps[activePowerUp]--;
+            updatePowerUpCounts();
+
+            if (activePowerUp === 'bomb') {
+                // Remove all bubbles in radius
+                bubbles = bubbles.filter(b => {
+                    const dist = Math.sqrt((b.x - x) ** 2 + (b.y - y) ** 2);
+                    return dist > BUBBLE_SIZE * 3;
+                });
+                score += 100;
+            } else if (activePowerUp === 'rainbow') {
+                // Remove all bubbles of clicked color
+                const clickedBubble = bubbles.find(b => {
+                    const dist = Math.sqrt((b.x - x) ** 2 + (b.y - y) ** 2);
+                    return dist < BUBBLE_SIZE;
+                });
+                if (clickedBubble) {
+                    bubbles = bubbles.filter(b => b.color !== clickedBubble.color);
+                    score += 200;
+                }
+            } else if (activePowerUp === 'laser') {
+                // Remove entire column
+                const col = Math.floor(x / BUBBLE_SIZE);
+                bubbles = bubbles.filter(b => b.col !== col);
+                score += 150;
+            }
+
+            document.getElementById('score').textContent = score;
+            activePowerUp = null;
+            return true;
+        }
+
+        function togglePause() {
+            paused = !paused;
+            document.getElementById('pauseBtn').textContent = paused ? '▶️ Resume' : '⏸️ Pause';
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            initGame();
+            update();
+
+            // Add event listeners for buttons
+            document.getElementById('bomb-btn').addEventListener('click', () => activatePowerUp('bomb'));
+            document.getElementById('rainbow-btn').addEventListener('click', () => activatePowerUp('rainbow'));
+            document.getElementById('laser-btn').addEventListener('click', () => activatePowerUp('laser'));
+            document.getElementById('new-game-btn').addEventListener('click', newGame);
+            document.getElementById('pauseBtn').addEventListener('click', togglePause);
+        });
+    </script>
+</body>
+
+</html>

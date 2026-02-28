@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Therapy Exercise Generator</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background-attachment: fixed;
+            padding: 2rem;
+        }
+
+        .feature-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .feature-header {
+            background: rgba(255, 255, 255, 0.95);
+            -webkit-backdrop-filter:backdrop-filter:
+            backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .feature-header h1 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .therapy-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            background: rgba(255, 255, 255, 0.95);
+            -webkit-backdrop-filter:backdrop-filter:
+            backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            padding: 1rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .therapy-tab {
+            flex: 1;
+            padding: 1rem;
+            background: var(--gray-100);
+            border: 2px solid transparent;
+            border-radius: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .therapy-tab:hover {
+            background: var(--gray-200);
+            transform: translateY(-2px);
+        }
+
+        .therapy-tab.active {
+            background: var(--gradient-primary);
+            color: white;
+            border-color: var(--primary-purple);
+            box-shadow: 0 10px 15px -3px rgba(102, 126, 234, 0.4);
+        }
+
+        .therapy-tab h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .therapy-tab p {
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+
+        .therapy-tab.active p {
+            opacity: 1;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            -webkit-backdrop-filter:backdrop-filter:
+            backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .exercise-content {
+            display: none;
+        }
+
+        .exercise-content.active {
+            display: block;
+        }
+
+        .exercise-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .exercise-card {
+            background: var(--gray-50);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            border-left: 4px solid var(--primary-purple);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .exercise-card:hover {
+            background: var(--gray-100);
+            transform: translateX(5px);
+        }
+
+        .exercise-card h4 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+        }
+
+        .exercise-card p {
+            color: var(--gray-600);
+            font-size: 0.875rem;
+        }
+
+        .exercise-detail {
+            display: none;
+        }
+
+        .exercise-detail.active {
+            display: block;
+        }
+
+        .step-container {
+            background: var(--gray-50);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .step-number {
+            width: 2.5rem;
+            height: 2.5rem;
+            background: var(--gradient-primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .step-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .step-description {
+            color: var(--gray-700);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .thought-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--gray-200);
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-family: inherit;
+            min-height: 100px;
+            resize: vertical;
+            margin-bottom: 1rem;
+        }
+
+        .thought-input:focus {
+            outline: none;
+            border-color: var(--primary-purple);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn-primary {
+            padding: 0.75rem 2rem;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            padding: 0.75rem 2rem;
+            background: var(--gray-200);
+            color: var(--gray-700);
+            border: none;
+            border-radius: 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-right: 0.5rem;
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-300);
+        }
+
+        .result-box {
+            background: rgba(102, 126, 234, 0.1);
+            border: 2px solid var(--primary-purple);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .result-box h4 {
+            color: var(--primary-purple);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-box p {
+            color: var(--gray-700);
+            line-height: 1.6;
+        }
+
+        .distortion-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .tag {
+            padding: 0.5rem 1rem;
+            background: var(--gray-200);
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tag:hover {
+            background: var(--primary-purple);
+            color: white;
+        }
+
+        .tag.selected {
+            background: var(--primary-purple);
+            color: white;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: 2rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.2s;
+            margin-bottom: 1rem;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .progress-tracker {
+            background: var(--gray-50);
+            padding: 1rem;
+            border-radius: 1rem;
+            margin-top: 1rem;
+        }
+
+        .progress-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .progress-item:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="feature-container">
+        <a href="../index.html" class="back-btn">
+            <span>←</span> Back to Dashboard
+        </a>
+
+        <div class="feature-header">
+            <h1>🎯 Therapy Exercise Generator</h1>
+            <p>Evidence-based therapeutic exercises for mental wellness</p>
+        </div>
+
+        <!-- Therapy Type Tabs -->
+        <div class="therapy-tabs">
+            <div class="therapy-tab active" data-therapy="cbt">
+                <h3>CBT</h3>
+                <p>Cognitive Behavioral Therapy</p>
+            </div>
+            <div class="therapy-tab" data-therapy="dbt">
+                <h3>DBT</h3>
+                <p>Dialectical Behavior Therapy</p>
+            </div>
+            <div class="therapy-tab" data-therapy="act">
+                <h3>ACT</h3>
+                <p>Acceptance & Commitment</p>
+            </div>
+        </div>
+
+        <!-- CBT Exercises -->
+        <div class="exercise-content active" id="cbt-content">
+            <div class="card">
+                <h2><span>🧠</span> Cognitive Behavioral Therapy Exercises</h2>
+                <div class="exercise-list" id="cbt-list">
+                    <div class="exercise-card" data-exercise="thought-record">
+                        <h4>📝 Thought Record</h4>
+                        <p>Identify and challenge negative automatic thoughts</p>
+                    </div>
+                    <div class="exercise-card" data-exercise="cognitive-distortions">
+                        <h4>🔍 Identify Cognitive Distortions</h4>
+                        <p>Recognize thinking patterns that contribute to negative emotions</p>
+                    </div>
+                    <div class="exercise-card" data-exercise="behavioral-activation">
+                        <h4>⚡ Behavioral Activation</h4>
+                        <p>Plan activities to improve mood and increase engagement</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DBT Exercises -->
+        <div class="exercise-content" id="dbt-content">
+            <div class="card">
+                <h2><span>💪</span> Dialectical Behavior Therapy Exercises</h2>
+                <div class="exercise-list" id="dbt-list">
+                    <div class="exercise-card" data-exercise="distress-tolerance">
+                        <h4>🛡️ Distress Tolerance - TIPP</h4>
+                        <p>Temperature, Intense exercise, Paced breathing, Progressive relaxation</p>
+                    </div>
+                    <div class="exercise-card" data-exercise="emotion-regulation">
+                        <h4>😌 Emotion Regulation</h4>
+                        <p>Build mastery over your emotions with practical skills</p>
+                    </div>
+                    <div class="exercise-card" data-exercise="interpersonal-effectiveness">
+                        <h4>🤝 Interpersonal Effectiveness - DEAR MAN</h4>
+                        <p>Communicate effectively and maintain relationships</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ACT Exercises -->
+        <div class="exercise-content" id="act-content">
+            <div class="card">
+                <h2><span>🌟</span> Acceptance & Commitment Therapy Exercises</h2>
+                <div class="exercise-list" id="act-list">
+                    <div class="exercise-card" data-exercise="values-clarification">
+                        <h4>🎯 Values Clarification</h4>
+                        <p>Identify what truly matters to you in life</p>
+                    </div>
+                    <div class="exercise-card" data-exercise="cognitive-defusion">
+                        <h4>☁️ Cognitive Defusion</h4>
+                        <p>Create distance from unhelpful thoughts</p>
+                    </div>
+                    <div class="exercise-card" data-exercise="present-moment">
+                        <h4>🧘 Present Moment Awareness</h4>
+                        <p>Mindfulness exercises to stay grounded in the now</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exercise Detail View (Dynamic) -->
+        <div class="card exercise-detail" id="exercise-detail">
+            <!-- Content will be dynamically loaded here -->
+        </div>
+    </div>
+
+    <script src="../utils/storage.js"></script>
+    <script>
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function () {
+            setupTherapyTabs();
+            setupExerciseCards();
+        });
+
+        let currentTherapy = 'cbt';
+
+        // Setup therapy tabs
+        function setupTherapyTabs() {
+            const tabs = document.querySelectorAll('.therapy-tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const therapy = tab.getAttribute('data-therapy');
+                    switchTherapy(therapy);
+                });
+            });
+        }
+
+        // Switch therapy type
+        function switchTherapy(therapy) {
+            currentTherapy = therapy;
+
+            // Update tabs
+            document.querySelectorAll('.therapy-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`[data-therapy="${therapy}"]`).classList.add('active');
+
+            // Update content
+            document.querySelectorAll('.exercise-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(`${therapy}-content`).classList.add('active');
+
+            // Hide exercise detail
+            document.getElementById('exercise-detail').classList.remove('active');
+        }
+
+        // Setup exercise cards
+        function setupExerciseCards() {
+            const cards = document.querySelectorAll('.exercise-card');
+            cards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const exercise = card.getAttribute('data-exercise');
+                    loadExercise(exercise, currentTherapy);
+                });
+            });
+        }
+
+        // Load specific exercise
+        function loadExercise(exercise, therapy) {
+            const detailView = document.getElementById('exercise-detail');
+            detailView.innerHTML = getExerciseContent(exercise, therapy);
+            detailView.classList.add('active');
+
+            // Scroll to detail view
+            detailView.scrollIntoView({ behavior: 'smooth' });
+
+            // Setup exercise-specific functionality
+            setupExerciseInteractions(exercise);
+        }
+
+        // Get exercise content
+        function getExerciseContent(exercise, therapy) {
+            const exercises = {
+                'thought-record': `
+                    <h2><span>📝</span> Thought Record Exercise</h2>
+                    <div class="step-container">
+                        <div class="step-header">
+                            <div class="step-number">1</div>
+                            <div class="step-title">Identify the Situation</div>
+                        </div>
+                        <p class="step-description">Describe what happened that triggered your thoughts</p>
+                        <textarea id="situation" class="thought-input" placeholder="Example: My friend didn't respond to my message for 3 hours..."></textarea>
+                    </div>
+
+                    <div class="step-container">
+                        <div class="step-header">
+                            <div class="step-number">2</div>
+                            <div class="step-title">Automatic Thought</div>
+                        </div>
+                        <p class="step-description">What thought immediately came to mind?</p>
+                        <textarea id="automatic-thought" class="thought-input" placeholder="Example: They're mad at me. Nobody likes me..."></textarea>
+                    </div>
+
+                    <div class="step-container">
+                        <div class="step-header">
+                            <div class="step-number">3</div>
+                            <div class="step-title">Evidence For and Against</div>
+                        </div>
+                        <p class="step-description">Evidence supporting the thought:</p>
+                        <textarea id="evidence-for" class="thought-input" placeholder="What facts support this thought?"></textarea>
+                        <p class="step-description">Evidence against the thought:</p>
+                        <textarea id="evidence-against" class="thought-input" placeholder="What facts contradict this thought?"></textarea>
+                    </div>
+
+                    <div class="step-container">
+                        <div class="step-header">
+                            <div class="step-number">4</div>
+                            <div class="step-title">Alternative Thought</div>
+                        </div>
+                        <p class="step-description">A more balanced way to think about this situation</p>
+                        <textarea id="alternative-thought" class="thought-input" placeholder="Example: They might be busy. I'll check in later..."></textarea>
+                    </div>
+
+                    <button class="btn-primary" onclick="saveThoughtRecord()">Save Thought Record</button>
+                    <button class="btn-secondary" onclick="closeExercise()">Back to Exercises</button>
+                `,
+
+                'cognitive-distortions': `
+                    <h2><span>🔍</span> Identify Cognitive Distortions</h2>
+                    <div class="step-container">
+                        <div class="step-header">
+                            <div class="step-number">1</div>
+                            <div class="step-title">Your Negative Thought</div>
+                        </div>
+                        <p class="step-description">Write down a negative thought you've been having</p>
+                        <textarea id="distortion-thought" class="thought-input" placeholder="Example: I always mess everything up..."></textarea>
+                    </div>
+
+                    <div class="step-container">
+                        <div class="step-header">
+                            <div class="step-number">2</div>
+                            <div class="step-title">Identify the Distortion</div>
+                        </div>
+                        <p class="step-description">Select which cognitive distortions apply:</p>
+                        <div class="distortion-tags">
+                            <div class="tag" data-distortion="all-or-nothing">All-or-Nothing Thinking</div>
+                            <div class="tag" data-distortion="overgeneralization">Overgeneralization</div>
+                            <div class="tag" data-distortion="mental-filter">Mental Filter</div>
+                            <div class="tag" data-distortion="disqualifying">Disqualifying the Positive</div>
+                            <div class="tag" data-distortion="jumping">Jumping to Conclusions</div>
+                            <div class="tag" data-distortion="magnification">Magnification/Minimization</div>
+                            <div class="tag" data-distortion="emotional">Emotional Reasoning</div>
+                            <div class="tag" data-distortion="should">Should Statements</div>
+                            <div class="tag" data-distortion="labeling">Labeling</div>
+                            <div class="tag" data-distortion="personalization">Personalization</div>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <div class="step-header">
+                            <div class="step-number">3</div>
+                            <div class="step-title">Reframe the Thought</div>
+                        </div>
+                        <p class="step-description">Write a more balanced, realistic thought</p>
+                        <textarea id="reframed-thought" class="thought-input" placeholder="Example: Sometimes I make mistakes, but I also do many things well..."></textarea>
+                    </div>
+
+                    <button class="btn-primary" onclick="saveDistortionExercise()">Save Exercise</button>
+                    <button class="btn-secondary" onclick="closeExercise()">Back to Exercises</button>
+                `,
+
+                'distress-tolerance': `
+                    <h2><span>🛡️</span> TIPP Skills for Distress Tolerance</h2>
+                    <div class="step-container">
+                        <p class="step-description">Use these skills when you're experiencing intense emotional distress:</p>
+                        
+                        <h3 style="margin-top: 1.5rem; margin-bottom: 1rem;">T - Temperature</h3>
+                        <p>Hold ice cubes, splash cold water on your face, or take a cold shower to quickly reduce emotional intensity.</p>
+                        
+                        <h3 style="margin-top: 1.5rem; margin-bottom: 1rem;">I - Intense Exercise</h3>
+                        <p>Do jumping jacks, run in place, or any vigorous exercise for 5-10 minutes to release tension.</p>
+                        
+                        <h3 style="margin-top: 1.5rem; margin-bottom: 1rem;">P - Paced Breathing</h3>
+                        <p>Breathe in for 5 seconds, hold for 2, breathe out for 7 seconds. Repeat 10 times.</p>
+                        
+                        <h3 style="margin-top: 1.5rem; margin-bottom: 1rem;">P - Progressive Muscle Relaxation</h3>
+                        <p>Tense each muscle group for 5 seconds, then release. Start from your toes and work up to your head.</p>
+                    </div>
+
+                    <div class="result-box">
+                        <h4>✅ Practice Log</h4>
+                        <p>Which TIPP skill did you use today?</p>
+                        <select id="tipp-skill" class="thought-input" style="min-height: auto;">
+                            <option value="">Select a skill...</option>
+                            <option value="temperature">Temperature</option>
+                            <option value="exercise">Intense Exercise</option>
+                            <option value="breathing">Paced Breathing</option>
+                            <option value="relaxation">Progressive Muscle Relaxation</option>
+                        </select>
+                        <textarea id="tipp-notes" class="thought-input" placeholder="How did it help?"></textarea>
+                    </div>
+
+                    <button class="btn-primary" onclick="saveTIPPLog()">Log Practice</button>
+                    <button class="btn-secondary" onclick="closeExercise()">Back to Exercises</button>
+                `,
+
+                'values-clarification': `
+                    <h2><span>🎯</span> Values Clarification Exercise</h2>
+                    <div class="step-container">
+                        <p class="step-description">Values are what give your life meaning and direction. Let's identify yours:</p>
+                        
+                        <h3 style="margin-top: 1.5rem; margin-bottom: 1rem;">Important Life Areas</h3>
+                        <p>For each area, write what matters most to you:</p>
+                        
+                        <h4 style="margin-top: 1rem;">Relationships & Family</h4>
+                        <textarea id="value-relationships" class="thought-input" placeholder="What kind of partner/friend/family member do you want to be?"></textarea>
+                        
+                        <h4 style="margin-top: 1rem;">Work & Education</h4>
+                        <textarea id="value-work" class="thought-input" placeholder="What matters to you in your career or learning?"></textarea>
+                        
+                        <h4 style="margin-top: 1rem;">Health & Self-Care</h4>
+                        <textarea id="value-health" class="thought-input" placeholder="How do you want to care for yourself?"></textarea>
+                        
+                        <h4 style="margin-top: 1rem;">Personal Growth</h4>
+                        <textarea id="value-growth" class="thought-input" placeholder="What kind of person do you want to become?"></textarea>
+                    </div>
+
+                    <div class="result-box">
+                        <h4>💡 Values-Based Actions</h4>
+                        <p>Based on your values, what's one small action you can take this week?</p>
+                        <textarea id="values-action" class="thought-input" placeholder="Example: Call a family member I haven't spoken to in a while..."></textarea>
+                    </div>
+
+                    <button class="btn-primary" onclick="saveValuesExercise()">Save Values</button>
+                    <button class="btn-secondary" onclick="closeExercise()">Back to Exercises</button>
+                `
+            };
+
+            return exercises[exercise] || '<p>Exercise content not found</p>';
+        }
+
+        // Setup exercise interactions
+        function setupExerciseInteractions(exercise) {
+            if (exercise === 'cognitive-distortions') {
+                const tags = document.querySelectorAll('.distortion-tags .tag');
+                tags.forEach(tag => {
+                    tag.addEventListener('click', () => {
+                        tag.classList.toggle('selected');
+                    });
+                });
+            }
+        }
+
+        // Save functions
+        function saveThoughtRecord() {
+            const record = {
+                type: 'thought-record',
+                timestamp: new Date().toISOString(),
+                situation: document.getElementById('situation').value,
+                automaticThought: document.getElementById('automatic-thought').value,
+                evidenceFor: document.getElementById('evidence-for').value,
+                evidenceAgainst: document.getElementById('evidence-against').value,
+                alternativeThought: document.getElementById('alternative-thought').value
+            };
+
+            saveExerciseToStorage(record);
+            alert('✅ Thought record saved successfully!');
+        }
+
+        function saveDistortionExercise() {
+            const selected = Array.from(document.querySelectorAll('.tag.selected'))
+                .map(tag => tag.getAttribute('data-distortion'));
+
+            const exercise = {
+                type: 'cognitive-distortions',
+                timestamp: new Date().toISOString(),
+                thought: document.getElementById('distortion-thought').value,
+                distortions: selected,
+                reframedThought: document.getElementById('reframed-thought').value
+            };
+
+            saveExerciseToStorage(exercise);
+            alert('✅ Cognitive distortion exercise saved!');
+        }
+
+        function saveTIPPLog() {
+            const log = {
+                type: 'tipp-log',
+                timestamp: new Date().toISOString(),
+                skill: document.getElementById('tipp-skill').value,
+                notes: document.getElementById('tipp-notes').value
+            };
+
+            saveExerciseToStorage(log);
+            alert('✅ TIPP practice logged!');
+        }
+
+        function saveValuesExercise() {
+            const values = {
+                type: 'values-clarification',
+                timestamp: new Date().toISOString(),
+                relationships: document.getElementById('value-relationships').value,
+                work: document.getElementById('value-work').value,
+                health: document.getElementById('value-health').value,
+                growth: document.getElementById('value-growth').value,
+                action: document.getElementById('values-action').value
+            };
+
+            saveExerciseToStorage(values);
+            alert('✅ Values clarification saved!');
+        }
+
+        // Save to storage
+        function saveExerciseToStorage(exercise) {
+            let exercises = Storage.load('mh_therapy_exercises') || [];
+            exercises.push(exercise);
+            Storage.save('mh_therapy_exercises', exercises);
+            Storage.incrementActivity();
+        }
+
+        // Close exercise detail
+        function closeExercise() {
+            document.getElementById('exercise-detail').classList.remove('active');
+        }
+    </script>
+</body>
+
+</html>

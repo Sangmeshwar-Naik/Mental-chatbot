@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Block Blast Puzzle</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            -webkit-backdrop-filter:backdrop-filter:
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 24px;
+        }
+
+        .back-btn {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .game-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .game-wrapper {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .score-panel {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .score-item {
+            text-align: center;
+            padding: 15px;
+            background: linear-gradient(135deg, #f0f4ff, #e8f0ff);
+            border-radius: 12px;
+        }
+
+        .score-item .label {
+            font-size: 11px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+
+        .score-item .value {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(8, 40px);
+            gap: 2px;
+            background: #e0e0e0;
+            padding: 2px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .cell {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 4px;
+        }
+
+        .cell.filled {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            animation: cellPop 0.3s;
+        }
+
+        @keyframes cellPop {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        .cell.clearing {
+            animation: cellClear 0.5s;
+        }
+
+        @keyframes cellClear {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            100% {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+        }
+
+        .preview {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .piece-preview {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+
+        .piece-preview:hover {
+            transform: scale(1.05);
+            border-color: #667eea;
+        }
+
+        .piece-preview.selected {
+            border-color: #667eea;
+            background: #f0f4ff;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .piece-preview.used {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .piece-grid {
+            display: grid;
+            gap: 2px;
+        }
+
+        .piece-cell {
+            width: 20px;
+            height: 20px;
+            background: transparent;
+            border-radius: 2px;
+        }
+
+        .piece-cell.filled {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .info-text {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .combo-indicator {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            font-size: 42px;
+            font-weight: 900;
+            color: #ffd93d;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            pointer-events: none;
+            z-index: 1000;
+            transition: all 0.3s;
+        }
+
+        .combo-indicator.show {
+            transform: translate(-50%, -50%) scale(1.5);
+            opacity: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>🧩 Block Blast Puzzle</h1>
+        <a href="../games.html" class="back-btn">← Back</a>
+    </div>
+    <div class="game-container">
+        <div class="game-wrapper">
+            <div class="score-panel">
+                <div class="score-item">
+                    <div class="label">Score</div>
+                    <div class="value" id="score">0</div>
+                </div>
+                <div class="score-item">
+                    <div class="label">Best</div>
+                    <div class="value" id="best">0</div>
+                </div>
+                <div class="score-item">
+                    <div class="label">Combo</div>
+                    <div class="value" id="combo">0</div>
+                </div>
+            </div>
+            <div class="combo-indicator" id="comboDisplay"></div>
+            <div class="board" id="board"></div>
+            <div class="preview" id="preview"></div>
+            <div class="info-text">🎯 Clear rows & columns | 🔥 Combos = Bonus!</div>
+            <button onclick="newGame()">🔄 New Game</button>
+        </div>
+    </div>
+    <script>
+        const GRID_SIZE = 8;
+        let board = Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill(false));
+        let score = 0;
+        let best = localStorage.getItem('blockBlastBest') || 0;
+        let currentPieces = [];
+        let selectedPiece = null;
+        let combo = 0;
+        let consecutiveClears = 0;
+
+        const PIECES = [
+            [[1]], [[1, 1]], [[1, 1, 1]], [[1, 1, 1, 1]], [[1, 1, 1, 1, 1]],
+            [[1], [1]], [[1], [1], [1]], [[1], [1], [1], [1]],
+            [[1, 1], [1, 1]], [[1, 1, 1], [1, 0, 0]], [[0, 1, 1], [1, 1, 0]],
+            [[1, 0], [1, 1]], [[0, 1], [1, 1]], [[1, 1], [0, 1]], [[1, 1], [1, 0]],
+            [[1, 1, 1], [0, 1, 0]], [[0, 1, 0], [1, 1, 1]], [[1, 0, 1], [1, 1, 1]]
+        ];
+
+        function initBoard() {
+            const boardEl = document.getElementById('board');
+            boardEl.innerHTML = '';
+            for (let i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                cell.onclick = () => placePiece(Math.floor(i / GRID_SIZE), i % GRID_SIZE);
+                boardEl.appendChild(cell);
+            }
+            document.getElementById('best').textContent = best;
+        }
+
+        function updateBoard() {
+            const cells = document.querySelectorAll('.cell');
+            board.forEach((row, r) => {
+                row.forEach((filled, c) => {
+                    cells[r * GRID_SIZE + c].classList.toggle('filled', filled);
+                });
+            });
+        }
+
+        function generatePieces() {
+            currentPieces = [];
+            for (let i = 0; i < 3; i++) {
+                currentPieces.push(PIECES[Math.floor(Math.random() * PIECES.length)]);
+            }
+            displayPieces();
+        }
+
+        function displayPieces() {
+            const preview = document.getElementById('preview');
+            preview.innerHTML = '';
+            currentPieces.forEach((piece, idx) => {
+                if (!piece) return;
+                const container = document.createElement('div');
+                container.className = 'piece-preview';
+                if (selectedPiece === idx) container.classList.add('selected');
+                if (!piece) container.classList.add('used');
+                container.onclick = () => {
+                    if (piece) {
+                        selectedPiece = idx;
+                        displayPieces();
+                    }
+                };
+
+                const grid = document.createElement('div');
+                grid.className = 'piece-grid';
+                grid.style.gridTemplateColumns = `repeat(${piece[0].length}, 20px)`;
+
+                piece.forEach(row => {
+                    row.forEach(cell => {
+                        const cellEl = document.createElement('div');
+                        cellEl.className = `piece-cell ${cell ? 'filled' : ''}`;
+                        grid.appendChild(cellEl);
+                    });
+                });
+
+                container.appendChild(grid);
+                preview.appendChild(container);
+            });
+        }
+
+        function placePiece(row, col) {
+            if (selectedPiece === null || !currentPieces[selectedPiece]) return;
+
+            const piece = currentPieces[selectedPiece];
+
+            // Check if piece fits
+            for (let r = 0; r < piece.length; r++) {
+                for (let c = 0; c < piece[r].length; c++) {
+                    if (piece[r][c]) {
+                        const nr = row + r;
+                        const nc = col + c;
+                        if (nr >= GRID_SIZE || nc >= GRID_SIZE || board[nr][nc]) {
+                            return;
+                        }
+                    }
+                }
+            }
+
+            // Place piece
+            for (let r = 0; r < piece.length; r++) {
+                for (let c = 0; c < piece[r].length; c++) {
+                    if (piece[r][c]) {
+                        board[row + r][col + c] = true;
+                    }
+                }
+            }
+
+            currentPieces[selectedPiece] = null;
+            selectedPiece = null;
+            updateBoard();
+            checkLines();
+
+            if (currentPieces.every(p => !p)) {
+                generatePieces();
+            } else {
+                displayPieces();
+            }
+        }
+
+        function checkLines() {
+            let cleared = 0;
+
+            // Check rows
+            for (let r = 0; r < GRID_SIZE; r++) {
+                if (board[r].every(c => c)) {
+                    board[r].fill(false);
+                    cleared++;
+                }
+            }
+
+            // Check columns
+            for (let c = 0; c < GRID_SIZE; c++) {
+                if (board.every(row => row[c])) {
+                    board.forEach(row => row[c] = false);
+                    cleared++;
+                }
+            }
+
+            if (cleared > 0) {
+                consecutiveClears++;
+                combo = consecutiveClears;
+
+                // Scoring with combo multiplier
+                const basePoints = cleared * 10;
+                const comboBonus = (consecutiveClears - 1) * 20;
+                score += basePoints + comboBonus;
+
+                document.getElementById('score').textContent = score;
+                document.getElementById('combo').textContent = consecutiveClears;
+
+                if (consecutiveClears > 1) {
+                    showCombo(consecutiveClears);
+                }
+
+                if (score > best) {
+                    best = score;
+                    localStorage.setItem('blockBlastBest', best);
+                    document.getElementById('best').textContent = best;
+                }
+                updateBoard();
+            } else {
+                consecutiveClears = 0;
+                document.getElementById('combo').textContent = '0';
+            }
+        }
+
+        function showCombo(comboCount) {
+            const display = document.getElementById('comboDisplay');
+            display.textContent = `${comboCount}x COMBO!`;
+            display.classList.add('show');
+            setTimeout(() => {
+                display.classList.remove('show');
+            }, 800);
+        }
+
+        function newGame() {
+            board = Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill(false));
+            score = 0;
+            selectedPiece = null;
+            document.getElementById('score').textContent = '0';
+            updateBoard();
+            generatePieces();
+        }
+
+        initBoard();
+        newGame();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Empathy Quiz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.2);
+            -webkit-backdrop-filter:backdrop-filter:
+            backdrop-filter: blur(10px);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .quiz-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+
+        .progress {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .question {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .option {
+            padding: 20px;
+            background: #f9fafb;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 16px;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .option.selected {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .results {
+            text-align: center;
+        }
+
+        .score {
+            font-size: 72px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+
+        .feedback {
+            font-size: 18px;
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="../index.html" class="back-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+        Back to Dashboard
+    </a>
+
+    <div class="container">
+        <div class="header">
+            <h1>🤝 Empathy Quiz</h1>
+            <p>Learn emotional intelligence through stories</p>
+        </div>
+
+        <div class="quiz-card">
+            <div class="progress">
+                <div class="progress-bar" id="progress"></div>
+            </div>
+            <div id="quiz-content"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                q: "Your friend cancels plans with you for the third time this month. What's your most empathetic response?",
+                options: [
+                    "Get upset and tell them they're unreliable",
+                    "Ask if everything is okay and if they need to talk",
+                    "Cancel future plans with them",
+                    "Ignore it and wait for them to explain"
+                ],
+                correct: 1,
+                explanation: "Asking if they're okay shows concern and opens communication, which is key to empathy."
+            },
+            {
+                q: "A colleague is being very short and irritable today. How do you respond?",
+                options: [
+                    "Give them space and check in later privately",
+                    "Ask them what's wrong in front of everyone",
+                    "Ignore them completely",
+                    "Tell them to stop being so rude"
+                ],
+                correct: 0,
+                explanation: "Giving space while showing you care respects their boundaries and acknowledges their struggle."
+            },
+            {
+                q: "Your partner makes a mistake that affects both of you. What do you do?",
+                options: [
+                    "Point out the mistake immediately and show your frustration",
+                    "Take a moment to understand what happened, then discuss calmly",
+                    "Fix it yourself without saying anything",
+                    "Bring it up repeatedly to make sure they don't forget"
+                ],
+                correct: 1,
+                explanation: "Understanding before reacting shows empathy and creates a safe space for honest conversation."
+            },
+            {
+                q: "A family member shares something they're proud of, but you're not impressed. How do you react?",
+                options: [
+                    "Tell them honestly that it's not that impressive",
+                    "Show genuine interest and ask them about it",
+                    "Give a quick 'good job' and change the subject",
+                    "Compare it to something you've done"
+                ],
+                correct: 1,
+                explanation: "Showing interest in what matters to them demonstrates empathy, even if you don't share the same enthusiasm."
+            },
+            {
+                q: "Someone shares a problem you think has an obvious solution. What's the empathetic approach?",
+                options: [
+                    "Tell them the solution immediately",
+                    "Listen first, then ask if they want advice or just someone to listen",
+                    "Tell them the problem isn't that big of a deal",
+                    "Share a similar experience to show you understand"
+                ],
+                correct: 1,
+                explanation: "Asking what they need shows you respect their autonomy and understand that sometimes people need support, not solutions."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let selectedAnswer = null;
+
+        function renderQuestion() {
+            const progress = ((currentQuestion) / questions.length) * 100;
+            document.getElementById('progress').style.width = progress + '%';
+
+            const q = questions[currentQuestion];
+            document.getElementById('quiz-content').innerHTML = `
+                <div class="question">${currentQuestion + 1}. ${q.q}</div>
+                <div class="options">
+                    ${q.options.map((opt, i) => `
+                        <div class="option" onclick="selectOption(${i})">${opt}</div>
+                    `).join('')}
+                </div>
+                <button class="btn-primary" onclick="submitAnswer()" id="submit-btn" disabled>
+                    ${currentQuestion < questions.length - 1 ? 'Next Question' : 'See Results'}
+                </button>
+            `;
+        }
+
+        function selectOption(index) {
+            selectedAnswer = index;
+            document.querySelectorAll('.option').forEach((opt, i) => {
+                opt.classList.toggle('selected', i === index);
+            });
+            document.getElementById('submit-btn').disabled = false;
+        }
+
+        function submitAnswer() {
+            if (selectedAnswer === questions[currentQuestion].correct) {
+                score++;
+            }
+
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                selectedAnswer = null;
+                renderQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            const percentage = Math.round((score / questions.length) * 100);
+            let feedback = '';
+
+            if (percentage >= 80) {
+                feedback = "Outstanding! You have excellent empathy skills. You understand others' perspectives and respond with compassion and wisdom.";
+            } else if (percentage >= 60) {
+                feedback = "Good work! You show solid empathy skills. Keep practicing active listening and considering others' feelings in your responses.";
+            } else {
+                feedback = "You're on the right path! Empathy is a skill that grows with practice. Focus on listening more and understanding before responding.";
+            }
+
+            document.getElementById('quiz-content').innerHTML = `
+                <div class="results">
+                    <div class="score">${percentage}%</div>
+                    <h2 style="color: #667eea; margin-bottom: 20px;">You scored ${score} out of ${questions.length}</h2>
+                    <div class="feedback">${feedback}</div>
+                    <button class="btn-primary" onclick="location.reload()">Restart Quiz</button>
+                </div>
+            `;
+            document.getElementById('progress').style.width = '100%';
+        }
+
+        renderQuestion();
+    </script>
+</body>
+
+</html>

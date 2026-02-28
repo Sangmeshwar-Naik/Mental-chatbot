@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mood Matching</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.2);
+            -webkit-backdrop-filter:backdrop-filter:
+            backdrop-filter: blur(10px);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .game-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .scenario {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            font-size: 18px;
+            line-height: 1.8;
+            color: #333;
+        }
+
+        .emotions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .emotion-btn {
+            padding: 20px;
+            background: white;
+            border: 3px solid #e0e0e0;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .emotion-btn:hover {
+            border-color: #667eea;
+            transform: translateY(-5px);
+        }
+
+        .emotion-btn.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .emotion-btn.correct {
+            border-color: #10b981;
+            background: #10b981;
+            color: white;
+        }
+
+        .emotion-btn.wrong {
+            border-color: #ef4444;
+            background: #ef4444;
+            color: white;
+        }
+
+        .emoji {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .result {
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            text-align: center;
+            font-size: 18px;
+            display: none;
+        }
+
+        .result.correct {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .result.wrong {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 30px;
+            padding: 20px;
+            background: #f9fafb;
+            border-radius: 15px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+    </style>
+</head>
+
+<body>
+    <a href="../index.html" class="back-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+        Back to Dashboard
+    </a>
+
+    <div class="container">
+        <div class="header">
+            <h1>😊 Mood Matching</h1>
+            <p>Identify emotions and improve empathy</p>
+        </div>
+
+        <div class="game-card">
+            <div class="scenario" id="scenario"></div>
+
+            <div class="emotions-grid" id="emotions"></div>
+
+            <div class="result" id="result"></div>
+
+            <button class="btn-primary" onclick="nextScenario()" id="next-btn" style="display: none;">Next
+                Scenario</button>
+        </div>
+
+        <div class="game-card" style="margin-top: 20px;">
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-value" id="correct-count">0</div>
+                    <div class="stat-label">Correct</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="total-count">0</div>
+                    <div class="stat-label">Total Played</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="accuracy">0%</div>
+                    <div class="stat-label">Accuracy</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const scenarios = [
+            { text: "Sarah just found out she got the job she's been dreaming about for years. She immediately calls her best friend to share the news.", emotion: "Joy", emoji: "😄" },
+            { text: "Michael's dog, who has been his companion for 12 years, passed away last night. He sits alone in his room, looking at old photos.", emotion: "Sadness", emoji: "😢" },
+            { text: "Lisa prepared a surprise party for her husband, but he forgot their anniversary and came home 3 hours late.", emotion: "Disappointment", emoji: "😞" },
+            { text: "Tom sees his colleague taking credit for the project he worked on all month during the team meeting.", emotion: "Anger", emoji: "😠" },
+            { text: "Emma is about to give her first presentation in front of 100 people. Her hands are shaking and her heart is racing.", emotion: "Anxiety", emoji: "😰" },
+            { text: "David received flowers and a heartfelt apology note from his friend who had hurt his feelings last week.", emotion: "Gratitude", emoji: "🥰" },
+            { text: "Rachel's friend shared her private conversation with others. Now everyone at work knows her personal business.", emotion: "Betrayal", emoji: "😔" },
+            { text: "Mark finally finished his thesis after three years of hard work. He holds the printed copy in his hands.", emotion: "Pride", emoji: "😊" },
+            { text: "Jenny sees a homeless person ask for help, but everyone walks past without acknowledging them.", emotion: "Empathy", emoji: "🤗" },
+            { text: "Alex discovers that their partner has been lying to them for months about where they've been spending their evenings.", emotion: "Hurt", emoji: "💔" }
+        ];
+
+        const emotions = ["Joy", "Sadness", "Anger", "Anxiety", "Gratitude", "Disappointment", "Betrayal", "Pride", "Empathy", "Hurt"];
+        const emojis = { "Joy": "😄", "Sadness": "😢", "Anger": "😠", "Anxiety": "😰", "Gratitude": "🥰", "Disappointment": "😞", "Betrayal": "😔", "Pride": "😊", "Empathy": "🤗", "Hurt": "💔" };
+
+        let currentScenario = null;
+        let stats = { correct: 0, total: 0 };
+
+        function loadStats() {
+            const saved = localStorage.getItem('mood_matching_stats');
+            if (saved) {
+                stats = JSON.parse(saved);
+                updateStatsDisplay();
+            }
+        }
+
+        function saveStats() {
+            localStorage.setItem('mood_matching_stats', JSON.stringify(stats));
+        }
+
+        function updateStatsDisplay() {
+            document.getElementById('correct-count').textContent = stats.correct;
+            document.getElementById('total-count').textContent = stats.total;
+            const accuracy = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
+            document.getElementById('accuracy').textContent = accuracy + '%';
+        }
+
+        function nextScenario() {
+            currentScenario = scenarios[Math.floor(Math.random() * scenarios.length)];
+            document.getElementById('scenario').textContent = currentScenario.text;
+
+            const shuffled = [...emotions].sort(() => Math.random() - 0.5).slice(0, 4);
+            if (!shuffled.includes(currentScenario.emotion)) {
+                shuffled[Math.floor(Math.random() * 4)] = currentScenario.emotion;
+            }
+
+            const emotionsDiv = document.getElementById('emotions');
+            emotionsDiv.innerHTML = shuffled.map(emotion => `
+                <div class="emotion-btn" onclick="checkAnswer('${emotion}')">
+                    <div class="emoji">${emojis[emotion]}</div>
+                    <div>${emotion}</div>
+                </div>
+            `).join('');
+
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('next-btn').style.display = 'none';
+        }
+
+        function checkAnswer(selected) {
+            stats.total++;
+            const isCorrect = selected === currentScenario.emotion;
+            if (isCorrect) stats.correct++;
+
+            const buttons = document.querySelectorAll('.emotion-btn');
+            buttons.forEach(btn => {
+                btn.onclick = null;
+                const emotionName = btn.textContent.trim();
+                if (emotionName === currentScenario.emotion) {
+                    btn.classList.add('correct');
+                } else if (emotionName === selected && !isCorrect) {
+                    btn.classList.add('wrong');
+                }
+            });
+
+            const result = document.getElementById('result');
+            result.className = 'result ' + (isCorrect ? 'correct' : 'wrong');
+            result.textContent = isCorrect
+                ? `Correct! The person is feeling ${currentScenario.emotion}.`
+                : `Not quite. The person is feeling ${currentScenario.emotion}, not ${selected}.`;
+            result.style.display = 'block';
+
+            document.getElementById('next-btn').style.display = 'block';
+            saveStats();
+            updateStatsDisplay();
+        }
+
+        loadStats();
+        nextScenario();
+    </script>
+</body>
+
+</html>

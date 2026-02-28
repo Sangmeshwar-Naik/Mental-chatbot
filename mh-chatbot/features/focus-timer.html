@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Focus Timer</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background-attachment: fixed;
+            padding: 2rem;
+        }
+
+        .feature-container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .feature-header {
+            background: rgba(255, 255, 255, 0.95);
+            -webkit-backdrop-filter:backdrop-filter:
+            backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .feature-header h1 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .timer-card {
+            background: rgba(255, 255, 255, 0.95);
+            -webkit-backdrop-filter:backdrop-filter:
+            backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            padding: 3rem 2rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .timer-display {
+            font-size: 6rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            font-family: 'Courier New', monospace;
+            margin: 2rem 0;
+        }
+
+        .timer-label {
+            font-size: 1.5rem;
+            color: var(--gray-600);
+            margin-bottom: 2rem;
+        }
+
+        .mode-tabs {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .mode-tab {
+            padding: 1rem;
+            background: var(--gray-100);
+            border: 2px solid transparent;
+            border-radius: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .mode-tab:hover {
+            background: var(--gray-200);
+        }
+
+        .mode-tab.active {
+            background: rgba(102, 126, 234, 0.1);
+            border-color: var(--primary-purple);
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 2rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-width: 120px;
+        }
+
+        .btn-start {
+            background: var(--gradient-success);
+            color: white;
+        }
+
+        .btn-pause {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .btn-reset {
+            background: var(--gray-200);
+            color: var(--gray-700);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .progress-ring {
+            width: 300px;
+            height: 300px;
+            margin: 0 auto 2rem;
+            position: relative;
+        }
+
+        .progress-ring circle {
+            fill: none;
+            stroke-width: 8;
+            transform-origin: 50% 50%;
+            transform: rotate(-90deg);
+        }
+
+        .progress-ring .bg-circle {
+            stroke: var(--gray-200);
+        }
+
+        .progress-ring .progress-circle {
+            stroke: url(#gradient);
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.5s;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .stat-card {
+            background: var(--gray-50);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-purple);
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            margin-top: 0.5rem;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: 2rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.2s;
+            margin-bottom: 1rem;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /*.notification {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: none;
+        }*/
+    </style>
+</head>
+
+<body>
+    <div class="feature-container">
+        <a href="../index.html" class="back-btn">
+            <span>←</span> Back to Dashboard
+        </a>
+
+        <div class="feature-header">
+            <h1>⏱️ Focus Timer</h1>
+            <p>Stay productive with Pomodoro technique and mindful breaks</p>
+        </div>
+
+        <div class="timer-card">
+            <div class="mode-tabs">
+                <div class="mode-tab active" onclick="setMode('focus', 25)">
+                    <div style="font-size: 1.5rem;">🎯</div>
+                    <div style="font-weight: 600; margin-top: 0.5rem;">Focus</div>
+                    <div style="font-size: 0.75rem; color: var(--gray-600);">25 min</div>
+                </div>
+                <div class="mode-tab" onclick="setMode('short-break', 5)">
+                    <div style="font-size: 1.5rem;">☕</div>
+                    <div style="font-weight: 600; margin-top: 0.5rem;">Short Break</div>
+                    <div style="font-size: 0.75rem; color: var(--gray-600);">5 min</div>
+                </div>
+                <div class="mode-tab" onclick="setMode('long-break', 15)">
+                    <div style="font-size: 1.5rem;">🌿</div>
+                    <div style="font-weight: 600; margin-top: 0.5rem;">Long Break</div>
+                    <div style="font-size: 0.75rem; color: var(--gray-600);">15 min</div>
+                </div>
+            </div>
+
+            <div class="progress-ring">
+                <svg width="300" height="300">
+                    <defs>
+                        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <circle class="bg-circle" cx="150" cy="150" r="140"></circle>
+                    <circle id="progress-circle" class="progress-circle" cx="150" cy="150" r="140"></circle>
+                </svg>
+                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%;">
+                    <div class="timer-display" id="timer">25:00</div>
+                    <div class="timer-label" id="mode-label">Focus Time</div>
+                </div>
+            </div>
+
+            <div class="control-buttons">
+                <button class="btn btn-start" id="start-btn" onclick="startTimer()">Start</button>
+                <button class="btn btn-pause" id="pause-btn" onclick="pauseTimer()"
+                    style="display: none;">Pause</button>
+                <button class="btn btn-reset" onclick="resetTimer()">Reset</button>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="sessions-today">0</div>
+                    <div class="stat-label">Focus Sessions Today</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="total-minutes">0</div>
+                    <div class="stat-label">Total Minutes</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../utils/storage.js"></script>
+    <script>
+        let currentMode = 'focus';
+        let timeLeft = 25 * 60; // seconds
+        let totalTime = 25 * 60;
+        let isRunning = false;
+        let timerInterval = null;
+        let completedSessions = 0;
+
+        const modes = {
+            'focus': { duration: 25, label: 'Focus Time', emoji: '🎯' },
+            'short-break': { duration: 5, label: 'Short Break', emoji: '☕' },
+            'long-break': { duration: 15, label: 'Long Break', emoji: '🌿' }
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function () {
+            updateDisplay();
+            loadStats();
+            initProgressCircle();
+        });
+
+        function initProgressCircle() {
+            const circle = document.getElementById('progress-circle');
+            const radius = circle.r.baseVal.value;
+            const circumference = radius * 2 * Math.PI;
+
+            circle.style.strokeDasharray = circumference;
+            circle.style.strokeDashoffset = 0;
+        }
+
+        function setMode(mode, minutes) {
+            if (isRunning) {
+                if (!confirm('Stop current timer?')) return;
+                stopTimer();
+            }
+
+            currentMode = mode;
+            totalTime = minutes * 60;
+            timeLeft = totalTime;
+
+            // Update UI
+            document.querySelectorAll('.mode-tab').forEach(tab => tab.classList.remove('active'));
+            event.target.closest('.mode-tab').classList.add('active');
+            document.getElementById('mode-label').textContent = modes[mode].label;
+
+            updateDisplay();
+        }
+
+        function startTimer() {
+            if (isRunning) return;
+
+            isRunning = true;
+            document.getElementById('start-btn').style.display = 'none';
+            document.getElementById('pause-btn').style.display = 'inline-block';
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateDisplay();
+
+                if (timeLeft <= 0) {
+                    timerComplete();
+                }
+            }, 1000);
+        }
+
+        function pauseTimer() {
+            stopTimer();
+        }
+
+        function stopTimer() {
+            isRunning = false;
+            clearInterval(timerInterval);
+            document.getElementById('start-btn').style.display = 'inline-block';
+            document.getElementById('pause-btn').style.display = 'none';
+        }
+
+        function resetTimer() {
+            stopTimer();
+            timeLeft = totalTime;
+            updateDisplay();
+        }
+
+        function timerComplete() {
+            stopTimer();
+
+            // Play sound (if browser allows)
+            try {
+                const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBTGH0fPTgjMGHm7A7+OZSA0PVqzn77BdGAg+ltryxnMjBSh+zPLaizsIGGS57OihUBELTKXh8bllHAU2jdXz0H8pBSt6yvHZkz0IFFqy6++oVhQIQJvZ8r90KwQcccrw244/ChVduejpsFcYBziP1PLFeC0EKnnM8t2UPwoXY7Xl7qlYFgpBnN3zwHMsBSJ1ye/cmUEKE');
+                audio.play();
+            } catch { }
+
+            // Log session
+            if (currentMode === 'focus') {
+                logSession();
+            }
+
+            // Show notification
+            alert(`${modes[currentMode].emoji} ${modes[currentMode].label} complete!`);
+
+            // Auto-switch to break
+            if (currentMode === 'focus') {
+                completedSessions++;
+                if (completedSessions % 4 === 0) {
+                    setTimeout(() => setMode('long-break', 15), 100);
+                } else {
+                    setTimeout(() => setMode('short-break', 5), 100);
+                }
+            }
+
+            timeLeft = totalTime;
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('timer').textContent =
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+            // Update progress circle
+            const circle = document.getElementById('progress-circle');
+            const radius = circle.r.baseVal.value;
+            const circumference = radius * 2 * Math.PI;
+            const progress = 1 - (timeLeft / totalTime);
+            const offset = circumference * (1 - progress);
+            circle.style.strokeDashoffset = offset;
+        }
+
+        function logSession() {
+            const sessions = Storage.load('mh_focus_sessions') || [];
+            sessions.push({
+                timestamp: new Date().toISOString(),
+                duration: totalTime / 60
+            });
+            Storage.save('mh_focus_sessions', sessions);
+            Storage.incrementActivity();
+            loadStats();
+        }
+
+        function loadStats() {
+            const sessions = Storage.load('mh_focus_sessions') || [];
+
+            // Today's sessions
+            const today = new Date().toDateString();
+            const todaySessions = sessions.filter(s =>
+                new Date(s.timestamp).toDateString() === today
+            );
+
+            document.getElementById('sessions-today').textContent = todaySessions.length;
+
+            // Total minutes
+            const totalMinutes = sessions.reduce((sum, s) => sum + s.duration, 0);
+            document.getElementById('total-minutes').textContent = Math.round(totalMinutes);
+        }
+    </script>
+</body>
+
+</html>

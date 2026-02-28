@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medication Reminder</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.2);
+            -webkit-backdrop-filter:backdrop-filter:
+            backdrop-filter: blur(10px);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 100;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .card h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .med-item {
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            border-left: 5px solid #667eea;
+        }
+
+        .med-item.taken {
+            background: #d4edda;
+            border-left-color: #28a745;
+        }
+
+        .med-item.overdue {
+            background: #f8d7da;
+            border-left-color: #dc3545;
+        }
+
+        .med-name {
+            font-weight: 700;
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .med-details {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .med-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .action-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-take {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-take:hover {
+            background: #218838;
+        }
+
+        .btn-skip {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .btn-skip:hover {
+            background: #e0a800;
+        }
+
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #c82333;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea10, #764ba210);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 48px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .refill-alert {
+            padding: 15px;
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="../mental-health-tools.html" class="back-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+        Back
+    </a>
+    <div class="container">
+        <div class="header">
+            <h1>💊 Medication Reminder</h1>
+            <p style="font-size: 18px; opacity: 0.9;">Manage your medication schedule and track adherence</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="adherence-rate">0%</div>
+                <div class="stat-label">Adherence Rate</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="doses-taken">0</div>
+                <div class="stat-label">Doses Taken</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="active-meds">0</div>
+                <div class="stat-label">Active Medications</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Add New Medication</h2>
+            <div class="form-group">
+                <label>Medication Name</label>
+                <input type="text" id="med-name" placeholder="e.g., Sertraline">
+            </div>
+            <div class="form-group">
+                <label>Dosage</label>
+                <input type="text" id="med-dosage" placeholder="e.g., 50mg">
+            </div>
+            <div class="form-group">
+                <label>Frequency</label>
+                <select id="med-frequency">
+                    <option value="once">Once daily</option>
+                    <option value="twice">Twice daily</option>
+                    <option value="three">Three times daily</option>
+                    <option value="asneeded">As needed</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Time(s)</label>
+                <input type="time" id="med-time1" placeholder="First dose time">
+                <input type="time" id="med-time2" placeholder="Second dose time (if applicable)"
+                    style="margin-top: 10px;">
+            </div>
+            <div class="form-group">
+                <label>Refill Date</label>
+                <input type="date" id="med-refill">
+            </div>
+            <div class="form-group">
+                <label>Notes (Optional)</label>
+                <textarea id="med-notes" rows="3"
+                    placeholder="e.g., Take with food, Side effects to watch for..."></textarea>
+            </div>
+            <button class="btn" onclick="addMedication()">➕ Add Medication</button>
+        </div>
+
+        <div class="card">
+            <h2>Today's Medications</h2>
+            <div id="refill-alerts"></div>
+            <div id="medications-list"></div>
+        </div>
+
+        <div class="card">
+            <h2>📊 Medication History</h2>
+            <div id="history-list"></div>
+        </div>
+    </div>
+
+    <script>
+        let medData = JSON.parse(localStorage.getItem('medicationData')) || {
+            medications: [],
+            history: []
+        };
+
+        function addMedication() {
+            const med = {
+                id: Date.now(),
+                name: document.getElementById('med-name').value,
+                dosage: document.getElementById('med-dosage').value,
+                frequency: document.getElementById('med-frequency').value,
+                time1: document.getElementById('med-time1').value,
+                time2: document.getElementById('med-time2').value,
+                refillDate: document.getElementById('med-refill').value,
+                notes: document.getElementById('med-notes').value,
+                active: true,
+                createdAt: new Date().toISOString()
+            };
+
+            if (!med.name || !med.dosage) {
+                alert('Please enter medication name and dosage');
+                return;
+            }
+
+            medData.medications.push(med);
+            saveMedData();
+            clearForm();
+            displayMedications();
+            alert('✅ Medication added!');
+        }
+
+        function clearForm() {
+            document.getElementById('med-name').value = '';
+            document.getElementById('med-dosage').value = '';
+            document.getElementById('med-time1').value = '';
+            document.getElementById('med-time2').value = '';
+            document.getElementById('med-refill').value = '';
+            document.getElementById('med-notes').value = '';
+        }
+
+        function takeMedication(id) {
+            const entry = {
+                id: Date.now(),
+                medicationId: id,
+                takenAt: new Date().toISOString(),
+                status: 'taken'
+            };
+
+            medData.history.push(entry);
+            saveMedData();
+            displayMedications();
+            displayHistory();
+            updateStats();
+            alert('✅ Medication marked as taken!');
+        }
+
+        function skipMedication(id) {
+            const entry = {
+                id: Date.now(),
+                medicationId: id,
+                takenAt: new Date().toISOString(),
+                status: 'skipped'
+            };
+
+            medData.history.push(entry);
+            saveMedData();
+            displayHistory();
+            updateStats();
+        }
+
+        function deleteMedication(id) {
+            if (confirm('Delete this medication?')) {
+                medData.medications = medData.medications.filter(m => m.id !== id);
+                saveMedData();
+                displayMedications();
+                updateStats();
+            }
+        }
+
+        function displayMedications() {
+            const list = document.getElementById('medications-list');
+            const activeMeds = medData.medications.filter(m => m.active);
+
+            if (activeMeds.length === 0) {
+                list.innerHTML = '<p style="text-align:center;color:#999;padding:2rem;">No medications added yet</p>';
+                return;
+            }
+
+            const today = new Date().toISOString().split('T')[0];
+            const takenToday = medData.history.filter(h =>
+                h.takenAt.startsWith(today) && h.status === 'taken'
+            ).map(h => h.medicationId);
+
+            list.innerHTML = activeMeds.map(m => {
+                const isTaken = takenToday.includes(m.id);
+                const isOverdue = false; // Simplified - would check actual time
+
+                return `
+                    <div class="med-item ${isTaken ? 'taken' : ''} ${isOverdue ? 'overdue' : ''}">
+                        <div class="med-name">💊 ${m.name}</div>
+                        <div class="med-details">
+                            <strong>Dosage:</strong> ${m.dosage}<br>
+                            <strong>Frequency:</strong> ${m.frequency}<br>
+                            <strong>Time:</strong> ${m.time1}${m.time2 ? ', ' + m.time2 : ''}<br>
+                            ${m.notes ? `<strong>Notes:</strong> ${m.notes}<br>` : ''}
+                        </div>
+                        <div class="med-actions">
+                            ${!isTaken ? `
+                                <button class="action-btn btn-take" onclick="takeMedication(${m.id})">✓ Take</button>
+                                <button class="action-btn btn-skip" onclick="skipMedication(${m.id})">Skip</button>
+                            ` : '<span style="color:#28a745;font-weight:600;">✓ Taken Today</span>'}
+                            <button class="action-btn btn-delete" onclick="deleteMedication(${m.id})">Delete</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Check for refills
+            const refillAlerts = document.getElementById('refill-alerts');
+            const needRefill = activeMeds.filter(m => {
+                if (!m.refillDate) return false;
+                const daysUntil = Math.floor((new Date(m.refillDate) - new Date()) / (1000 * 60 * 60 * 24));
+                return daysUntil <= 7 && daysUntil >= 0;
+            });
+
+            if (needRefill.length > 0) {
+                refillAlerts.innerHTML = needRefill.map(m => `
+                    <div class="refill-alert">
+                        <strong>⚠️ Refill Reminder:</strong> ${m.name} needs refill by ${new Date(m.refillDate).toLocaleDateString()}
+                    </div>
+                `).join('');
+            } else {
+                refillAlerts.innerHTML = '';
+            }
+        }
+
+        function displayHistory() {
+            const list = document.getElementById('history-list');
+            if (medData.history.length === 0) {
+                list.innerHTML = '<p style="text-align:center;color:#999;padding:2rem;">No history yet</p>';
+                return;
+            }
+
+            const recent = medData.history.slice().reverse().slice(0, 20);
+            list.innerHTML = recent.map(h => {
+                const med = medData.medications.find(m => m.id === h.medicationId);
+                if (!med) return '';
+
+                return `
+                    <div class="med-item">
+                        <strong>${med.name}</strong> - ${h.status === 'taken' ? '✓ Taken' : '⊘ Skipped'}<br>
+                        <small>${new Date(h.takenAt).toLocaleString()}</small>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateStats() {
+            const activeMeds = medData.medications.filter(m => m.active);
+            document.getElementById('active-meds').textContent = activeMeds.length;
+
+            const taken = medData.history.filter(h => h.status === 'taken').length;
+            document.getElementById('doses-taken').textContent = taken;
+
+            const total = medData.history.length;
+            const adherence = total > 0 ? Math.round((taken / total) * 100) : 0;
+            document.getElementById('adherence-rate').textContent = adherence + '%';
+        }
+
+        function saveMedData() {
+            localStorage.setItem('medicationData', JSON.stringify(medData));
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            displayMedications();
+            displayHistory();
+            updateStats();
+        });
+    </script>
+</body>
+
+</html>

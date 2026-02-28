@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mental Health Resources</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.2);
+            -webkit-backdrop-filter:backdrop-filter:
+            backdrop-filter: blur(10px);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 100;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .card h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .resource-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .resource-card {
+            padding: 25px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #667eea10, #764ba210);
+            border-left: 5px solid #667eea;
+            transition: all 0.3s;
+        }
+
+        .resource-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .resource-title {
+            font-weight: 700;
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .resource-desc {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .resource-link {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .resource-link:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+        }
+
+        .category-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: white;
+            color: #667eea;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="../mental-health-tools.html" class="back-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+        Back
+    </a>
+    <div class="container">
+        <div class="header">
+            <h1>📚 Mental Health Resources</h1>
+            <p style="font-size: 18px; opacity: 0.9;">Access educational content, videos, and professional help</p>
+        </div>
+
+        <div class="category-tabs">
+            <div class="tab active" onclick="showCategory('articles')">📖 Articles</div>
+            <div class="tab" onclick="showCategory('videos')">🎥 Videos</div>
+            <div class="tab" onclick="showCategory('books')">📚 Books</div>
+            <div class="tab" onclick="showCategory('professionals')">👨‍⚕️ Find Help</div>
+            <div class="tab" onclick="showCategory('support-groups')">👥 Support Groups</div>
+        </div>
+
+        <div class="card" id="articles">
+            <h2>📖 Educational Articles</h2>
+            <div class="resource-grid">
+                <div class="resource-card">
+                    <div class="resource-title">Understanding Anxiety</div>
+                    <div class="resource-desc">Learn about anxiety disorders, symptoms, and coping strategies</div>
+                    <a href="https://www.nimh.nih.gov/health/topics/anxiety-disorders" target="_blank"
+                        class="resource-link">Read Article</a>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-title">Depression: What You Need to Know</div>
+                    <div class="resource-desc">Comprehensive guide to understanding and managing depression</div>
+                    <a href="https://www.nimh.nih.gov/health/topics/depression" target="_blank"
+                        class="resource-link">Read Article</a>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-title">Stress Management Techniques</div>
+                    <div class="resource-desc">Evidence-based strategies for managing stress effectively</div>
+                    <a href="https://www.apa.org/topics/stress" target="_blank" class="resource-link">Read Article</a>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-title">Mindfulness and Meditation</div>
+                    <div class="resource-desc">Introduction to mindfulness practices for mental wellness</div>
+                    <a href="https://www.mindful.org/meditation/mindfulness-getting-started/" target="_blank"
+                        class="resource-link">Read Article</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="videos" style="display: none;">
+            <h2>🎥 Video Resources</h2>
+            <div class="resource-grid">
+                <div class="resource-card">
+                    <div class="resource-title">TED: The Power of Vulnerability</div>
+                    <div class="resource-desc">Brené Brown on embracing vulnerability for mental health</div>
+                    <a href="https://www.ted.com/talks/brene_brown_the_power_of_vulnerability" target="_blank"
+                        class="resource-link">Watch Video</a>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-title">Guided Meditation for Anxiety</div>
+                    <div class="resource-desc">10-minute guided meditation to reduce anxiety</div>
+                    <a href="https://www.youtube.com/results?search_query=guided+meditation+anxiety" target="_blank"
+                        class="resource-link">Watch Video</a>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-title">Understanding Mental Health</div>
+                    <div class="resource-desc">Crash Course on mental health basics</div>
+                    <a href="https://www.youtube.com/results?search_query=mental+health+crash+course" target="_blank"
+                        class="resource-link">Watch Video</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="books" style="display: none;">
+            <h2>📚 Recommended Books</h2>
+            <div class="resource-grid">
+                <div class="resource-card">
+                    <div class="resource-title">Feeling Good by David Burns</div>
+                    <div class="resource-desc">The classic guide to cognitive behavioral therapy</div>
+                    <a href="https://www.amazon.com/s?k=feeling+good+david+burns" target="_blank"
+                        class="resource-link">Find Book</a>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-title">The Anxiety and Phobia Workbook</div>
+                    <div class="resource-desc">Comprehensive workbook for managing anxiety</div>
+                    <a href="https://www.amazon.com/s?k=anxiety+phobia+workbook" target="_blank"
+                        class="resource-link">Find Book</a>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-title">Mindfulness in Plain English</div>
+                    <div class="resource-desc">Practical guide to mindfulness meditation</div>
+                    <a href="https://www.amazon.com/s?k=mindfulness+in+plain+english" target="_blank"
+                        class="resource-link">Find Book</a>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-title">The Body Keeps the Score</div>
+                    <div class="resource-desc">Understanding trauma and healing</div>
+                    <a href="https://www.amazon.com/s?k=body+keeps+the+score" target="_blank" class="resource-link">Find
+                        Book</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="professionals" style="display: none;">
+            <h2>👨‍⚕️ Find Professional Help</h2>
+            <div class="resource-grid">
+                <div class="resource-card">
+                    <div class="resource-title">Psychology Today Therapist Finder</div>
+                    <div class="resource-desc">Search for therapists in your area by specialty and insurance</div>
+                    <a href="https://www.psychologytoday.com/us/therapists" target="_blank" class="resource-link">Find
+                        Therapist</a>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-title">BetterHelp Online Therapy</div>
+                    <div class="resource-desc">Access licensed therapists through online video sessions</div>
+                    <a href="https://www.betterhelp.com" target="_blank" class="resource-link">Learn More</a>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-title">SAMHSA Treatment Locator</div>
+                    <div class="resource-desc">Find mental health and substance abuse treatment facilities</div>
+                    <a href="https://findtreatment.samhsa.gov" target="_blank" class="resource-link">Find Treatment</a>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-title">Open Path Collective</div>
+                    <div class="resource-desc">Affordable therapy for those without insurance</div>
+                    <a href="https://openpathcollective.org" target="_blank" class="resource-link">Learn More</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="support-groups" style="display: none;">
+            <h2>👥 Support Groups</h2>
+            <div class="resource-grid">
+                <div class="resource-card">
+                    <div class="resource-title">NAMI Support Groups</div>
+                    <div class="resource-desc">Free peer-led support groups for mental health</div>
+                    <a href="https://www.nami.org/Support-Education/Support-Groups" target="_blank"
+                        class="resource-link">Find Group</a>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-title">DBSA Support Groups</div>
+                    <div class="resource-desc">Depression and Bipolar Support Alliance groups</div>
+                    <a href="https://www.dbsalliance.org/support/chapters-and-support-groups/" target="_blank"
+                        class="resource-link">Find Group</a>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-title">Anxiety and Depression Association</div>
+                    <div class="resource-desc">Online and in-person support groups</div>
+                    <a href="https://adaa.org/finding-help/getting-support" target="_blank" class="resource-link">Find
+                        Group</a>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-title">7 Cups Online Support</div>
+                    <div class="resource-desc">Free emotional support through online chat</div>
+                    <a href="https://www.7cups.com" target="_blank" class="resource-link">Get Support</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showCategory(category) {
+            // Hide all cards
+            document.querySelectorAll('.card').forEach(card => {
+                if (card.id) card.style.display = 'none';
+            });
+
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+
+            // Show selected card
+            document.getElementById(category).style.display = 'block';
+
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+
+</html>
