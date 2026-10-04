@@ -4,6 +4,11 @@ Complete Authentication System with Database and Sessions
 import sys
 import os
 sys.path.insert(0, os.path.dirname(__file__))
+if hasattr(sys.stdout, 'reconfigure'):
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+    except Exception:
+        pass
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -53,7 +58,7 @@ init_db()
 # Register games API blueprint
 if GAMES_API_AVAILABLE:
     app.register_blueprint(games_api)
-    print("✅ Games API registered successfully!")
+    print("Games API registered successfully!")
 
 # Helper functions
 def hash_password(password):
@@ -88,8 +93,8 @@ def login_required(f):
     """Decorator to protect routes"""
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if 'user_id' not in session:
-            return redirect('/login')
+        # if 'user_id' not in session:
+        #     return redirect('/login')
         return f(*args, **kwargs)
     return decorated_function
 
@@ -213,15 +218,16 @@ console.log('Chat widget ready!');
 @app.route('/login')
 def login_page():
     # If already logged in, redirect to chat
-    if 'user_id' in session:
-        return redirect('/chat')
+    # if 'user_id' in session:
+    #     return redirect('/chat')
+    return redirect('/chat') # Authentication disabled, directly redirect to chat
     
-    auth_path = os.path.join(os.path.dirname(__file__), '..', 'auth.html')
-    try:
-        with open(auth_path, 'r', encoding='utf-8') as f:
-            return f.read()
-    except FileNotFoundError:
-        return f"Error: auth.html not found at {auth_path}", 404
+    # auth_path = os.path.join(os.path.dirname(__file__), '..', 'auth.html')
+    # try:
+    #     with open(auth_path, 'r', encoding='utf-8') as f:
+    #         return f.read()
+    # except FileNotFoundError:
+    #     return f"Error: auth.html not found at {auth_path}", 404
 
 @app.route('/chat')
 @login_required
@@ -329,6 +335,6 @@ def api_chat():
 
 if __name__ == '__main__':
     print("=" * 60)
-    print("🎉 CHATBOT READY - OPEN: http://localhost:5000")
+    print("CHATBOT READY - OPEN: http://localhost:5001")
     print("=" * 60)
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5001, debug=True)

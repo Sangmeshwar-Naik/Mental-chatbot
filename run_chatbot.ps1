@@ -7,12 +7,15 @@ Write-Host "📦 Activating virtual environment..." -ForegroundColor Yellow
 
 # Install required packages
 Write-Host "📥 Installing dependencies..." -ForegroundColor Yellow
-& "G:\My Drive\chatbot\.venv\Scripts\pip.exe" install flask flask-cors google-generativeai python-dotenv
+& "G:\My Drive\chatbot\.venv\Scripts\pip.exe" install flask flask-cors flask-login flask-sqlalchemy google-generativeai python-dotenv
 
 # Navigate to backend directory
 Set-Location "G:\My Drive\chatbot\mh-chatbot\backend-flask"
 
+# Set encoding
+$env:PYTHONIOENCODING = "utf-8"
+
 # Run the chatbot
 Write-Host "🎉 Starting Flask server..." -ForegroundColor Green
-Write-Host "🌐 Open http://localhost:5000 in your browser" -ForegroundColor Cyan
+Write-Host "🌐 Open http://localhost:5001 in your browser" -ForegroundColor Cyan
 & "G:\My Drive\chatbot\.venv\Scripts\python.exe" final_working_chat.py
