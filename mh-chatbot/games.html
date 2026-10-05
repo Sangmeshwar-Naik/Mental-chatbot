@@ -4,126 +4,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cognitive Games - Mental Health Support</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Focus Arcade | Cognitive Games</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background:
+                radial-gradient(circle at top, rgba(255,255,255,0.18), transparent 22%),
+                linear-gradient(135deg, #0f172a 0%, #1e3a8a 35%, #7c3aed 100%);
             min-height: 100vh;
-            padding: 20px;
-        }
-
-        .header {
-            text-align: center;
-            color: white;
-            margin-bottom: 40px;
-        }
-
-        .header h1 {
-            font-size: 36px;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-        }
-
-        .header p {
-            font-size: 16px;
-            opacity: 0.9;
+            color: #eef2ff;
+            padding: 28px 20px 40px;
         }
 
         .back-btn {
             position: fixed;
             top: 20px;
             left: 20px;
-            padding: 12px 24px;
-            background: rgba(255, 255, 255, 0.2);
-            -webkit-backdrop-filter:backdrop-filter:
-            backdrop-filter: blur(10px);
-            color: white;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-            text-decoration: none;
-            display: flex;
+            z-index: 40;
+            display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            padding: 12px 20px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.18);
+            box-shadow: 0 8px 22px rgba(15, 23, 42, 0.25);
+            color: white;
+            text-decoration: none;
+            font-weight: 700;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: transform 0.2s ease, background 0.2s ease;
         }
 
         .back-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
             transform: translateY(-2px);
+            background: rgba(255,255,255,0.18);
+        }
+
+        .page-shell {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 52px 20px 28px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.14);
+            border-radius: 999px;
+            font-size: 12px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: #dbeafe;
+        }
+
+        .hero h1 {
+            margin-top: 18px;
+            font-size: clamp(2.4rem, 4vw, 4rem);
+            line-height: 1.04;
+            font-weight: 800;
+        }
+
+        .hero p {
+            margin: 16px auto 0;
+            max-width: 760px;
+            font-size: 1.06rem;
+            line-height: 1.7;
+            color: rgba(226,232,240,0.9);
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 18px;
+            margin: 20px auto 42px;
+            max-width: 1050px;
+        }
+
+        .stat-card {
+            padding: 22px 20px;
+            border-radius: 22px;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(15, 23, 42, 0.28);
+            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.18);
+            text-align: center;
+        }
+
+        .stat-card .value {
+            font-size: clamp(1.8rem, 3vw, 2.6rem);
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .stat-card .label {
+            color: rgba(224,231,255,0.8);
+            font-size: 0.8rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
         }
 
         .games-grid {
-            max-width: 1200px;
-            margin: 0 auto;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 24px;
-            padding: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 22px;
+            margin-top: 16px;
         }
 
         .game-card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            padding: 30px;
+            position: relative;
+            padding: 26px 22px 20px;
+            min-height: 235px;
+            border-radius: 24px;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(15, 23, 42, 0.42);
+            box-shadow: 0 16px 28px rgba(15, 23, 42, 0.18);
             cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+            overflow: hidden;
+        }
+
+        .game-card::before {
+            content: '';
+            position: absolute;
+            inset: 0 0 auto 0;
+            height: 4px;
+            background: linear-gradient(90deg, #7dd3fc, #a78bfa, #f9a8d4);
         }
 
         .game-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            transform: translateY(-8px);
+            box-shadow: 0 22px 40px rgba(15, 23, 42, 0.24);
+            border-color: rgba(191,219,254,0.35);
         }
 
         .game-icon {
-            font-size: 48px;
-            margin-bottom: 15px;
+            width: 72px;
+            height: 72px;
+            display: grid;
+            place-items: center;
+            font-size: 2.5rem;
+            border-radius: 18px;
+            background: linear-gradient(135deg, rgba(125,211,252,0.18), rgba(167,139,250,0.18));
+            border: 1px solid rgba(255,255,255,0.12);
+            margin-bottom: 18px;
         }
 
         .game-card h3 {
-            font-size: 22px;
-            color: #333;
+            font-size: 1.5rem;
             margin-bottom: 10px;
+            color: #f8fafc;
         }
 
         .game-card p {
-            color: #666;
-            font-size: 14px;
+            color: rgba(226,232,240,0.8);
             line-height: 1.6;
+            font-size: 0.96rem;
+            min-height: 66px;
         }
 
-        .game-card .badge {
-            display: inline-block;
-            padding: 4px 12px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border-radius: 12px;
-            font-size: 12px;
-            margin-top: 10px;
-            font-weight: 600;
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 7px 12px;
+            margin-top: 16px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, rgba(96,165,250,0.2), rgba(168,85,247,0.2));
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #e0f2fe;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
         }
 
         @media (max-width: 768px) {
-            .games-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .header h1 {
-                font-size: 28px;
-            }
+            body { padding-top: 72px; }
+            .back-btn { left: 14px; top: 14px; }
+            .hero { padding-top: 26px; }
         }
     </style>
 </head>
@@ -136,60 +205,84 @@
         Back to Chat
     </a>
 
-    <div class="header">
-        <h1>🎮 Cognitive Games</h1>
-        <p>Engage your mind with therapeutic games designed for mental wellness</p>
-    </div>
+    <div class="page-shell">
+        <header class="hero">
+            <div class="eyebrow">⚡ Focus Arcade</div>
+            <h1>Mindful games that sharpen focus and calm the mind.</h1>
+            <p>
+                This collection blends strategy, memory, rhythm, and creative relaxation into a more polished, professional mini-game experience for mental wellness and cognitive play.
+            </p>
+        </header>
 
-    <div class="games-grid">
-        <div class="game-card" onclick="location.href='games/chess.html'">
-            <div class="game-icon">♟️</div>
-            <h3>Chess</h3>
-            <p>Improve concentration and strategic thinking with AI opponents</p>
-            <span class="badge">3 Difficulty Levels</span>
-        </div>
+        <section class="stats-row" aria-label="game overview">
+            <div class="stat-card">
+                <div class="value">7</div>
+                <div class="label">Games</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">4</div>
+                <div class="label">Skill Types</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">24/7</div>
+                <div class="label">Practice</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">Calm</div>
+                <div class="label">Mood</div>
+            </div>
+        </section>
 
-        <div class="game-card" onclick="location.href='games/memory-match.html'">
-            <div class="game-icon">🎴</div>
-            <h3>Memory Match</h3>
-            <p>Enhance memory with card matching games</p>
-            <span class="badge">Progressive Difficulty</span>
-        </div>
+        <main class="games-grid">
+            <div class="game-card" onclick="location.href='games/chess.html'">
+                <div class="game-icon">♟️</div>
+                <h3>Chess</h3>
+                <p>Train strategic thought, pattern recognition, and slow, deliberate decision-making with a polished competitive setup.</p>
+                <span class="badge">Strategy</span>
+            </div>
 
-        <div class="game-card" onclick="location.href='games/bubble-shooter.html'">
-            <div class="game-icon">🎯</div>
-            <h3>Bubble Shooter</h3>
-            <p>Colorful stress-relief bubble popping game</p>
-            <span class="badge">Endless Levels</span>
-        </div>
+            <div class="game-card" onclick="location.href='games/memory-match.html'">
+                <div class="game-icon">🎴</div>
+                <h3>Memory Match</h3>
+                <p>Challenge recall, attention, and concentration with richer scoring, themes, and power-ups.</p>
+                <span class="badge">Memory</span>
+            </div>
 
-        <div class="game-card" onclick="location.href='games/block-blast.html'">
-            <div class="game-icon">🧩</div>
-            <h3>Block Blast Puzzle</h3>
-            <p>Spatial reasoning and focus improvement</p>
-            <span class="badge">Challenge Mode</span>
-        </div>
+            <div class="game-card" onclick="location.href='games/bubble-shooter.html'">
+                <div class="game-icon">🎯</div>
+                <h3>Bubble Shooter</h3>
+                <p>Relax while improving visual focus and reaction speed using classic matching mechanics and combo scoring.</p>
+                <span class="badge">Arcade</span>
+            </div>
 
-        <div class="game-card" onclick="location.href='games/reaction-time.html'">
-            <div class="game-icon">⚡</div>
-            <h3>Reaction Time</h3>
-            <p>Test and improve your focus and attention</p>
-            <span class="badge">Leaderboard</span>
-        </div>
+            <div class="game-card" onclick="location.href='games/block-blast.html'">
+                <div class="game-icon">🧩</div>
+                <h3>Block Blast Puzzle</h3>
+                <p>Build spatial reasoning and pacing under pressure with clean puzzle controls and combo-driven rewards.</p>
+                <span class="badge">Puzzle</span>
+            </div>
 
-        <div class="game-card" onclick="location.href='games/color-therapy.html'">
-            <div class="game-icon">🎨</div>
-            <h3>Color Therapy</h3>
-            <p>Calming drawing kit with color matching exercises</p>
-            <span class="badge">Drawing Tools</span>
-        </div>
+            <div class="game-card" onclick="location.href='games/reaction-time.html'">
+                <div class="game-icon">⚡</div>
+                <h3>Reaction Time</h3>
+                <p>Measure speed, accuracy, and discipline through timed response challenges designed for quick mental resets.</p>
+                <span class="badge">Reflex</span>
+            </div>
 
-        <div class="game-card" onclick="location.href='features/mind-games.html'">
-            <div class="game-icon">🧠</div>
-            <h3>Mind Games</h3>
-            <p>Story-based cognitive assessment to discover your thinking style</p>
-            <span class="badge">Personality Analysis</span>
-        </div>
+            <div class="game-card" onclick="location.href='games/color-therapy.html'">
+                <div class="game-icon">🎨</div>
+                <h3>Color Therapy</h3>
+                <p>Use creative drawing tools as a calming digital art break, blending focus with gentle expression.</p>
+                <span class="badge">Creative</span>
+            </div>
+
+            <div class="game-card" onclick="location.href='features/mind-games.html'">
+                <div class="game-icon">🧠</div>
+                <h3>Mind Games</h3>
+                <p>Explore reflective exercises and cognitive prompts designed to support self-awareness and mental wellness.</p>
+                <span class="badge">Wellness</span>
+            </div>
+        </main>
     </div>
 </body>
 

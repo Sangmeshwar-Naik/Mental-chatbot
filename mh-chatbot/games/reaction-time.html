@@ -47,8 +47,8 @@
             left: 20px;
             padding: 12px 24px;
             background: rgba(255, 255, 255, 0.2);
-            -webkit-backdrop-filter:backdrop-filter:
             backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             color: white;
             border: 2px solid rgba(255, 255, 255, 0.3);
             border-radius: 25px;
@@ -273,6 +273,20 @@
             color: #667eea;
         }
 
+        .game-tip {
+            margin-top: 18px;
+            width: 100%;
+            max-width: 600px;
+            padding: 14px 18px;
+            background: rgba(102, 126, 234, 0.08);
+            border: 1px solid rgba(102, 126, 234, 0.18);
+            border-radius: 14px;
+            color: #4b5563;
+            font-size: 14px;
+            text-align: center;
+            font-weight: 600;
+        }
+
         @keyframes pulse {
 
             0%,
@@ -340,6 +354,7 @@
                 <div class="test-instruction">Click to Start</div>
                 <div class="test-detail">Test your reaction speed</div>
             </div>
+            <div class="game-tip">Tip: stay relaxed, focus on the colour change, and avoid anticipating the signal.</div>
         </div>
 
         <!-- Statistics -->

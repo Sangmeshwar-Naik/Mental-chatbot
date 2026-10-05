@@ -24,8 +24,8 @@
 
         .header {
             background: rgba(255, 255, 255, 0.1);
-            -webkit-backdrop-filter:backdrop-filter:
             backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             padding: 15px 20px;
             display: flex;
             justify-content: space-between;
@@ -63,7 +63,7 @@
         }
 
         .toolbar {
-            background: white;
+            background: rgba(255, 255, 255, 0.96);
             border-radius: 20px;
             padding: 20px;
             width: 280px;
@@ -163,13 +163,14 @@
 
         .canvas-container {
             flex: 1;
-            background: white;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(239, 246, 255, 0.9));
             border-radius: 20px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            border: 1px solid rgba(148, 163, 184, 0.25);
         }
 
         canvas {
@@ -207,6 +208,11 @@
 
     <div class="main-container">
         <div class="toolbar">
+            <div class="tool-section" style="padding: 12px 14px; background: linear-gradient(135deg, #eef2ff, #f5f3ff); border-radius: 14px; border: 1px solid rgba(99, 102, 241, 0.12);">
+                <h3 style="margin-bottom: 8px;">Creative Studio</h3>
+                <div style="font-size: 13px; color: #475569; line-height: 1.5;">Choose a mood, paint freely, and reset when you want a fresh creative start.</div>
+            </div>
+
             <div class="tool-section">
                 <h3>Colors</h3>
                 <div class="color-palette" id="colorPalette"></div>

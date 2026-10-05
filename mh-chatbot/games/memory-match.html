@@ -507,6 +507,9 @@
         }
 
         function initGame() {
+            const board = document.getElementById('gameBoard');
+            if (!board) return;
+
             clearInterval(timer);
             seconds = 0;
             moves = 0;
@@ -518,12 +521,12 @@
 
             updateStats();
 
-            const board = document.getElementById('gameBoard');
             board.style.gridTemplateColumns = `repeat(${gridSize}, 1fr)`;
             board.innerHTML = '';
 
             const pairCount = (gridSize * gridSize) / 2;
-            document.getElementById('totalPairs').textContent = pairCount;
+            const totalPairsEl = document.getElementById('totalPairs');
+            if (totalPairsEl) totalPairsEl.textContent = pairCount;
 
             const selectedEmojis = themes[currentTheme].slice(0, pairCount);
             const cardPairs = [...selectedEmojis, ...selectedEmojis];
@@ -630,29 +633,40 @@
         }
 
         function updateStats() {
-            document.getElementById('moves').textContent = moves;
-            document.getElementById('timer').textContent = `${Math.floor(seconds / 60)}:${(seconds % 60).toString().padStart(2, '0')}`;
-            document.getElementById('matches').textContent = matches;
-            document.getElementById('score').textContent = score;
+            const movesEl = document.getElementById('moves');
+            const timerEl = document.getElementById('timer');
+            const matchesEl = document.getElementById('matches');
+            const scoreEl = document.getElementById('score');
+
+            if (movesEl) movesEl.textContent = moves;
+            if (timerEl) timerEl.textContent = `${Math.floor(seconds / 60)}:${(seconds % 60).toString().padStart(2, '0')}`;
+            if (matchesEl) matchesEl.textContent = matches;
+            if (scoreEl) scoreEl.textContent = score;
         }
 
         function showVictory() {
             clearInterval(timer);
 
-            document.getElementById('finalScore').textContent = score;
-            document.getElementById('finalMoves').textContent = moves;
-            document.getElementById('finalTime').textContent = document.getElementById('timer').textContent;
+            const finalScoreEl = document.getElementById('finalScore');
+            const finalMovesEl = document.getElementById('finalMoves');
+            const finalTimeEl = document.getElementById('finalTime');
+            const victoryScreenEl = document.getElementById('victoryScreen');
+            const starsEl = document.getElementById('stars');
 
-            // Calculate stars (1-3)
-            const perfectMoves = (gridSize * gridSize) / 2;
-            const moveEfficiency = perfectMoves / moves;
-            let stars = 1;
-            if (moveEfficiency > 0.8) stars = 3;
-            else if (moveEfficiency > 0.6) stars = 2;
+            if (finalScoreEl) finalScoreEl.textContent = score;
+            if (finalMovesEl) finalMovesEl.textContent = moves;
+            if (finalTimeEl) finalTimeEl.textContent = document.getElementById('timer') ? document.getElementById('timer').textContent : '0:00';
+            if (starsEl) {
+                const perfectMoves = (gridSize * gridSize) / 2;
+                const moveEfficiency = perfectMoves / moves;
+                let stars = 1;
+                if (moveEfficiency > 0.8) stars = 3;
+                else if (moveEfficiency > 0.6) stars = 2;
 
-            document.getElementById('stars').textContent = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
+                starsEl.textContent = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
+            }
 
-            document.getElementById('victoryScreen').classList.add('show');
+            if (victoryScreenEl) victoryScreenEl.classList.add('show');
 
             // Save to leaderboard
             saveToLeaderboard();
@@ -665,7 +679,8 @@
         }
 
         function playAgain() {
-            document.getElementById('victoryScreen').classList.remove('show');
+            const victoryScreenEl = document.getElementById('victoryScreen');
+            if (victoryScreenEl) victoryScreenEl.classList.remove('show');
             initGame();
         }
 
@@ -736,9 +751,12 @@
         document.addEventListener('DOMContentLoaded', function () {
             initGame();
             updateLeaderboard();
-            document.getElementById('peek-count').textContent = powerUps.peek;
-            document.getElementById('freeze-count').textContent = powerUps.freeze;
-            document.getElementById('hint-count').textContent = powerUps.hint;
+            const peekCountEl = document.getElementById('peek-count');
+            const freezeCountEl = document.getElementById('freeze-count');
+            const hintCountEl = document.getElementById('hint-count');
+            if (peekCountEl) peekCountEl.textContent = powerUps.peek;
+            if (freezeCountEl) freezeCountEl.textContent = powerUps.freeze;
+            if (hintCountEl) hintCountEl.textContent = powerUps.hint;
         });
     </script>
 </body>

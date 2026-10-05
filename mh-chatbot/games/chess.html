@@ -400,8 +400,14 @@
         let gameOver = false;
         let gameStarted = false;
 
+        function safeSetText(id, value) {
+            const el = document.getElementById(id);
+            if (el) el.textContent = value;
+        }
+
         function initBoard() {
             const boardEl = document.getElementById('chessboard');
+            if (!boardEl) return;
             boardEl.innerHTML = '';
 
             for (let row = 0; row < 8; row++) {
@@ -554,10 +560,13 @@
 
             const moveText = `${PIECES[piece]} ${String.fromCharCode(97 + from.col)}${8 - from.row} → ${String.fromCharCode(97 + to.col)}${8 - to.row}`;
             moveHistory.push(moveText);
-            document.getElementById('moves').innerHTML = moveHistory.map((m, i) => `<div class="move-item">${i + 1}. ${m}</div>`).join('');
+            const movesEl = document.getElementById('moves');
+            if (movesEl) movesEl.innerHTML = moveHistory.map((m, i) => `<div class="move-item">${i + 1}. ${m}</div>`).join('');
 
-            document.getElementById('undo-btn').disabled = false;
-            document.getElementById('redo-btn').disabled = true;
+            const undoBtn = document.getElementById('undo-btn');
+            const redoBtn = document.getElementById('redo-btn');
+            if (undoBtn) undoBtn.disabled = false;
+            if (redoBtn) redoBtn.disabled = true;
 
             checkGameOver();
         }
@@ -671,9 +680,12 @@
 
             updateBoard();
             updateStatus();
-            document.getElementById('moves').innerHTML = moveHistory.map((m, i) => `<div class="move-item">${i + 1}. ${m}</div>`).join('');
-            document.getElementById('undo-btn').disabled = historyIndex < 0;
-            document.getElementById('redo-btn').disabled = false;
+            const movesEl = document.getElementById('moves');
+            if (movesEl) movesEl.innerHTML = moveHistory.map((m, i) => `<div class="move-item">${i + 1}. ${m}</div>`).join('');
+            const undoBtn = document.getElementById('undo-btn');
+            const redoBtn = document.getElementById('redo-btn');
+            if (undoBtn) undoBtn.disabled = historyIndex < 0;
+            if (redoBtn) redoBtn.disabled = false;
         }
 
         function redoMove() {
@@ -689,18 +701,23 @@
 
                 updateBoard();
                 updateStatus();
-                document.getElementById('redo-btn').disabled = historyIndex >= gameHistory.length - 2;
-                document.getElementById('undo-btn').disabled = false;
+                const redoBtn = document.getElementById('redo-btn');
+                const undoBtn = document.getElementById('undo-btn');
+                if (redoBtn) redoBtn.disabled = historyIndex >= gameHistory.length - 2;
+                if (undoBtn) undoBtn.disabled = false;
             }
         }
 
         function updateCapturedPieces() {
-            document.getElementById('white-captured').innerHTML = blackCaptured.map(p => PIECES[p]).join(' ');
-            document.getElementById('black-captured').innerHTML = whiteCaptured.map(p => PIECES[p]).join(' ');
+            const whiteCapturedEl = document.getElementById('white-captured');
+            const blackCapturedEl = document.getElementById('black-captured');
+            if (whiteCapturedEl) whiteCapturedEl.innerHTML = blackCaptured.map(p => PIECES[p]).join(' ');
+            if (blackCapturedEl) blackCapturedEl.innerHTML = whiteCaptured.map(p => PIECES[p]).join(' ');
         }
 
         function updateStatus() {
             const statusEl = document.getElementById('status');
+            if (!statusEl) return;
             statusEl.textContent = currentPlayer === 'white' ? "White's Turn" : "Black's Turn (AI)";
             statusEl.className = 'status';
         }
@@ -754,8 +771,10 @@
             gameOver = true;
             stopTimer();
             const statusEl = document.getElementById('status');
-            statusEl.textContent = message;
-            statusEl.className = 'status checkmate';
+            if (statusEl) {
+                statusEl.textContent = message;
+                statusEl.className = 'status checkmate';
+            }
             alert(message);
         }
 
@@ -780,8 +799,10 @@
                     updateTimerDisplay('black-timer', blackTime);
                 }
 
-                document.getElementById('white-timer').classList.toggle('active', currentPlayer === 'white');
-                document.getElementById('black-timer').classList.toggle('active', currentPlayer === 'black');
+                const whiteTimerEl = document.getElementById('white-timer');
+                const blackTimerEl = document.getElementById('black-timer');
+                if (whiteTimerEl) whiteTimerEl.classList.toggle('active', currentPlayer === 'white');
+                if (blackTimerEl) blackTimerEl.classList.toggle('active', currentPlayer === 'black');
             }, 1000);
         }
 
@@ -795,8 +816,10 @@
         function updateTimerDisplay(id, seconds) {
             const mins = Math.floor(seconds / 60);
             const secs = seconds % 60;
-            document.getElementById(id).querySelector('.timer-value').textContent =
-                `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+            const timerEl = document.getElementById(id);
+            if (!timerEl) return;
+            const valueEl = timerEl.querySelector('.timer-value');
+            if (valueEl) valueEl.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
         }
 
         function saveGame() {
@@ -829,7 +852,8 @@
 
             updateBoard();
             updateStatus();
-            document.getElementById('moves').innerHTML = moveHistory.map((m, i) => `<div class="move-item">${i + 1}. ${m}</div>`).join('');
+            const movesEl = document.getElementById('moves');
+            if (movesEl) movesEl.innerHTML = moveHistory.map((m, i) => `<div class="move-item">${i + 1}. ${m}</div>`).join('');
             startTimer();
             alert('✅ Game loaded!');
         }
@@ -837,7 +861,15 @@
         function setDifficulty(level) {
             difficulty = level;
             document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
-            event.target.classList.add('active');
+            const target = window.event ? window.event.target : null;
+            if (target && target.classList && target.classList.contains('diff-btn')) {
+                target.classList.add('active');
+            }
+            const selectedButton = Array.from(document.querySelectorAll('.diff-btn')).find((btn, idx) => {
+                const expected = [1, 2, 3, 4];
+                return expected[idx] === level && btn.classList.contains('diff-btn');
+            });
+            if (selectedButton) selectedButton.classList.add('active');
         }
 
         function toggleGame() {
@@ -879,18 +911,27 @@
             gameStarted = false;
 
             const startBtn = document.getElementById('start-btn');
-            startBtn.textContent = '▶️ Start Game';
-            startBtn.style.background = '#28a745';
+            if (startBtn) {
+                startBtn.textContent = '▶️ Start Game';
+                startBtn.style.background = '#28a745';
+            }
 
             updateBoard();
             updateStatus();
-            document.getElementById('moves').innerHTML = '';
-            document.getElementById('undo-btn').disabled = true;
-            document.getElementById('redo-btn').disabled = true;
+            const movesEl = document.getElementById('moves');
+            if (movesEl) movesEl.innerHTML = '';
+            const undoBtn = document.getElementById('undo-btn');
+            const redoBtn = document.getElementById('redo-btn');
+            if (undoBtn) undoBtn.disabled = true;
+            if (redoBtn) redoBtn.disabled = true;
             stopTimer();
         }
 
-        initBoard();
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initBoard);
+        } else {
+            initBoard();
+        }
     </script>
 </body>
 
